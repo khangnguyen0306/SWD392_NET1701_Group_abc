@@ -1,6 +1,6 @@
-# Hotel Booking Website
+# Exchange Used Website
 
-Welcome to our Hotel Booking Website project! This application is designed to provide users with a seamless experience in searching, booking, and managing hotel reservations. Built with modern technologies, it offers a responsive and user-friendly interface.
+Welcome to our Exchange Used Website project! This application is designed to facilitate users in buying, selling, and exchanging pre-owned items. Utilizing modern technologies, it provides an intuitive and efficient platform for users to interact with.
 
 ## Table of Contents
 - [Team Members](#team-members)
@@ -13,13 +13,9 @@ Welcome to our Hotel Booking Website project! This application is designed to pr
 ## Team Members
 Meet the talented individuals behind this project:
 - **Nguyễn Trọng Khang**
-- **Đỗ Minh Chính**
-- **Lâm Quốc Vinh**
-- **Nguyễn Đức Thắng**
-- **Hoàng Tuấn Khang**
 
 ## Technologies Used
-This project leverages a variety of technologies to deliver a robust hotel booking experience:
+This project employs various technologies to deliver a seamless exchange experience:
 - **Frontend**:
   - ![ReactJS](https://img.icons8.com/color/48/000000/react-native.png) ReactJS
   - ![Redux](https://img.icons8.com/color/48/000000/redux.png) Redux
@@ -27,17 +23,17 @@ This project leverages a variety of technologies to deliver a robust hotel booki
   - ![SCSS](https://img.icons8.com/color/48/000000/sass.png) SCSS
 
 - **Backend**:
-  - ![Spring Boot](https://img.icons8.com/color/48/000000/spring-logo.png) Spring Boot
+  - ![.NET Core](https://img.icons8.com/color/48/000000/dot-net.png) .NET Core
 
 ## Features
-Our hotel booking website offers the following features:
-- **User Authentication**: Allow users to sign up, log in, and log out.
-- **Hotel Search**: Users can search for hotels based on location, date, and other criteria.
-- **Hotel Listing**: Display a list of available hotels based on the search criteria.
-- **Hotel Details**: Show detailed information about each hotel, including amenities, room types, and prices.
-- **Booking**: Enable users to make reservations for selected hotels.
-- **Booking Management**: Allow users to view and manage their bookings.
-- **Responsive Design**: Ensure the website is accessible and usable on various devices, including desktops, tablets, and smartphones.
+Our exchange used website offers the following features:
+- **User Authentication**: Allows users to sign up, log in, and log out.
+- **Item Search**: Users can search for pre-owned items based on category, condition, and other criteria.
+- **Item Listing**: Displays a list of available items based on the search criteria.
+- **Item Details**: Shows detailed information about each item, including images, descriptions, and prices.
+- **Buying and Selling**: Enables users to buy, sell, or exchange items with other users.
+- **Order Management**: Allows users to view and manage their orders and listings.
+- **Responsive Design**: Ensures the website is accessible and usable across different devices, including desktops, tablets, and smartphones.
 
 ## Installation
 Ready to explore our project? Follow these simple steps to get started:
@@ -46,8 +42,8 @@ Ready to explore our project? Follow these simple steps to get started:
 3. Install dependencies: `npm install`
 4. Start the frontend server: `npm run dev`
 5. Navigate to the backend directory: `cd backend`
-6. Install dependencies: `mvn install`
-7. Start the backend server: `mvn spring-boot:run`
+6. Install dependencies: `<If using .NET Core: dotnet restore>`
+7. Start the backend server: `<If using .NET Core: dotnet run>`
 
 ## Contribution
 We welcome contributions from the community! Here's how you can get involved:
@@ -60,4 +56,4 @@ We welcome contributions from the community! Here's how you can get involved:
 ## License
 This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute it according to your needs.
 
-Have fun exploring our Hotel Booking Website!
+Enjoy exploring our Exchange Used Website!
