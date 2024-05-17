@@ -13,6 +13,10 @@ Welcome to our Exchange Used Website project! This application is designed to fa
 ## Team Members
 Meet the talented individuals behind this project:
 - **Nguyễn Trọng Khang**
+- **Phạm Cao Duy Thuấn**
+- **Phan Kim Ngân**
+- **Lưu Xuân Hiệp**
+- **Phạm Minh Khôi**
 
 ## Technologies Used
 This project employs various technologies to deliver a seamless exchange experience:
