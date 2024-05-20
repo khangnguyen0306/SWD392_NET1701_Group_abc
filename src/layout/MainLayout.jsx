@@ -20,6 +20,7 @@ import useSider from "@/hooks/useSider";
 import { Link, useLocation } from "react-router-dom";
 import CustomHeader from "../components/Header/CustomHeader";
 import CustomFooter from "../components/Footer/CustomFooter";
+import { ImportFile } from "../assets/importSVG";
 
 const { Header, Sider, Content } = Layout;
 
@@ -29,20 +30,19 @@ const MainLayout = () => {
   const {
     token: { colorBgContainer, borderRadiusLG, ...other },
   } = theme.useToken();
-  const location = useLocation();
-
-  const siderList = useSider();
   return (
     <Layout
+      id="layout-body"
     >
       <CustomHeader />
       <Content
         style={{
           display: "flex",
-          margin: "75px 16px",
-          padding: 50,
+          margin: "0px 16px",
+          // padding: 50,
           minHeight: 500,
-          background: other.colorBorderSecondary,
+          // background: other.colorBorderSecondary,
+          background: ImportFile.background,
           borderRadius: borderRadiusLG,
         }}
       >
