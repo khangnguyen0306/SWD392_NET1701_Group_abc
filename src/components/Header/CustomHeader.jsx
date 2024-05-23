@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, Layout, Menu, Drawer, Grid } from "antd";
+import { Button, Layout, Menu, Drawer, Grid, Avatar } from "antd";
 import "./CustomHeader.scss"; // Import SCSS file
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
 // import Imame from "../../../src/assets/icons/laudry-icon.png"
 const { Header } = Layout;
@@ -30,37 +30,52 @@ const CustomHeader = () => {
         <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: '1' }}>
             <Link to={"/"}>
                 <div className="header-logo">
-                    <p><span style={{ color: 'black' }}>Travel</span> <span >Tour</span></p>
+                    <p><span style={{ color: 'black' }}>Exchange</span> <span >Web</span></p>
                 </div>
             </Link>
             {screens.md ? (
                 <>
-                    <Menu mode="horizontal" defaultSelectedKeys={["1"]} style={{ width: 'fit-content', backgroundColor: 'none' }}>
-                        <Menu.Item key="1">
-                            <Link to="/">Home</Link>
-                        </Menu.Item>
-                        <SubMenu key="2" title="Pages">
-                            <Menu.Item key="2-1">
-                                <Link to="/destination">Destination</Link>
+                    <div >
+                        <Menu mode="horizontal" defaultSelectedKeys={["1"]} style={{ width: 'fit-content', backgroundColor: 'none' }}>
+                            <Menu.Item key="1">
+                                <Link to="/">Home</Link>
                             </Menu.Item>
-                            <Menu.Item key="2-2">
-                                <Link to="/about">About Us</Link>
+                            <SubMenu key="2" title="Pages">
+                                <Menu.Item key="2-1">
+                                    <Link to="/destination">Destination</Link>
+                                </Menu.Item>
+                                <Menu.Item key="2-2">
+                                    <Link to="/about">About Us</Link>
+                                </Menu.Item>
+                            </SubMenu>
+                            <Menu.Item key="3">
+                                <Link to="admin">Product</Link>
                             </Menu.Item>
-                        </SubMenu>
-                        <Menu.Item key="3">
-                            <Link to="admin">Tour List</Link>
-                        </Menu.Item>
-                        <Menu.Item key="4">
-                            <Link to="/"> Room List </Link>
-                        </Menu.Item>
-                        <Menu.Item key="5">
-                            <Link to="home">Tour Search</Link>
-                        </Menu.Item>
-                        <Menu.Item key="6">
-                            <Link to="admin">Blog</Link>
-                        </Menu.Item>
-                    </Menu>
-                    <Button type="primary" className="login-btn">Login</Button>
+                            <Menu.Item key="4">
+                                <Link to="/">Exchange Product</Link>
+                            </Menu.Item>
+                            <Menu.Item key="5">
+                                <Link to="home">Tour Search</Link>
+                            </Menu.Item>
+                            <Menu.Item key="6">
+                                <Link to="admin">Blog</Link>
+                            </Menu.Item>
+                        </Menu>
+
+                    </div>
+                    {/* //nun-function */}
+                    <div className="icon-header">
+                        <p className="cart-icon"><ShoppingCartOutlined /></p>
+                        <Link to={"/user-profile"}>
+                            <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
+                        </Link>
+
+                    </div>
+                    {/* <div className="btn-login">
+                        <Link to={"/login"}>
+                            <Button type="primary" className="login-btn"><p>Login</p></Button>
+                        </Link>
+                    </div> */}
                 </>
             ) : (
                 <Button className="menu-btn" onClick={() => setDrawerVisible(true)} style={{ marginRight: '40px' }}>

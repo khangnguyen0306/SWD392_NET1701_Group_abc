@@ -3,7 +3,9 @@ import Loadable from "./Loadable";
 import MainLayout from "../layout/MainLayout";
 import AuthGuard from "./AuthGuard";
 const Login = Loadable({ loader: () => import("../pages/login/Login") });
+const Register = Loadable({ loader: () => import("../pages/register/Register") });
 const Home = Loadable({ loader: () => import("../pages/home/Home") });
+const UserProfile = Loadable({ loader: () => import("../pages/userProfile/UserProfile") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/Dashboard"),
@@ -17,12 +19,15 @@ export const router = createBrowserRouter([
     element: Login,
   },
   {
-    path: "/",
-    element: <AuthGuard />,
-
+    path: "/register",
+    element: Register,
+  },
+  {
+    element: <MainLayout />,
     children: [
       {
-        element: <MainLayout />,
+        path: "/",
+        element: <AuthGuard />,
         children: [
           {
             index: true,
@@ -36,11 +41,15 @@ export const router = createBrowserRouter([
             path: "admin",
             element: Admin,
           },
-
+          {
+            path: "user-profile",                         //id it not defined in the path
+            element: UserProfile,         
+          },
         ],
       },
-    ],
+    ]
   },
+
   {
     path: "*",
     element: errorPage,
