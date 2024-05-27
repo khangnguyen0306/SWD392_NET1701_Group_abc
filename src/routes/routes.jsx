@@ -6,6 +6,8 @@ const Login = Loadable({ loader: () => import("../pages/login/Login") });
 const Register = Loadable({ loader: () => import("../pages/register/Register") });
 const Home = Loadable({ loader: () => import("../pages/home/Home") });
 const UserProfile = Loadable({ loader: () => import("../pages/userProfile/UserProfile") });
+const ProductPage = Loadable({ loader: () => import("../pages/product/ProductPage") });
+const ProductDetail = Loadable({ loader: () => import("../pages/product/ProductDetail") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/Dashboard"),
@@ -21,6 +23,14 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: Register,
+  },
+  {
+    path: "/product",
+    element: ProductPage,
+  },
+  {
+    path: "/productDetail/:productId",
+    element: ProductDetail,
   },
   {
     element: <MainLayout />,
