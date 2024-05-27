@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, Layout, Menu, Drawer, Grid, Avatar } from "antd";
+import { Button, Layout, Menu, Drawer, Grid, Avatar, Badge, Dropdown } from "antd";
 import "./CustomHeader.scss"; // Import SCSS file
 import { MenuOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
-// import Imame from "../../../src/assets/icons/laudry-icon.png"
+import CartModal from "../../pages/product/cartModal";
+import { useSelector } from "react-redux";
+import { selectTotalProducts } from "../../slices/product.slice"; // Import selector
+
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
 
@@ -13,6 +16,12 @@ const CustomHeader = () => {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const [drawerVisible, setDrawerVisible] = useState(false);
+    const [cartVisible, setCartVisible] = useState(false); // State to control visibility of cart modal
+    const totalProducts = useSelector(selectTotalProducts); // Get total number of products in the cart
+
+    const toggleCartModal = () => {
+        setCartVisible(!cartVisible);
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -25,6 +34,17 @@ const CustomHeader = () => {
 
         return () => window.removeEventListener("scroll", handleScroll);
     }, [prevScrollPos]);
+
+    const menu = (
+        <Menu>
+            <Menu.Item key="profile">
+                <Link to="/user-profile">User Profile</Link>
+            </Menu.Item>
+            <Menu.Item key="history">
+                <Link to="/user-transaction-history">Transaction History</Link>
+            </Menu.Item>
+        </Menu>
+    );
 
     return (
         <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: '1' }}>
@@ -49,7 +69,7 @@ const CustomHeader = () => {
                                 </Menu.Item>
                             </SubMenu>
                             <Menu.Item key="3">
-                                <Link to="admin">Product</Link>
+                                <Link to="/product">Product</Link>
                             </Menu.Item>
                             <Menu.Item key="4">
                                 <Link to="/">Exchange Product</Link>
@@ -65,10 +85,14 @@ const CustomHeader = () => {
                     </div>
                     {/* //nun-function */}
                     <div className="icon-header">
-                        <p className="cart-icon"><ShoppingCartOutlined /></p>
-                        <Link to={"/user-profile"}>
+                        <p className="cart-icon" onClick={toggleCartModal}>
+                            <Badge count={totalProducts}>
+                                <ShoppingCartOutlined style={{ fontSize: '30px' }} />
+                            </Badge>
+                        </p>
+                        <Dropdown overlay={menu} trigger={['hover']}>
                             <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
-                        </Link>
+                        </Dropdown>
 
                     </div>
                     {/* <div className="btn-login">
@@ -87,7 +111,7 @@ const CustomHeader = () => {
                 placement="right"
                 closable={false}
                 onClose={() => setDrawerVisible(false)}
-                visible={drawerVisible}
+                open={drawerVisible}
             >
                 <Menu
                     mode="vertical"
@@ -120,6 +144,10 @@ const CustomHeader = () => {
                     </Menu.Item>
                 </Menu>
             </Drawer>
+            <CartModal
+                visible={cartVisible}
+                onClose={toggleCartModal}
+            />
         </Header>
     );
 };

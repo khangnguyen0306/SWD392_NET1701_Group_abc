@@ -1,0 +1,133 @@
+$font-content: DM Sans, sans-serif;
+$font-title: DM Serif Display, sans-serif;
+$blue-main-color: #5c98f2;
+
+* {
+    font-family: $font-content;
+}
+
+.product-page {
+    padding: 8rem;
+
+    .filter-section {
+        padding: 16px;
+        background-color: #fafcfc;
+        border-right: 1px solid #e4ecec;
+
+        .filter-group {
+            margin-bottom: 16px;
+
+            .title-filter {
+                font-family: $font-title;
+                font-size: 19px;
+                font-weight: 700;
+                letter-spacing: 0px;
+                text-transform: none;
+                color: $blue-main-color;
+                padding: 10px;
+
+            }
+
+            h4 {
+                margin-bottom: 8px;
+            }
+
+            .filter-checkbox-layout {
+                font-size: 16px;
+            }
+
+            .subcategories {
+                font-size: 16px;
+
+                .subcategories-checkbox {
+
+                    padding: 5px;
+                }
+
+                padding: 0 2rem;
+            }
+        }
+    }
+
+    .product-section {
+        padding: 16px;
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+
+            .search-input {
+                width: 300px;
+            }
+
+            .view-buttons {
+                button {
+                    margin-left: 8px;
+                }
+            }
+        }
+
+        .card-product {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .product-image {
+                transition: transform 0.3s ease;
+               
+
+            }
+
+            &:hover {
+                .product-image {
+                    transform: scale(1.1);
+                }
+            }
+
+            .card-product-name {
+                font-family: $font-title;
+                font-size: 16px;
+                font-weight: 700;
+                letter-spacing: 0px;
+                text-transform: none;
+                color: $blue-main-color;
+                padding: 10px 0;
+
+            }
+            .card-product-price {
+
+            }
+
+
+        }
+
+        .product-list {
+            &.grid {
+                .ant-col {
+                    @media (max-width: 768px) {
+                        flex: 0 0 100%;
+                        max-width: 100%;
+                    }
+                }
+            }
+
+            &.list {
+                .ant-col {
+                    flex: 0 0 100%;
+                    max-width: 100%;
+                }
+            }
+        }
+
+        .pagination {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+    }
+}

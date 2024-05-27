@@ -6,13 +6,14 @@ import dayjs from 'dayjs';
 // import { useGetUserByIdQuery, useEditUserMutation } from '../../../services/userAPI';
 import "./UserProfile.scss"
 import { validationPatterns } from '../../utils/utils';
+import { useGetUserProfileQuery } from '../../services/userAPI';
 // import UploadWidget from '../../../components/uploadWidget/uploadWidget';
 
 
 const UserProfile = () => {
-    // const { userId } = useParams();
+    const { userId } = useParams();
     // const [editUser] = useEditUserMutation();
-    // const { data: user, error, isLoading } = useGetUserByIdQuery(userId);
+    // const { data: user, error, isLoading } = useGetUserProfileQuery(userId);  /// API login
     const [form] = Form.useForm();
     const [updateUser, setUpdateUser] = useState(false);
     const [newAvatar, setNewAvatar] = useState([]);

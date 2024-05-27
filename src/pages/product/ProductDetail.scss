@@ -1,0 +1,115 @@
+$font-content: DM Sans, sans-serif;
+$font-title: DM Serif Display, sans-serif;
+$blue-main-color: #5c98f2;
+$blue-color-content: #8a8a8a;
+$blue-color-price: #f05d40;
+
+
+
+* {
+    font-family: $font-content;
+}
+
+.productdetail-layout {
+    padding: 8rem 0;
+
+    .product-image {
+        .view-all-image-btn {
+            margin-top: 1rem;
+        }
+
+        img {
+            border-radius: 10px;
+            box-shadow: 0 15px 16.83px 0.17px rgba(0, 0, 0, .09);
+        }
+
+        .ant-image-mask {
+            border-radius: 10px;
+        }
+    }
+
+    .product-detail-description {
+        margin-left: 3rem;
+
+        .productTitle {
+            margin-bottom: 1.5rem;
+            font-family: $font-title;
+            font-size: 30px;
+        }
+
+        .productCategory {
+            padding: 1.5rem 0;
+            font-family: $font-content;
+            font-size: 1rem;
+            color: $blue-color-content;
+        }
+
+        .productPrice {
+            color: $blue-color-price;
+            font-size: 1.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .productDescription {
+            font-size: 16px;
+            color: $blue-color-content;
+            line-height: 1.9;
+            letter-spacing: 0px;
+            margin-bottom: 2rem;
+        }
+
+        .addToCart-btn {
+            .ant-input-number-handler-wrap {
+                display: none;
+            }
+
+            display: flex;
+            align-items: center;
+
+        }
+    }
+
+    .related-Title {
+        font-family: $font-title;
+        font-size: 25px;
+        margin-bottom: 1.5rem;
+        color: #000;
+        margin-top: 2rem;
+    }
+
+    .relatedProductItem {
+        margin-right: 18px;
+        border-radius: 0 5px 5px 5px;
+
+        .content-related-item {
+            padding: 0rem 0 0.5rem 1rem;
+
+        }
+
+        &:hover {
+            box-shadow: 0 15px 16.83px 0.17px rgba(0, 0, 0, .09);
+        }
+
+        img {
+            height: auto;
+
+        }
+
+        .relatedProductName {
+            font-family: $font-title;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0px;
+            text-transform: none;
+            color: $blue-main-color;
+            padding: 0.7rem 0 0.5rem 0;
+
+        }
+
+        .relatedProductPrice {
+            font-size: 16px;
+            color: $blue-color-price;
+        }
+    }
+}

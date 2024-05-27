@@ -7,6 +7,7 @@ import './Register.scss'
 import imager from '../../assets/signup-image.jpg';
 import { validationPatterns } from '../../utils/utils';
 
+
 const Register = () => {
 
   const [form] = Form.useForm();
@@ -65,6 +66,7 @@ const Register = () => {
                       pattern: validationPatterns.name.pattern,
                       message: validationPatterns.name.message,
                     },
+                   
                   ]}
                 >
                   <Input type="" placeholder="Full name" className="form-input" />
