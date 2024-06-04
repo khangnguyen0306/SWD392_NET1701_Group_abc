@@ -12,7 +12,7 @@ const Error = () => {
         <p>
           ...maybe the page you're looking for is not found or never existed.
         </p>
-        <Link to={"/"} target="blank">
+        <Link to={"/"} >
           <button>Back to home <i class="far fa-hand-point-right"></i></button>
         </Link>
       </div>
