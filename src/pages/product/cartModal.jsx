@@ -3,11 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Image, Space, Table, Checkbox, message } from 'antd';
 import { loadCartFromLocalStorage, removeFromCart, updateCartQuantity, clearPaidItems } from '../../slices/product.slice';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { selectCurrenToken } from '../../slices/auth.slice';
+import { Link, useLocation } from 'react-router-dom';
 
 const CartModal = ({ visible, onClose }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.product.cart);
   const [selectedItems, setSelectedItems] = useState([]);
+  const token = useSelector(selectCurrenToken);
+  const location = useLocation()
 
   useEffect(() => {
     if (visible) {
@@ -117,28 +121,37 @@ const CartModal = ({ visible, onClose }) => {
       <div style={{ marginTop: 16, textAlign: 'right' }}>
         <div style={{ padding: '1rem' }}>Total Amount: {totalAmount.toFixed(2)} ₫</div>
         {totalAmount > 0 ? (
-          <PayPalScriptProvider options={{ "client-id":"AZJbL2P3zXWiJVR6L9VSCruzggReYNwEQDtMpJCZYQfp3QWNgwacrqPzraLRL1zgP9x_KnJQ3-ruBri9"}}>
-            <PayPalButtons
-              createOrder={(data, actions) => {
-                return actions.order.create({
-                  purchase_units: [{
-                    amount: {
-                      value: (totalAmount / 23000).toFixed(2), // Convert VND to USD
-                      currency_code: 'USD'
-                    },
-                  }],
-                });
-              }}
-              onApprove={(data, actions) => {
-                console.log(data);
-                return actions.order.capture().then((details) => {
-                  message.success('Transaction completed by ' + details.payer.name.given_name);
-                  dispatch(clearPaidItems(selectedItems));
-                  onClose();
-                });
-              }}
-            />  
-          </PayPalScriptProvider>
+          token ? (
+            <PayPalScriptProvider options={{ "client-id": "AZJbL2P3zXWiJVR6L9VSCruzggReYNwEQDtMpJCZYQfp3QWNgwacrqPzraLRL1zgP9x_KnJQ3-ruBri9" }}>
+              <PayPalButtons                          //isLoading not defined
+                createOrder={(data, actions) => {
+                  return actions.order.create({
+                    purchase_units: [{
+                      amount: {
+                        value: (totalAmount / 23000).toFixed(2), // Convert VND to USD
+                        currency_code: 'USD'
+                      },
+                    }],
+                  });
+                }}
+                onApprove={(data, actions) => {
+                  console.log(data);
+                  return actions.order.capture().then((details) => {
+                    message.success('Transaction completed by ' + details.payer.name.given_name);
+                    dispatch(clearPaidItems(selectedItems));
+                    onClose();
+                  });
+                }}
+              />
+            </PayPalScriptProvider>
+          ) : (
+            <div className="check-login-payment" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <p style={{ marginRight: '2rem' }}>Please login to buy product</p>
+              <Link to={"/login"} state={{ from: location }}>
+                <Button type="primary">Login</Button>
+              </Link>
+            </div>
+          )
         ) : (
           <Button type="primary" disabled>Buy Product</Button>
         )}
