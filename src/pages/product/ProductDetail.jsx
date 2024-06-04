@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useGetAllProductQuery, useGetProductDetailQuery } from '../../services/productAPI';
 import CustomFooter from '../../components/Footer/CustomFooter';
 import CustomHeader from '../../components/Header/CustomHeader';
-import { Button, Col, Image, InputNumber, Layout, Modal, Row, Space, Tag, message } from 'antd';
+import { Button, Col, Image, InputNumber, Layout, Modal, Row, Space, Spin, Tag, message } from 'antd';
 import "./ProductDetail.scss"
 import { addToCart, loadCartFromLocalStorage, updateCartQuantity } from '../../slices/product.slice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ const ProductDetail = () => {
     const [buyQuantity, setBuyQuantity] = useState(1);
     const cart = useSelector(state => state.product.cart);
     const { data: ProductDetail, isLoadingProduct } = useGetProductDetailQuery(productId);
-    const { data: AllProduct, isLoadingAllProduct } = useGetAllProductQuery();
+    const { data: AllProduct, isLoadingAllProducts } = useGetAllProductQuery();
     const [mainImage, setMainImage] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -94,10 +94,12 @@ const ProductDetail = () => {
         return words.slice(0, 10).join(' ') + ' buy ...';
     };
 
-
-    if (isLoadingProduct) {
-        return <h1>Loading...</h1>
+    if (isLoadingProduct && isLoadingAllProducts) {
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Spin size="large" />
+    </div>
     }
+
     return (
         <>
             <CustomHeader />

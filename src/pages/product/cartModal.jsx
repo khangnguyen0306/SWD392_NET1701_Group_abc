@@ -130,13 +130,14 @@ const CartModal = ({ visible, onClose }) => {
                 });
               }}
               onApprove={(data, actions) => {
+                console.log(data);
                 return actions.order.capture().then((details) => {
                   message.success('Transaction completed by ' + details.payer.name.given_name);
                   dispatch(clearPaidItems(selectedItems));
                   onClose();
                 });
               }}
-            />
+            />  
           </PayPalScriptProvider>
         ) : (
           <Button type="primary" disabled>Buy Product</Button>

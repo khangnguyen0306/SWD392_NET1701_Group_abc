@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Input, Checkbox, Slider, Button, Select, Row, Col, Card, message, Pagination } from 'antd';
+import { Layout, Input, Checkbox, Slider, Button, Select, Row, Col, Card, message, Pagination, Spin } from 'antd';
 import { SearchOutlined, AppstoreOutlined, BarsOutlined, FilterOutlined } from '@ant-design/icons';
 import './ProductPage.scss';
 import CustomHeader from '../../components/Header/CustomHeader';
@@ -109,7 +109,9 @@ const ProductPage = () => {
     };
 
     if (isLoadingProduct && isLoadingCategories) {
-        return <div>Loading...</div>
+        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Spin size="large" />
+        </div>
     }
     return (
         <>
@@ -222,7 +224,7 @@ const ProductPage = () => {
                                         <Card className='card-product'>
                                             <img src={product?.imageURL} width={"190px"} height={"170px"} className='product-image' />
                                             <p className='card-product-name'>{product.name}</p>
-                                            <p className='card-product-price'>Price: <span style={{color:'#000',fontWeight:'bold'}}>{product.price}₫</span></p>
+                                            <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product.price}₫</span></p>
                                             <p>Condition: {product.condition}%</p>
                                             <p>Location: {product.location}</p>
                                             {/* <Button type='primary' onClick={() => handleAddToCart(product)}>Add to cart</Button> */}

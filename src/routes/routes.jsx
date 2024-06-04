@@ -10,7 +10,7 @@ const ProductPage = Loadable({ loader: () => import("../pages/product/ProductPag
 const ProductDetail = Loadable({ loader: () => import("../pages/product/ProductDetail") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Dashboard = Loadable({
-  loader: () => import("../pages/dashboard/Dashboard"),
+  loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
 const Admin = Loadable({
   loader: () => import("../pages/admin/Admin"),

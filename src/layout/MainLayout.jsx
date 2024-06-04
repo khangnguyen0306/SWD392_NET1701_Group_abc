@@ -20,7 +20,7 @@ import useSider from "@/hooks/useSider";
 import { Link, useLocation } from "react-router-dom";
 import CustomHeader from "../components/Header/CustomHeader";
 import CustomFooter from "../components/Footer/CustomFooter";
-import { ImportFile } from "../assets/importSVG";
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -42,7 +42,6 @@ const MainLayout = () => {
           // padding: 50,
           minHeight: 500,
           // background: other.colorBorderSecondary,
-          background: ImportFile.background,
           borderRadius: borderRadiusLG,
         }}
       >
