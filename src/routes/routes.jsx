@@ -25,6 +25,10 @@ export const router = createBrowserRouter([
     element: Register,
   },
   {
+    index: true,
+    element: Dashboard,
+  },
+  {
     path: "/product",
     element: ProductPage,
   },
@@ -39,10 +43,7 @@ export const router = createBrowserRouter([
         path: "/",
         element: <AuthGuard />,
         children: [
-          {
-            index: true,
-            element: Dashboard,
-          },
+
           {
             path: "home",
             element: Home,
@@ -52,8 +53,8 @@ export const router = createBrowserRouter([
             element: Admin,
           },
           {
-            path: "user-profile",                         //id it not defined in the path
-            element: UserProfile,         
+            path: "user-profile",
+            element: UserProfile,
           },
         ],
       },

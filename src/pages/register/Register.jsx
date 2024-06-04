@@ -6,29 +6,41 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import './Register.scss'
 import imager from '../../assets/signup-image.jpg';
 import { validationPatterns } from '../../utils/utils';
+import { useRegisterUserMutation } from '../../services/authAPI';
 
 
 const Register = () => {
 
   const [form] = Form.useForm();
-//   const [registerUser, isLoading] = useAddUserMutation();
+  const [registerUser, isLoading] = useRegisterUserMutation();
   const navigate = useNavigate();
-//   const handleSubmit = async (values) => {
-//     const user = await registerUser(values);
-//     try {
-//       console.log(user);
-//       if (user.data.status == 200) {
-//         message.success(user.data.message);
-//         form.resetFields();
-//         navigate("/login");
-//       } else {
-//         message.error(user.error.data.message);
-//         form.resetFields();
-//       }
-//     } catch (error) {
-//       message.error(user.error.data.message);
-//     }
-//   }
+
+  const handleSubmit = async (values) => {
+    const user = await registerUser(values);
+    console.log(user)
+    try {
+      console.log(user);
+      if (user.data.code == 201) {
+        message.success(user.data.message);
+        form.resetFields();
+        navigate("/login");
+      } else {
+        message.error(user.error.data.message);
+        form.resetFields();
+      }
+    } catch (error) {
+      message.error(user.error.data.message);
+    }
+  }
+
+  // {
+  //   "username": "string",
+  //   "password": "string",
+  //   "email": "string",
+  //   "dob": "2024-06-04T17:15:12.684Z",
+  //   "address": "string",
+  //   "phoneNumber": "string"
+  // }
 
   return (
     <Layout style={{ height: '100%' }} className='register-layout'>
@@ -40,8 +52,8 @@ const Register = () => {
               <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <h2 className="title-login">Sign Up</h2>
               </div>
-              {/* <Form form={form} onFinish={handleSubmit}> */}
-              <Form form={form}>
+              <Form form={form} onFinish={handleSubmit}>
+                {/* <Form form={form}> */}
                 <Form.Item
                   hasFeedback
                   label="Email"
@@ -59,17 +71,32 @@ const Register = () => {
                 <Form.Item
                   hasFeedback
                   label="Full name"
-                  name="fullname"
+                  name="username"
                   rules={[
                     {
                       required: true,
                       pattern: validationPatterns.name.pattern,
                       message: validationPatterns.name.message,
                     },
-                   
+
                   ]}
                 >
                   <Input type="" placeholder="Full name" className="form-input" />
+                </Form.Item>
+                <Form.Item
+                  hasFeedback
+                  label="address"
+                  name="address"
+                // rules={[
+                //   {
+                //     required: true,
+                //     pattern: validationPatterns.name.pattern,
+                //     message: validationPatterns.name.message,
+                //   },
+
+                // ]}
+                >
+                  <Input type="" placeholder="Address" className="form-input" />
                 </Form.Item>
                 <Form.Item
                   hasFeedback
@@ -86,7 +113,7 @@ const Register = () => {
                   <Input type="" placeholder="Phone number" className="form-input" />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                   label="Gender"
                   name="gender"
                   rules={[{ required: true, message: "Please select gender!" }]}
@@ -95,10 +122,10 @@ const Register = () => {
                     <Radio value={true}>Male</Radio>
                     <Radio value={false}>Female</Radio>
                   </Radio.Group>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item
                   label="DOB"
-                  name="DOB"
+                  name="dob"
                   rules={[
                     { required: true, message: "Please select date of birth!" },
                     () => ({
@@ -161,7 +188,7 @@ const Register = () => {
                 </Form.Item>
 
                 <Form.Item>
-                  {/* {isLoading ? ( */}
+                  {isLoading ? (
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: '2rem' }}>
                       <button
                         type="primary"
@@ -178,9 +205,9 @@ const Register = () => {
 
                     </div>
 
-                   {/* ) : ( */}
-                    {/* <Button type='primary' loading>Register</Button> */}
-                  {/* )} */}
+                  ) : (
+                    <Button type='primary' loading>Register</Button>
+                  )}
                 </Form.Item>
               </Form>
             </div>
