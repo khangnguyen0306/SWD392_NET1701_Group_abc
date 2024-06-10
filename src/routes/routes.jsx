@@ -8,6 +8,8 @@ const Home = Loadable({ loader: () => import("../pages/home/Home") });
 const UserProfile = Loadable({ loader: () => import("../pages/userProfile/UserProfile") });
 const ProductPage = Loadable({ loader: () => import("../pages/product/ProductPage") });
 const ProductDetail = Loadable({ loader: () => import("../pages/product/ProductDetail") });
+const ForgotPassword = Loadable({ loader: () => import("../pages/login/ForgotPassword") });
+const ExchangePage = Loadable({ loader: () => import("../pages/exchange/ExchangePage") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
@@ -25,6 +27,10 @@ export const router = createBrowserRouter([
     element: Register,
   },
   {
+    path: "exchange",
+    element: ExchangePage,
+  },
+  {
     index: true,
     element: Dashboard,
   },
@@ -32,6 +38,11 @@ export const router = createBrowserRouter([
     path: "/product",
     element: ProductPage,
   },
+  {
+    path: "/forgot-password",
+    element: ForgotPassword,
+  },
+
   {
     path: "/productDetail/:productId",
     element: ProductDetail,
@@ -56,6 +67,7 @@ export const router = createBrowserRouter([
             path: "user-profile",
             element: UserProfile,
           },
+          
         ],
       },
     ]

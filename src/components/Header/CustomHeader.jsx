@@ -88,7 +88,7 @@ const CustomHeader = () => {
                                 <Link to="/product">Product</Link>
                             </Menu.Item>
                             <Menu.Item key="4">
-                                <Link to="/">Exchange Product</Link>
+                                <Link to="/exchange">Exchange Product</Link>
                             </Menu.Item>
                             <Menu.Item key="5">
                                 <Link to="home">Tour Search</Link>
