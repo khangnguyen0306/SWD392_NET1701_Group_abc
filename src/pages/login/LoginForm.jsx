@@ -92,6 +92,9 @@ const LoginForm = () => {
             Login
           </button>
         </Form.Item>
+        <Form.Item>
+        <Link style={{ fontSize: '16px', color: '#222222' }} to={"/forgot-password"} > <u className="forgot-password">Forgot password</u></Link>
+        </Form.Item>
       </Form>
     </div>
   );
