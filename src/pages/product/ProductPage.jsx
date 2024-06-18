@@ -18,6 +18,7 @@ const { Option } = Select;
 
 const ProductPage = () => {
     const { data: productData, isLoadingProduct } = useGetAllProductQuery();
+    console.log(productData)
     const { data: categoriesData, isLoadingCategories } = useGetAllCategoriesQuery();
     const [cart, setCart] = useState([]);
     const [search, setSearch] = useState('');
@@ -102,7 +103,8 @@ const ProductPage = () => {
         );
     });
 
-    const paginatedProducts = filteredProducts?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    // const paginatedProducts = filteredProducts?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const paginatedProducts = productData?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -222,7 +224,7 @@ const ProductPage = () => {
                                 <Col key={product.id} span={view === 'grid' ? 6 : 24}>
                                     <Link to={`/productDetail/${product.id}`}>
                                         <Card className='card-product'>
-                                            <img src={product?.imageURL} width={"190px"} height={"170px"} className='product-image' />
+                                            <img src={product?.urlImg} width={"190px"} height={"170px"} className='product-image' />
                                             <p className='card-product-name'>{product.name}</p>
                                             <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product.price}₫</span></p>
                                             <p>Condition: {product.condition}%</p>

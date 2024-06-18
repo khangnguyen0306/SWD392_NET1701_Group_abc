@@ -8,6 +8,7 @@ const Home = Loadable({ loader: () => import("../pages/home/Home") });
 const UserProfile = Loadable({ loader: () => import("../pages/userProfile/UserProfile") });
 const ProductPage = Loadable({ loader: () => import("../pages/product/ProductPage") });
 const ProductDetail = Loadable({ loader: () => import("../pages/product/ProductDetail") });
+const dashboardAdmin = Loadable({ loader: () => import("../pages/dashboard/jsx/DashboardManagement") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
             path: "user-profile",
             element: UserProfile,
           },
+          {
+            path:"dashsboard",
+            element:dashboardAdmin
+          }
         ],
       },
     ]

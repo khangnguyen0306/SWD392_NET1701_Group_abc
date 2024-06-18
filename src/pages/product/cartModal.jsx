@@ -2,33 +2,41 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Image, Space, Table, Checkbox, message } from 'antd';
 import { loadCartFromLocalStorage, removeFromCart, updateCartQuantity, clearPaidItems } from '../../slices/product.slice';
-import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
-import { selectCurrenToken } from '../../slices/auth.slice';
+import { selectCurrentToken, selectCurrentUser } from '../../slices/auth.slice';
 import { Link, useLocation } from 'react-router-dom';
+import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 const CartModal = ({ visible, onClose }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.product.cart);
   const [selectedItems, setSelectedItems] = useState([]);
-  const token = useSelector(selectCurrenToken);
-  const location = useLocation()
+  const token = useSelector(selectCurrentToken);
+  const currentUser = useSelector(selectCurrentUser);
+
+  const location = useLocation();
 
   useEffect(() => {
-    if (visible) {
-      dispatch(loadCartFromLocalStorage());
+    if (visible && currentUser) {
+      dispatch(loadCartFromLocalStorage({ userID: currentUser.id }));
     }
-  }, [dispatch, visible]);
+  }, [dispatch, visible, currentUser]);
 
   const handleRemoveFromCart = (itemId) => {
-    dispatch(removeFromCart(itemId));
+    if (currentUser) {
+      dispatch(removeFromCart({ userID: currentUser.id, itemId }));
+    }
   };
 
   const handleIncreaseQuantity = (itemId) => {
-    dispatch(updateCartQuantity({ id: itemId, change: 1 }));
+    if (currentUser) {
+      dispatch(updateCartQuantity({ userID: currentUser.id, id: itemId, change: 1 }));
+    }
   };
 
   const handleDecreaseQuantity = (itemId) => {
-    dispatch(updateCartQuantity({ id: itemId, change: -1 }));
+    if (currentUser) {
+      dispatch(updateCartQuantity({ userID: currentUser.id, id: itemId, change: -1 }));
+    }
   };
 
   const handleSelectItem = (itemId, checked) => {
@@ -105,7 +113,7 @@ const CartModal = ({ visible, onClose }) => {
   ];
 
   const dataSource = cartItems.map(item => ({
-    key: item.id,
+    key: item?.id,
     ...item,
   }));
 
@@ -123,7 +131,7 @@ const CartModal = ({ visible, onClose }) => {
         {totalAmount > 0 ? (
           token ? (
             <PayPalScriptProvider options={{ "client-id": "AZJbL2P3zXWiJVR6L9VSCruzggReYNwEQDtMpJCZYQfp3QWNgwacrqPzraLRL1zgP9x_KnJQ3-ruBri9" }}>
-              <PayPalButtons                          //isLoading not defined
+              <PayPalButtons
                 createOrder={(data, actions) => {
                   return actions.order.create({
                     purchase_units: [{
@@ -138,7 +146,9 @@ const CartModal = ({ visible, onClose }) => {
                   console.log(data);
                   return actions.order.capture().then((details) => {
                     message.success('Transaction completed by ' + details.payer.name.given_name);
-                    dispatch(clearPaidItems(selectedItems));
+                    if (currentUser) {
+                      dispatch(clearPaidItems({ userID: currentUser.id, itemIds: selectedItems }));
+                    }
                     onClose();
                   });
                 }}

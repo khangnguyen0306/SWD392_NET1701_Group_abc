@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Layout, Button, Form, Input, Radio, DatePicker, message, Avatar, Row, Col, Card } from 'antd';
-import { ManOutlined, UserOutlined, WomanOutlined } from '@ant-design/icons';
+import { EyeInvisibleOutlined, EyeTwoTone, ManOutlined, UserOutlined, WomanOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 // import { useGetUserByIdQuery, useEditUserMutation } from '../../../services/userAPI';
 import "./UserProfile.scss"
 import { validationPatterns } from '../../utils/utils';
-import { useGetUserProfileQuery } from '../../services/userAPI';
+import { useEditProfileMutation, useGetUserProfileQuery } from '../../services/userAPI';
 import { selectCurrentUser } from '../../slices/auth.slice';
 import { useSelector } from 'react-redux';
+import ChangePassword from './ChangePassword';
 // import UploadWidget from '../../../components/uploadWidget/uploadWidget';
 
 
 const UserProfile = () => {
     // const { userId } = useParams();
-    // const [editUser] = useEditUserMutation();
+    const [editUser] = useEditProfileMutation();
     // const { data: user, error, isLoading } = useGetUserProfileQuery(userId);  /// API login
     const user = useSelector(selectCurrentUser);
+    const [isUpdatePassword, setIsUpdatePassword] = useState(false);
     console.log(user)
     const [form] = Form.useForm();
     const [updateUser, setUpdateUser] = useState(false);
@@ -36,13 +38,14 @@ const UserProfile = () => {
     useEffect(() => {
         if (user) {
             form.setFieldsValue({
-                // id: user.id,
+                id: user.id,
                 fullname: user?.userName,
                 email: user?.email,
                 DOB: user?.dob ? dayjs(user.dob) : null,
                 gender: true,                                     // missing gender, mising avatar chua chinh uploadWidgets
                 phoneNumber: user?.phoneNumber,
-                address: user?.address
+                address: user?.address,
+                password: user?.password
             });
         }
 
@@ -56,17 +59,17 @@ const UserProfile = () => {
     //     setNewAvatar(imageUrl);
     // };
 
-        // const updateUserProfile = async (values) => {
-        //     console.log(values)
-        //     const result = await editUser({
-        //         body: { ...values, avatar: newAvatar[0] || user.avatar },
-        //         id: userId
-        //     });
-        //     if (result.data.status === 200) {
-        //         message.success(result.data.message);
-        //         setUpdateUser(false);
-        //     }
-        // };
+    const updateUserProfile = async (values) => {
+        console.log(values)
+        const result = await editUser({
+            body: { ...values },
+            id: user.id
+        });
+        if (result.data.status === 200) {
+            message.success(result.data.message);
+            setUpdateUser(false);
+        }
+    };
     // const validateEmail = (rule, value, callback) => {
     //     if (!value) {
     //         callback('Please input your email!');
@@ -180,7 +183,7 @@ const UserProfile = () => {
                     variant="outlined"
                     form={form}
                     name="updateProfile"
-                // onFinish={updateUserProfile}
+                    onFinish={updateUserProfile}
                 >
                     <Row gutter={[16, 16]}>
                         <Col span={17}>
@@ -197,7 +200,7 @@ const UserProfile = () => {
                                         <Col span={12}>
                                             <div className='profile-information-content-input' >
                                                 <label id='fullname'>Full name</label>
-                                                <Form.Item name="fullname" rules={[
+                                                {/* <Form.Item name="fullname" rules={[
                                                     { required: true, message: 'Please input your full name!' },
                                                     {
                                                         pattern: validationPatterns.name.pattern,
@@ -205,7 +208,7 @@ const UserProfile = () => {
                                                     }
                                                 ]}>
                                                     <Input />
-                                                </Form.Item>
+                                                </Form.Item> */}
                                             </div>
 
                                             <div className='profile-information-content-input'>
@@ -251,22 +254,24 @@ const UserProfile = () => {
                                                             message: validationPatterns.email.message
                                                         }
                                                     ]}>
-                                                    <Input />
+                                                    <Input readOnly />
                                                 </Form.Item>
                                             </div>
                                             <div>
                                                 <label id='fullname'>Day of birth</label>
-                                                <Form.Item name="DOB"
+                                                <Form.Item
+                                                    name="DOB"
                                                     rules={[
                                                         { required: true, message: "Please select user date of birth!" },
                                                         () => ({
                                                             validator(_, value) {
+
                                                                 const selectedYear = value && value.year();
                                                                 const currentYear = new Date().getFullYear();
                                                                 if (selectedYear && currentYear && currentYear - selectedYear >= 18 && currentYear - selectedYear <= 100) {
                                                                     return Promise.resolve();
                                                                 } else {
-                                                                    form.resetFields(['DOB']);
+                                                                    form.resetFields(['dob']);
                                                                     if ((currentYear - selectedYear < 18)) {
                                                                         message.error("must greater than 18 years old !!!")
                                                                     }
@@ -280,12 +285,12 @@ const UserProfile = () => {
                                             </div>
                                             <div className='profile-information-content-input' style={{ marginTop: '1rem' }} >
                                                 <label id='gender'>Gender</label>
-                                                <Form.Item name="gender" rules={[{ required: true, message: 'Please select your gender!' }]}>
+                                                {/* <Form.Item name="gender" rules={[{ required: true, message: 'Please select your gender!' }]}>
                                                     <Radio.Group>
                                                         <Radio value={true}>Male</Radio>
                                                         <Radio value={false}>Female</Radio>
                                                     </Radio.Group>
-                                                </Form.Item>
+                                                </Form.Item> */}
                                             </div>
                                             <div className='profile-information-content-input' style={{ marginTop: '1rem' }} >
                                                 <label id='address'>Address</label>
@@ -293,6 +298,53 @@ const UserProfile = () => {
                                                     <Input />
                                                 </Form.Item>
                                             </div>
+                                            {/* <div className='profile-information-content-input' style={{ marginTop: '1rem' }} >
+                                                <label id='address'>New Password</label>
+                                                <Form.Item
+                                                    hasFeedback
+                                                    name="password"
+                                                    rules={[
+                                                        {
+                                                            // required: true,
+                                                            pattern: validationPatterns.password.pattern,
+                                                            message: validationPatterns.password.message
+
+                                                        }
+                                                    ]}
+                                                >
+                                                    <Input.Password placeholder="Password" className="form-input"
+                                                        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                                    />
+                                                </Form.Item>
+
+                                            </div>
+                                            <div className='profile-information-content-input' style={{ marginTop: '1rem' }} >
+                                                <label id='address'>Retype password</label>
+                                                <Form.Item
+                                                    name="retypePassword"
+                                                    rules={[
+                                                        // { required: true, message: 'Please re-type the password!' },
+                                                        ({ getFieldValue }) => ({
+                                                            validator(_, value) {
+                                                                if (!value || getFieldValue('password') === value) {
+                                                                    return Promise.resolve();
+                                                                }
+                                                                return Promise.reject(new Error('The passwords do not match!'));
+                                                            },
+                                                        }),
+                                                    ]}
+                                                >
+                                                    <Input.Password
+                                                        placeholder="Re-type password"
+                                                        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                                    />
+                                                </Form.Item>
+                                            </div> */}
+                                            <ChangePassword
+                                                form={form}
+                                                isUpdatePassword={isUpdatePassword}
+                                                setIsUpdatePassword={setIsUpdatePassword}
+                                            />
 
                                             <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                                                 <Button type="primary" htmlType="submit" style={{ marginRight: '20px' }}>

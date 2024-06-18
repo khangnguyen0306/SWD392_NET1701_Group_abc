@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Form, Input, Button, Alert, notification } from "antd";
 import "./Login.scss";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { LockFilled, LockOutlined, SmileFilled, SmileOutlined, UserOutlined } from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeTwoTone, LockFilled, LockOutlined, SmileFilled, SmileOutlined, UserOutlined } from "@ant-design/icons";
 import { setToken, setUser } from "../../slices/auth.slice";
 import { useLoginUserMutation } from "../../services/authAPI";
 // import cookieParser from "cookie-parser";
@@ -19,11 +19,10 @@ const LoginForm = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const result = await loginUser({ username: values.email, password: values.password });
-      console.log(result);                                                                         // missing user Data
+      const result = await loginUser({ username: values.email, password: values.password });                                                                 // missing user Data
       if (result.data.data.user && result.data.data.token) {
         dispatch(setUser(result.data.data.user));
-        console.log(result.data.data.user)
+        // console.log(result.data.roles)
         dispatch(setToken(result.data.data.token));
         localStorage.setItem("token", result.data.data.token);
 
@@ -75,17 +74,22 @@ const LoginForm = () => {
           name="password"
           rules={[{ required: true, message: "Please input your password!" }]}
         >
-          <Input.Password placeholder="Password" size="large" className="form-input" prefix={<LockOutlined />} />
+          <Input.Password
+            placeholder="new password"
+            size="large" className="form-input"
+            prefix={<LockOutlined />} 
+            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+          />
         </Form.Item>
 
         <Form.Item>
           <button
             type="primary"
             htmlType="submit"
-            loading={isLoading}
+            onLoad={isLoading}
             className="submit-btn"
           >
-            Đăng nhập
+            Login
           </button>
         </Form.Item>
       </Form>

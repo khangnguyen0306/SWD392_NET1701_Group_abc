@@ -57,7 +57,7 @@ function Dashboard() {
                 </div>
                 <div className="btn-homePage">
                   {/* change url diarec */}
-                  <Link to={"/register"}>
+                  <Link to={"/"}>
                     <button className="btn-home">
                       Start Exchange
                     </button>
