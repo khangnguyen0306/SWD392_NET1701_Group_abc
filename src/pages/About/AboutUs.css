@@ -1,0 +1,135 @@
+.about-us-container {
+    padding-top: 80px; 
+    padding-bottom: 50px; 
+  }
+  
+  .image-card {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .about-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .dots-container {
+    position: absolute;
+    bottom: 10px; 
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+  
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(128, 128, 128, 0.5); 
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  
+      &.active {
+        background-color: gray; 
+      }
+    }
+  }
+  
+  .why-exchange-section {
+    text-align: center;
+    padding: 40px 0;
+  
+    .why-title {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+  
+    .why-subtitle {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+  
+    .why-description {
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+  
+    .why-cards {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+  
+      .feature-card {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
+        .feature-icon {
+          font-size: 2rem;
+          color: #4caf50;
+          margin-bottom: 10px;
+        }
+  
+        .feature-title {
+          font-size: 1.5rem;
+          margin-bottom: 10px;
+        }
+  
+        p {
+          font-size: 1rem;
+          color: #555;
+        }
+      }
+    }
+  
+    .join-now-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+  
+  .introduction-section {
+    padding: 40px 20px;
+    background-color: #f0f2f5;
+  
+    .introduction-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto 20px;
+      text-align: center;
+  
+      strong {
+        color: #007bff;
+      }
+    }
+  
+    .exchange-image {
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin: 0 auto;
+      border-radius: 8px;
+    }
+  }
+  
