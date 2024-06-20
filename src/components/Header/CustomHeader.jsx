@@ -91,7 +91,7 @@ const CustomHeader = () => {
                         <Link to="/exchange">Exchange Product</Link>
                     </Menu.Item>
                     <Menu.Item key="5">
-                        <Link to="home">About us</Link>
+                        <Link to="/about">About us</Link>
                     </Menu.Item>
                     <Menu.Item key="6">
                         <Link to="admin">Blog</Link>
