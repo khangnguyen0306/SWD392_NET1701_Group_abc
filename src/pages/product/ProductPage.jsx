@@ -37,36 +37,23 @@ const ProductPage = () => {
         dispatch(loadCartFromLocalStorage());
     }, [dispatch]);
 
-    // const handleAddToCart = (product) => {
-    //     const isProductInCart = cart.some(item => item.id === product.id);
-
-    //     if (isProductInCart) {
-    //         message.error('Product is already in the cart!');
-    //     } else {
-    //         dispatch(addToCart({ ...product, quantity: 1 }));
-    //         message.success('Product added to cart successfully!');
-    //     }
-    // };
-
-
     const handleFilterChange = (type, value) => {
         setFilters({ ...filters, [type]: value });
     };
 
     const handleCategoryChange = (category, checked) => {
-        const updatedCategories = checked ? [...filters.categories, category] : filters.categories.filter(cat => cat !== category);
+        const updatedCategories = checked
+            ? [...filters.categories, category.id] // Assuming category.id is used for comparison
+            : filters.categories.filter(catId => catId !== category.id);
         setFilters({ ...filters, categories: updatedCategories });
     };
 
     const handleSubcategoryChange = (subcategory, checked) => {
-        const updatedSubcategories = checked ? [...filters.subcategories, subcategory] : filters.subcategories.filter(sub => sub !== subcategory);
+        const updatedSubcategories = checked
+            ? [...filters.subcategories, subcategory.id] // Assuming subcategory.id is used for comparison
+            : filters.subcategories.filter(subId => subId !== subcategory.id);
         setFilters({ ...filters, subcategories: updatedSubcategories });
     };
-
-    // const handleConditionChange = (condition, checked) => {
-    //     const updatedConditions = checked ? [...filters.condition, condition] : filters.condition.filter(con => con !== condition);
-    //     setFilters({ ...filters, condition: updatedConditions });
-    // };
 
     const resetFilters = () => {
         setFilters({
@@ -79,30 +66,32 @@ const ProductPage = () => {
         setSearch('');
     };
 
-    // Dummy product data
-
     const filteredProducts = productData?.filter(product => {
-        return (
-            (filters.categories.length === 0 || filters.categories.includes(product.category)) &&
-            (filters.subcategories.length === 0 || filters.subcategories.includes(product.subcategory)) &&
-            product.price >= filters.priceRange[0] &&
-            product.price <= filters.priceRange[1] &&
-            (filters.condition.length === 0 || filters.condition.some(condition => {
-                if (condition === '50-70' && product.condition >= 50 && product.condition <= 70) return true;
-                if (condition === '70-90' && product.condition > 70 && product.condition <= 90) return true;
-                if (condition === '90+' && product.condition > 90) return true;
-                return false;
-            })) &&
-            (!filters.location || product.location === filters.location) &&
-            (
-                !search ||
-                product.name.toLowerCase().includes(search.toLowerCase()) ||
-                product.subcategory.toLowerCase().includes(search.toLowerCase())
-            )
-        );
+        const categoryMatches = filters.categories.length === 0 || filters.categories.includes(product.categoryId);
+        const subcategoryMatches = filters.subcategories.length === 0 || filters.subcategories.includes(product.subcategoryId);
+        const priceMatches = product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
+        const locationMatches = !filters.location || product.location === filters.location;
+        const searchMatches = !search ||
+            product.name.toLowerCase().includes(search.toLowerCase()) ||
+            (product.subcategoryName && product.subcategoryName.toLowerCase().includes(search.toLowerCase()));
+    
+        // Condition filter logic
+        const conditionMatches = filters.condition.length === 0 || filters.condition.some(condition => {
+            if (condition === '50-70' && product.condition >= 50 && product.condition <= 70) {
+                return true;
+            } else if (condition === '70-90' && product.condition > 70 && product.condition <= 90) {
+                return true;
+            } else if (condition === '90+' && product.condition > 90) {
+                return true;
+            }
+            return false;
+        });
+    
+        return categoryMatches && subcategoryMatches && priceMatches && conditionMatches && locationMatches && searchMatches;
     });
-
+    
     const paginatedProducts = filteredProducts?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -111,7 +100,7 @@ const ProductPage = () => {
     if (isLoadingProduct && isLoadingCategories) {
         return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Spin size="large" />
-        </div>
+        </div>;
     }
     return (
         <>
@@ -126,19 +115,21 @@ const ProductPage = () => {
                             <div key={category.id} className='filter-checkbox-layout'>
                                 <Checkbox
                                     style={{ fontSize: '16px', fontWeight: '500' }}
-                                    onChange={(e) => handleCategoryChange(category.name, e.target.checked)}
+                                    checked={filters.categories.includes(category.id)}
+                                    onChange={(e) => handleCategoryChange(category, e.target.checked)}
+
                                 >
                                     {category.name}
                                 </Checkbox>
                                 <div className="subcategories">
-                                    {category.subcategories?.map((sub) => (
-                                        <Col key={category.subcategories.name}>
+                                    {category.subCategories?.map(sub => (
+                                        <Col key={sub.id}>
                                             <Checkbox
                                                 className='subcategories-checkbox'
-                                                key={sub.id}
+                                                checked={filters.subcategories.includes(sub.id)}
                                                 onChange={(e) => handleSubcategoryChange(sub, e.target.checked)}
                                             >
-                                                {sub}
+                                                {sub.name}
                                             </Checkbox>
                                         </Col>
                                     ))}
@@ -179,12 +170,14 @@ const ProductPage = () => {
                         <h4>Condition</h4>
                         <Checkbox.Group
                             onChange={(checkedValues) => handleFilterChange('condition', checkedValues)}
+                            value={filters.condition}
                         >
                             <Checkbox value="50-70">50-70%</Checkbox>
                             <Checkbox value="70-90">70-90%</Checkbox>
                             <Checkbox value="90+">90%+</Checkbox>
                         </Checkbox.Group>
                     </div>
+
                     <div className="filter-group">
                         <h4>Location</h4>
                         <Select
@@ -222,13 +215,11 @@ const ProductPage = () => {
                                 <Col key={product.id} span={view === 'grid' ? 6 : 24}>
                                     <Link to={`/productDetail/${product.id}`}>
                                         <Card className='card-product'>
-                                            <img src={product?.imageURL} width={"190px"} height={"170px"} className='product-image' />
+                                            <img src={product?.urlImg} width={"190px"} height={"170px"} className='product-image' />
                                             <p className='card-product-name'>{product.name}</p>
                                             <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product.price}₫</span></p>
                                             <p>Condition: {product.condition}%</p>
                                             <p>Location: {product.location}</p>
-                                            {/* <Button type='primary' onClick={() => handleAddToCart(product)}>Add to cart</Button> */}
-
                                         </Card>
                                     </Link>
                                 </Col>

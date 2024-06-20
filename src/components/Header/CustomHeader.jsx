@@ -7,7 +7,7 @@ import SubMenu from "antd/es/menu/SubMenu";
 import CartModal from "../../pages/product/cartModal";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTotalProducts } from "../../slices/product.slice"; // Import selector
-import { logOut } from "../../slices/auth.slice";
+import { logOut, selectCurrentUser } from "../../slices/auth.slice";
 
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
@@ -19,6 +19,7 @@ const CustomHeader = () => {
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [cartVisible, setCartVisible] = useState(false); 
     const totalProducts = useSelector(selectTotalProducts); 
+    const user = useSelector(selectCurrentUser);
     const navigate = useNavigate();
 
     const toggleCartModal = () => {
@@ -57,10 +58,48 @@ const CustomHeader = () => {
                 <Link to="/user-transaction-history">Transaction History</Link>
             </Menu.Item>
             <Menu.Item key="logout">
-                <Link onClick={handleLogout }>Log out</Link>
+                <Link onClick={handleLogout}>Log out</Link>
             </Menu.Item>
         </Menu>
     );
+
+    const renderMenuItems = () => {
+        if (user?.roleId === 1) {
+            return (
+                <>
+                    <Menu.Item key="dashboard">
+                        <Link to="/dashboard">Dashboard</Link>
+                    </Menu.Item>
+                    <Menu.Item key="manage-products">
+                        <Link to="/manage-products">Manage Products</Link>
+                    </Menu.Item>
+                    <Menu.Item key="manage-posts">
+                        <Link to="/manage-posts">Manage Posts</Link>
+                    </Menu.Item>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <Menu.Item key="1">
+                        <Link to="/">Home</Link>
+                    </Menu.Item>
+                    <Menu.Item key="3">
+                        <Link to="/product">Product</Link>
+                    </Menu.Item>
+                    <Menu.Item key="4">
+                        <Link to="/exchange">Exchange Product</Link>
+                    </Menu.Item>
+                    <Menu.Item key="5">
+                        <Link to="home">About us</Link>
+                    </Menu.Item>
+                    <Menu.Item key="6">
+                        <Link to="admin">Blog</Link>
+                    </Menu.Item>
+                </>
+            );
+        }
+    };
 
     return (
         <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: '1' }}>
@@ -71,35 +110,11 @@ const CustomHeader = () => {
             </Link>
             {screens.md ? (
                 <>
-                    <div >
+                    <div>
                         <Menu mode="horizontal" defaultSelectedKeys={["1"]} style={{ width: 'fit-content', backgroundColor: 'none' }}>
-                            <Menu.Item key="1">
-                                <Link to="/">Home</Link>
-                            </Menu.Item>
-                            <SubMenu key="2" title="Pages">
-                                <Menu.Item key="2-1">
-                                    <Link to="/destination">Destination</Link>
-                                </Menu.Item>
-                                <Menu.Item key="2-2">
-                                    <Link to="/about">About Us</Link>
-                                </Menu.Item>
-                            </SubMenu>
-                            <Menu.Item key="3">
-                                <Link to="/product">Product</Link>
-                            </Menu.Item>
-                            <Menu.Item key="4">
-                                <Link to="/exchange">Exchange Product</Link>
-                            </Menu.Item>
-                            <Menu.Item key="5">
-                                <Link to="home">Tour Search</Link>
-                            </Menu.Item>
-                            <Menu.Item key="6">
-                                <Link to="admin">Blog</Link>
-                            </Menu.Item>
+                            {renderMenuItems()}
                         </Menu>
-
                     </div>
-                    {/* //nun-function */}
                     <div className="icon-header">
                         <p className="cart-icon" onClick={toggleCartModal}>
                             <Badge count={totalProducts}>
@@ -109,13 +124,7 @@ const CustomHeader = () => {
                         <Dropdown overlay={menu} trigger={['hover']}>
                             <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
                         </Dropdown>
-
                     </div>
-                    {/* <div className="btn-login">
-                        <Link to={"/login"}>
-                            <Button type="primary" className="login-btn"><p>Login</p></Button>
-                        </Link>
-                    </div> */}
                 </>
             ) : (
                 <Button className="menu-btn" onClick={() => setDrawerVisible(true)} style={{ marginRight: '40px' }}>
@@ -135,29 +144,7 @@ const CustomHeader = () => {
                     style={{ width: '100%' }}
                     onClick={() => setDrawerVisible(false)}
                 >
-                    <Menu.Item key="1">
-                        <Link to="/">Home</Link>
-                    </Menu.Item>
-                    <SubMenu key="2" title="Pages">
-                        <Menu.Item key="2-1">
-                            <Link to="/destination">Destination</Link>
-                        </Menu.Item>
-                        <Menu.Item key="2-2">
-                            <Link to="/about">About Us</Link>
-                        </Menu.Item>
-                    </SubMenu>
-                    <Menu.Item key="3">
-                        <Link to="admin">Tour List</Link>
-                    </Menu.Item>
-                    <Menu.Item key="4">
-                        <Link to="/"> Room List </Link>
-                    </Menu.Item>
-                    <Menu.Item key="5">
-                        <Link to="home">Tour Search</Link>
-                    </Menu.Item>
-                    <Menu.Item key="6">
-                        <Link to="admin">Blog</Link>
-                    </Menu.Item>
+                    {renderMenuItems()}
                 </Menu>
             </Drawer>
             <CartModal

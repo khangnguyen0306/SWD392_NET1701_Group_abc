@@ -39,6 +39,7 @@ export const authApi = createApi({
         },
         // invalidatesTags: [{ type: " UserList ", id: " LIST " }],
       }),
+      
   
         // verifyOtp: builder.mutation({
         //   query: ({ email, otpCode }) => {

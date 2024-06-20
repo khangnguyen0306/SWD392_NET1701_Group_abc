@@ -8,7 +8,7 @@ import "./ProductDetail.scss"
 import { addToCart, loadCartFromLocalStorage, updateCartQuantity } from '../../slices/product.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { ShoppingCartOutlined } from '@ant-design/icons';
-import { selectCurrenToken } from '../../slices/auth.slice';
+import { selectCurrentToken, selectCurrentUser } from '../../slices/auth.slice';
 const ProductDetail = () => {
     const { productId } = useParams();
     const dispatch = useDispatch();
@@ -18,7 +18,9 @@ const ProductDetail = () => {
     const { data: AllProduct, isLoadingAllProducts } = useGetAllProductQuery();
     const [mainImage, setMainImage] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const token = useSelector(selectCurrenToken);
+    const token = useSelector(selectCurrentToken);
+    const userId = useSelector(selectCurrentUser)
+  
 
     const handleIncreaseQuantity = () => {
         if (buyQuantity < ProductDetail.quantity) {
@@ -66,11 +68,13 @@ const ProductDetail = () => {
             if (buyQuantity > ProductDetail.quantity) {
                 message.error('The quantity exceeds available stock!');
             } else {
-                dispatch(addToCart({ ...product, quantity: buyQuantity }));
+                // Truyền userID vào action payload khi dispatch
+                dispatch(addToCart({ userID: userId.id, newItem: { ...product, quantity: buyQuantity } }));
                 message.success('Product added to cart successfully!');
             }
         }
     };
+    
 
     const handleThumbnailClick = (image) => {
         setMainImage(image);
@@ -89,17 +93,17 @@ const ProductDetail = () => {
     };
 
     const getShortDescription = (description) => {
-        const words = description.split(' ');
-        if (words.length <= 10) {
+        const words = description?.split(' ');
+        if (words?.length <= 10) {
             return description;
         }
-        return words.slice(0, 10).join(' ') + ' buy ...';
+        return words?.slice(0, 10).join(' ') + ' buy ...';
     };
 
     if (isLoadingProduct && isLoadingAllProducts) {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Spin size="large" />
-    </div>
+            <Spin size="large" />
+        </div>
     }
 
     return (
@@ -133,8 +137,8 @@ const ProductDetail = () => {
                         <div className='product-detail-description'>
                             <p className="productTitle">{ProductDetail?.name}</p>
                             <p className="productQuantity"> <Tag color="success">
-                                <b>Stock: </b> <span style={{ color: 'red' }}>{ProductDetail?.quantity}</span></Tag></p>
-                            <p className="productCategory">{ProductDetail?.category} | {ProductDetail?.subcategory}</p>
+                                <b>Stock: </b> <span style={{ color: 'red' }}>{ProductDetail?.stockQuantity}</span></Tag></p>
+                            <p className="productCategory">{ProductDetail?.category} | {ProductDetail?.subcategoryName}</p>
                             <p className="productPrice"> ₫ {ProductDetail?.price}</p>
                             <p className="productDescription">{ProductDetail?.description}</p>
 

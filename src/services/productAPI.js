@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { API_URL } from "../config";
+import { BE_API_LOCAL } from "../config";
+import { selectTokens } from "../slices/auth.slice";
 // import { selectToken } from "../slices/auth.slice";
 
 // Define a service using a base URL and expected endpoints
@@ -8,16 +9,16 @@ export const productAPI = createApi({
     // Tag types are used for caching and invalidation.
     tagTypes: ["ProductList"],
     baseQuery: fetchBaseQuery({
-        baseUrl: API_URL,
+        baseUrl: BE_API_LOCAL,
 
-        // prepareHeaders: (headers, { getState }) => {
-        //   const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
-        //   if (token) {
-        //     headers.append("Authorization", `Bearer ${token}`);
-        //   }
-        //   headers.append("Content-Type", "application/json");
-        //   return headers;
-        // },
+        prepareHeaders: (headers, { getState }) => {
+            const token = selectTokens(getState()); // Retrieve token from Redux state using selectToken selector
+            if (token) {
+                headers.append("Authorization", `Bearer ${token}`);
+            }
+            headers.append("Content-Type", "application/json");
+            return headers;
+        },
 
     }),
     // baseQuery: fetchBaseQuery({ baseUrl: CLASS_API_URL }),
@@ -26,7 +27,16 @@ export const productAPI = createApi({
         // and the expected query argument. If there is no argument, use `void`
         // for the argument type instead.
         getAllProduct: builder.query({
-            query: () => `products`,
+            query: () => `product/getallvalid`,
+            // `providesTags` determines which 'tag' is attached to the
+            // cached data returned by the query.
+            providesTags: (result) =>
+                result
+                    ? result.map(({ id }) => ({ type: "ProductList", id }))
+                    : [{ type: "ProductList", id: "LIST" }],
+        }),
+        getAllProductForExchange: builder.query({
+            query: () => `product/getallforexchange`,
             // `providesTags` determines which 'tag' is attached to the
             // cached data returned by the query.
             providesTags: (result) =>
@@ -36,12 +46,12 @@ export const productAPI = createApi({
         }),
         getProductDetail: builder.query({
             query: (productId) => ({
-                url: `products/${productId}`, // Use template literal for security
+                url: `product/getproductdetails/${productId}`, // Use template literal for security
                 method: "GET",
             }),
         }),
         getAllCategories: builder.query({
-            query: () => `categories`,
+            query: () => `category/getallcategory`,
             // `providesTags` determines which 'tag' is attached to the
             // cached data returned by the query.
             providesTags: (result) =>
@@ -121,7 +131,8 @@ export const productAPI = createApi({
 export const {
     useGetAllProductQuery,
     useGetAllCategoriesQuery,
-    useGetProductDetailQuery
+    useGetProductDetailQuery,
+    useGetAllProductForExchangeQuery
     //   useDuplicateClassMutation,
     //   useCreateClassMutation,
     //   useGetClassByIdQuery,

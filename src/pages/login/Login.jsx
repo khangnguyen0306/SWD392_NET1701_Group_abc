@@ -25,7 +25,7 @@ function Login() {
 
   return (
     <>
-      {isLoading ? ( 
+      {isLoading ? (
         <div>
           <LoadingOutlined />
         </div>
@@ -38,6 +38,7 @@ function Login() {
                   <Col className="image-login">
                     <img src={imager} />
                     <Link style={{ fontSize: '16px', color: '#222222' }} to={"/register"} > <u className="Create-account-name">Create an account</u></Link>
+                    <Link style={{ fontSize: '16px', color: '#222222' }} to={"/forgot-password"} > <u className="forgot-password">Forgot password</u></Link>
                   </Col>
                   <Col>
                     <h1 className="title-login">

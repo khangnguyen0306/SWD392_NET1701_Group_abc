@@ -12,7 +12,7 @@ import { useRegisterUserMutation } from '../../services/authAPI';
 const Register = () => {
 
   const [form] = Form.useForm();
-  const [registerUser, isLoading] = useRegisterUserMutation();
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
@@ -20,7 +20,7 @@ const Register = () => {
     console.log(user)
     try {
       console.log(user);
-      if (user.data.code == 201) {
+      if (user.data.status == "OK") {
         message.success(user.data.message);
         form.resetFields();
         navigate("/login");
@@ -70,7 +70,7 @@ const Register = () => {
                 </Form.Item>
                 <Form.Item
                   hasFeedback
-                  label="Full name"
+                  label="User name"
                   name="username"
                   rules={[
                     {
@@ -85,16 +85,16 @@ const Register = () => {
                 </Form.Item>
                 <Form.Item
                   hasFeedback
-                  label="address"
+                  label="Address"
                   name="address"
-                // rules={[
-                //   {
-                //     required: true,
-                //     pattern: validationPatterns.name.pattern,
-                //     message: validationPatterns.name.message,
-                //   },
+                  rules={[
+                    {
+                      required: true,
+                      //     pattern: validationPatterns.name.pattern,
+                      //     message: validationPatterns.name.message,
+                    },
 
-                // ]}
+                  ]}
                 >
                   <Input type="" placeholder="Address" className="form-input" />
                 </Form.Item>
@@ -188,7 +188,7 @@ const Register = () => {
                 </Form.Item>
 
                 <Form.Item>
-                  {isLoading ? (
+                  {!isLoading ? (
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: '2rem' }}>
                       <button
                         type="primary"
