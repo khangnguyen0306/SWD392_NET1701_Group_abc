@@ -12,12 +12,12 @@ export const productAPI = createApi({
         baseUrl: BE_API_LOCAL,
 
         prepareHeaders: (headers, { getState }) => {
-          const token = selectTokens(getState()); // Retrieve token from Redux state using selectToken selector
-          if (token) {
-            headers.append("Authorization", `Bearer ${token}`);
-          }
-          headers.append("Content-Type", "application/json");
-          return headers;
+            const token = selectTokens(getState()); // Retrieve token from Redux state using selectToken selector
+            if (token) {
+                headers.append("Authorization", `Bearer ${token}`);
+            }
+            headers.append("Content-Type", "application/json");
+            return headers;
         },
 
     }),
@@ -27,7 +27,16 @@ export const productAPI = createApi({
         // and the expected query argument. If there is no argument, use `void`
         // for the argument type instead.
         getAllProduct: builder.query({
-            query: () => `product/getall`,
+            query: () => `product/getallvalid`,
+            // `providesTags` determines which 'tag' is attached to the
+            // cached data returned by the query.
+            providesTags: (result) =>
+                result
+                    ? result.map(({ id }) => ({ type: "ProductList", id }))
+                    : [{ type: "ProductList", id: "LIST" }],
+        }),
+        getAllProductForExchange: builder.query({
+            query: () => `product/getallforexchange`,
             // `providesTags` determines which 'tag' is attached to the
             // cached data returned by the query.
             providesTags: (result) =>
@@ -42,7 +51,7 @@ export const productAPI = createApi({
             }),
         }),
         getAllCategories: builder.query({
-            query: () => `categories`,
+            query: () => `category/getallcategory`,
             // `providesTags` determines which 'tag' is attached to the
             // cached data returned by the query.
             providesTags: (result) =>
@@ -122,7 +131,8 @@ export const productAPI = createApi({
 export const {
     useGetAllProductQuery,
     useGetAllCategoriesQuery,
-    useGetProductDetailQuery
+    useGetProductDetailQuery,
+    useGetAllProductForExchangeQuery
     //   useDuplicateClassMutation,
     //   useCreateClassMutation,
     //   useGetClassByIdQuery,

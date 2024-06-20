@@ -8,6 +8,9 @@ const Home = Loadable({ loader: () => import("../pages/home/Home") });
 const UserProfile = Loadable({ loader: () => import("../pages/userProfile/UserProfile") });
 const ProductPage = Loadable({ loader: () => import("../pages/product/ProductPage") });
 const ProductDetail = Loadable({ loader: () => import("../pages/product/ProductDetail") });
+const ForgotPassword = Loadable({ loader: () => import("../pages/login/ForgotPassword") });
+const ExchangePage = Loadable({ loader: () => import("../pages/exchange/ExchangePage") });
+const PostDetail = Loadable({ loader: () => import("../pages/exchange/PostDetail") });
 const dashboardAdmin = Loadable({ loader: () => import("../pages/dashboard/jsx/DashboardManagement") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Dashboard = Loadable({
@@ -26,6 +29,10 @@ export const router = createBrowserRouter([
     element: Register,
   },
   {
+    path: "exchange",
+    element: ExchangePage,
+  },
+  {
     index: true,
     element: Dashboard,
   },
@@ -34,8 +41,18 @@ export const router = createBrowserRouter([
     element: ProductPage,
   },
   {
+    path: "/forgot-password",
+    element: ForgotPassword,
+  },
+
+  {
     path: "/productDetail/:productId",
     element: ProductDetail,
+  },
+
+  {
+    path: "/postDetail/:postId",
+    element: PostDetail,
   },
   {
     element: <MainLayout />,
@@ -58,7 +75,7 @@ export const router = createBrowserRouter([
             element: UserProfile,
           },
           {
-            path:"dashsboard",
+            path:"dashboard",
             element:dashboardAdmin
           }
         ],

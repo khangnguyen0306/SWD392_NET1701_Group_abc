@@ -6,6 +6,8 @@ import { userAPI } from "../services/userAPI";
 import UserReducer from "../slices/user.slice";
 import { authApi } from "../services/authAPI";
 import AuthReducer from "../slices/auth.slice";
+import { postAPI } from "../services/postAPI";
+import postReducer from "../slices/post.slice";
 
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -25,6 +27,7 @@ const persistedReducer = persistReducer(persistConfig, flowerReducer);
 const ProductPerisReducer = persistReducer(persistConfig, ProductReducer);
 const UserPerisReducer = persistReducer(persistConfig, UserReducer);
 const AuthPerisReducer = persistReducer(persistConfig, AuthReducer);
+const PostPerisReducer = persistReducer(persistConfig, postReducer);
 export const store = configureStore({
   reducer: {
     [flowerApi.reducerPath]: flowerApi.reducer,
@@ -35,13 +38,16 @@ export const store = configureStore({
     user: UserPerisReducer,
     [authApi.reducerPath]: authApi.reducer,
     auth: AuthPerisReducer,
+    [postAPI.reducerPath]: postAPI.reducer,
+    post: PostPerisReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       flowerApi.middleware,
       productAPI.middleware,
       userAPI.middleware,
-      authApi.middleware
+      authApi.middleware,
+      postAPI.middleware
     ),
 });
 
