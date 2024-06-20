@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetPostDetailQuery } from '../../services/postAPI';
 import { Card, Skeleton, Badge, Avatar, Alert, Layout, Row, Col, Tag, Image, Button, Modal } from 'antd';
@@ -7,13 +7,21 @@ import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
 import ExchangeModal from './ExchangeModal';
 
+const { Content } = Layout;
+
 const PostDetail = () => {
     const { postId } = useParams();
-    const { data: postDetail, isLoading, error } = useGetPostDetailQuery(postId);
+    const { data: postDetail, isLoading, error, refetch } = useGetPostDetailQuery(postId);
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [isExchangeModalVisible, setIsExchangeModalVisible] = useState(false);
+
+
+    useEffect(() => {
+        refetchPostDetail();
+    }, [postId]); 
+    
     const showModal = () => {
         setIsModalVisible(true);
     };
@@ -25,9 +33,6 @@ const PostDetail = () => {
 
     const handleModalCancel = () => {
         setIsModalVisible(false);
-    };
-    const handleImageModalCancel = () => {
-        setIsImageModalVisible(false);
     };
 
     const handleExchangeButtonClick = () => {
@@ -41,6 +46,14 @@ const PostDetail = () => {
     const convertStatus = {
         true: <Badge color={"#33ff00"} text={"Đã được duyệt"} />,
         false: <Badge color={"#ffc125"} text={"Chưa được duyệt"} />
+    };
+
+    const refetchPostDetail = async () => {
+        try {
+            await refetch();
+        } catch (error) {
+            console.error('Error refetching post detail:', error);
+        }
     };
 
     if (isLoading) {
@@ -69,7 +82,7 @@ const PostDetail = () => {
     return (
         <>
             <CustomHeader />
-            <Layout style={{ minHeight: '100vh' }}>
+            <Content style={{ minHeight: '100vh' }}>
                 <Button
                     style={{ position: 'absolute', marginTop: '7rem', left: '2rem' }}
                     onClick={() => navigate(-1)}
@@ -79,7 +92,7 @@ const PostDetail = () => {
                 <Row justify={'center'} style={{ padding: '20px', marginTop: '7rem' }}>
                     <Col md={10} span={24} className='product-image'>
                         <Image
-                            src="https://cdn.tgdd.vn/Products/Images/42/305658/iphone-15-pro-max-blue-thumbnew-600x600.jpg"
+                            src={postDetail?.imageUrl}
                             alt="Product Image"
                         />
                         <Row gutter={[8, 8]} className="thumbnail-row" style={{ marginTop: '1rem' }}>
@@ -106,8 +119,12 @@ const PostDetail = () => {
                         <div className='product-detail-description'>
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', justifyContent: 'space-between' }}>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <Avatar icon={<UserOutlined />} />
-                                    <p style={{ marginLeft: '1rem' }}>User</p>
+                                    {postDetail?.user?.imgUrl ? (
+                                        <Avatar src={postDetail.user.imgUrl} size={'large'} />
+                                    ) : (
+                                        <Avatar icon={<UserOutlined />} />
+                                    )}
+                                    <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
                                 </div>
                                 <Button type='primary' onClick={handleExchangeButtonClick}>Exchange</Button>
                             </div>
@@ -116,14 +133,18 @@ const PostDetail = () => {
                         </div>
                     </Col>
                 </Row>
-            </Layout>
+            </Content>
             <CustomFooter />
             <Modal visible={isModalVisible} footer={null} onCancel={handleModalCancel}>
                 <Image src={selectedImage} alt="Selected Image" style={{ width: '100%' }} />
             </Modal>
             <ExchangeModal
                 isVisible={isExchangeModalVisible}
-                onClose={handleExchangeModalCancel}
+                onClose={() => {
+                    handleExchangeModalCancel();
+                    refetchPostDetail();
+                }}
+                postId={postId}
             />
         </>
     );

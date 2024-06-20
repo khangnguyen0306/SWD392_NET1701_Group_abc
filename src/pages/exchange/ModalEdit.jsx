@@ -1,43 +1,59 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, message, Select } from 'antd';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
 import { useEditPostMutation, useGetPostDetailQuery } from '../../services/postAPI';
+import UploadWidget from '../../components/uploadWidget/uploadWidget';
 
 const { Option } = Select;
 
 const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
     const [form] = Form.useForm();
     const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
+    console.log(productData)
     const { data: postDetail, refetch } = useGetPostDetailQuery(post);
+    console.log(postDetail)
     const [editPost, { isLoading: isEditing }] = useEditPostMutation();
+    const [currentImageUrl, setCurrentImageUrl] = useState('');
+    const [newImageUrl, setNewImageUrl] = useState([]);
 
     useEffect(() => {
         if (visible && postDetail) {
             form.setFieldsValue({
                 title: postDetail.title,
                 description: postDetail.description,
-                productId: postDetail.productId,
+                productId: postDetail.product.id,
             });
+            setCurrentImageUrl(postDetail?.imageUrl || '');
         }
     }, [visible, postDetail, form]);
+
+    const handleImageChange = (value) => {
+        setNewImageUrl(value); 
+    };
 
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            const { data } = await editPost({ id: post, body: values });
+            const imageUrlToUpdate = newImageUrl.length > 0 ? newImageUrl[0] : currentImageUrl;
+
+            const { data } = await editPost({
+                id: post,
+                body: { ...values, imageUrl: imageUrlToUpdate }
+            });
 
             if (data) {
                 message.success('Post updated successfully');
                 onOk();
-                refetch(); // Refetch post detail to get updated data
-                refetchPostData(); // Optionally refetch post list
+                refetch();
+                refetchPostData();
             } else {
                 message.error('Failed to update post');
             }
         } catch (errorInfo) {
             console.log('Failed:', errorInfo);
+            message.error('Failed to update post');
         }
     };
 
@@ -101,6 +117,30 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
                             </Option>
                         ))}
                     </Select>
+                </Form.Item>
+                <Form.Item name="image" label="Image">
+                    <UploadWidget
+                        uwConfig={{
+                            multiple: true,
+                            cloudName: "dnnvrqoiu",
+                            uploadPreset: "estate",
+                        }}
+                        folder={postDetail?.imageUrl ? postDetail.imageUrl.split('/')[1] : `posts/${postDetail?.folder}`}
+                        setState={handleImageChange}
+                    />
+                    {newImageUrl.length > 0 ? (
+                        <img
+                            src={newImageUrl[0]}
+                            alt="Uploaded Image"
+                            style={{ maxWidth: '100%', marginTop: '10px' }}
+                        />
+                    ) : currentImageUrl ? (
+                        <img
+                            src={currentImageUrl}
+                            alt="Current Image"
+                            style={{ maxWidth: '100%', marginTop: '10px' }}
+                        />
+                    ) : null}
                 </Form.Item>
             </Form>
         </Modal>

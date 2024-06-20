@@ -6,7 +6,7 @@ import { selectTokens } from "../slices/auth.slice";
 // Define a service using a base URL and expected endpoints
 export const postAPI = createApi({
     reducerPath: "postManagement",
-    tagTypes: ["PostList"],
+    tagTypes: ["PostList","ExchangeList"],
     baseQuery: fetchBaseQuery({
         baseUrl: BE_API_LOCAL,
         prepareHeaders: (headers, { getState }) => {
@@ -41,6 +41,14 @@ export const postAPI = createApi({
                 body,
             }),
             invalidatesTags: [{ type: "PostList", id: "LIST" }],
+        }),
+        createExchange: builder.mutation({
+            query: (body) => ({
+                method: "POST",
+                url: `exchanged`,
+                body,
+            }),
+            invalidatesTags: [{ type: "ExchangeList", id: "LIST" }],
         }),
         deletePost: builder.mutation({
             query: (postId) => ({
@@ -138,7 +146,8 @@ export const {
     useDeletePostMutation,
     useCreatePostMutation,
     useGetPostDetailQuery,
-    useEditPostMutation
+    useEditPostMutation,
+    useCreateExchangeMutation
     // useGetAllCategoriesQuery,
     // useGetProductDetailQuery
     //   useDuplicateClassMutation,

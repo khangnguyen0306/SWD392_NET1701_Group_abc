@@ -105,7 +105,6 @@ const ProductPage = () => {
     return (
         <>
             <CustomHeader />
-
             <Layout className="product-page">
                 <Sider width={300} className="filter-section">
                     <h3> <span style={{ marginRight: '0.7rem' }}><FilterOutlined /></span>Filter</h3>

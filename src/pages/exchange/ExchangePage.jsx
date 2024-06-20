@@ -168,7 +168,7 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
 
         <Modal
           title="Đăng bài"
-          visible={isModalVisible}
+          open={isModalVisible}
           onCancel={() => setIsModalVisible(false)}
           footer={null}
         >

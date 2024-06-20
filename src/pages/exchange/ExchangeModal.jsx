@@ -4,35 +4,37 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
 import TableTransfer from '../../components/TableTransfer';
+import { useCreateExchangeMutation } from '../../services/postAPI';
 
-const ExchangeModal = ({ isVisible, onClose }) => {
+const ExchangeModal = ({ isVisible, onClose, postId }) => {
     const [form] = Form.useForm();
     const [selectedProductKeys, setSelectedProductKeys] = useState([]);
     const [description, setDescription] = useState('');
     const [isLocked, setIsLocked] = useState(false);
-
+    const [createExchange] = useCreateExchangeMutation();
     const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
 
-    const handleOk = () => {
-        form
-            .validateFields()
-            .then((values) => {
-                if (!isLocked) {
-                    console.log('Please lock the exchange before submitting.');
-                    return;
-                }
+    const handleOk = async () => {
+        try {
+            const values = await form.validateFields();
+            
+            if (!isLocked) {
+                console.log('Please lock the exchange before submitting.');
+                return;
+            }
 
-                const formValues = {
-                    ...values,
-                    productId: selectedProductKeys, // Assuming single selection
-                    description: description,
-                };
-                console.log('Form Values:', formValues);
-                onClose();
-            })
-            .catch((info) => {
-                console.log('Validate Failed:', info);
-            });
+            const formValues = {
+                productIds: selectedProductKeys,
+                description: description,
+                postId: parseInt(postId, 10)
+            };
+
+            await createExchange(formValues); 
+
+            onClose(); // Close modal or perform other actions after successful exchange creation
+        } catch (errorInfo) {
+            console.log('Validate Failed:', errorInfo);
+        }
     };
 
     const handleTransferChange = (targetKeys) => {
@@ -75,7 +77,7 @@ const ExchangeModal = ({ isVisible, onClose }) => {
     return (
         <Modal
             title="Exchange Item"
-            visible={isVisible}
+            open={isVisible}
             onOk={handleOk}
             onCancel={onClose}
             width={'fit-content'}

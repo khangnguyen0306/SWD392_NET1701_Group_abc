@@ -1,14 +1,19 @@
-import { Button, Form, Input, Select, message } from 'antd';
-import React from 'react';
+import { Button, Form, Input, Select, message, Image } from 'antd';
+import React, { useState } from 'react';
 import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
 import ReactQuill from 'react-quill';
 import { useCreatePostMutation, useGetAllPostQuery } from '../../services/postAPI';
+import UploadWidget from '../../components/uploadWidget/uploadWidget';
+import { v4 as uuidv4 } from 'uuid';
 
 const CreatePost = ({ setIsModalVisible }) => {
   const [form] = Form.useForm();
-  const { data: productData, isLoading: isLoadingProduct, refetch } = useGetAllProductForExchangeQuery();
+  const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
   const [createPost] = useCreatePostMutation();
   const { refetch: refetchPosts } = useGetAllPostQuery();
+  const [images, setImages] = useState([]);
+  const [folder] = useState(uuidv4());
+
   const handleSubmit = async (values) => {
     console.log(values);
     try {
@@ -16,14 +21,19 @@ const CreatePost = ({ setIsModalVisible }) => {
         title: values.title,
         description: values.description,
         productId: values.productId,
+        imageUrl: images.length > 0 ? images[0] : '',  // Lưu URL của hình ảnh đầu tiên
       }).unwrap();
       message.success('Post created successfully');
-      refetchPosts(); 
+      refetchPosts();
       form.resetFields();
       setIsModalVisible(false);
     } catch (error) {
       message.error('Failed to create post');
     }
+  };
+
+  const handleImageChange = (value) => {
+    setImages(value);
   };
 
   return (
@@ -66,6 +76,28 @@ const CreatePost = ({ setIsModalVisible }) => {
             </Select.Option>
           ))}
         </Select>
+      </Form.Item>
+      <Form.Item name="image" label="Image">
+        <UploadWidget
+          uwConfig={{
+            multiple: true,
+            cloudName: "dnnvrqoiu",
+            uploadPreset: "estate",
+          }}
+          folder={`posts/${folder}`}
+          setState={handleImageChange}
+        />
+        <div style={{ marginTop: '10px' }}>
+          {images.map((image, index) => (
+            <Image
+              key={index}
+              src={image}
+              alt={`Uploaded Image ${index + 1}`}
+              width={200}
+              style={{ marginRight: '10px' }}
+            />
+          ))}
+        </div>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
