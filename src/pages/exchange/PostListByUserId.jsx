@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Tabs } from 'antd';
+import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Tabs, Empty } from 'antd';
 import { useDeletePostMutation, useGetAllPostByUserQuery } from '../../services/postAPI';
 import { EllipsisOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -81,8 +81,8 @@ const PostListByUser = () => {
         );
     }
 
-    if ((!postData || postData.length === 0) && !isLoadingPost) {
-        return <div>No posts available</div>;
+    if (!postData || postData.length === 0) {
+        return <Empty description="No posts available" />; // Display Ant Design Empty component
     }
 
     return (

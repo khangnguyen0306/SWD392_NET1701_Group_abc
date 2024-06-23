@@ -35,7 +35,7 @@ const ProductDetailPage = () => {
 
             <div className="product-detail-container" style={{ marginTop: '10rem' }}>
                 <Button
-                    style={{ margin : '1rem', left: '2rem' }}
+                    style={{ margin: '1rem', left: '2rem' }}
                     onClick={() => navigate(-1)}
                     type='primary'
                     icon={<ArrowLeftOutlined />}
@@ -70,23 +70,25 @@ const ProductDetailPage = () => {
                             </div>
                         </Card>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-                        <Card className="user-card">
-                            <div className="user-info">
-                                <Image
-                                    src={user.imgUrl}
-                                    alt="User Avatar"
-                                    className="user-avatar"
-                                    preview={false}
-                                />
-                                <div className="user-details">
-                                    <h3>{productData.userName}</h3>
-                                    <Tag icon={<UserOutlined />} color="default">Seller</Tag>
+                    {productData.userId != user.id ? (
+                        <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+                            <Card className="user-card">
+                                <div className="user-info">
+                                    <Image
+                                        src={user.imgUrl}
+                                        alt="User Avatar"
+                                        className="user-avatar"
+                                        preview={false}
+                                    />
+                                    <div className="user-details">
+                                        <h3>{productData.userName}</h3>
+                                        <Tag icon={<UserOutlined />} color="default">Seller</Tag>
+                                    </div>
                                 </div>
-                            </div>
-                            <Button type="primary" block>Message Seller</Button>
-                        </Card>
-                    </Col>
+                                <Button type="primary" block>Message Seller</Button>
+                            </Card>
+                        </Col>
+                    ) : null}
                 </Row>
             </div>
             <CustomFooter />

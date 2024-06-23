@@ -140,7 +140,7 @@ const PostDetail = () => {
                                     </div>
                                 </div>
                                 {postDetail.user.id != user.id ? (
-                                    <Button type='primary' onClick={handleExchangeButtonClick}>Exchange</Button>
+                                    <Button type='primary' onClick={handleExchangeButtonClick} style={{marginRight:'-7rem'}}>Exchange</Button>
                                 ) : (
                                     null
                                 )}

@@ -92,7 +92,7 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
         </Card>
    
         <Modal
-          title="Đăng bài"
+          title="Create post"
           open={isModalVisible}
           onCancel={() => setIsModalVisible(false)}
           footer={null}

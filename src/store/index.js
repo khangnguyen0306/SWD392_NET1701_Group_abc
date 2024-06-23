@@ -8,6 +8,8 @@ import { authApi } from "../services/authAPI";
 import AuthReducer from "../slices/auth.slice";
 import { postAPI } from "../services/postAPI";
 import postReducer from "../slices/post.slice";
+import { exchangeAPI } from "../services/exchangeAPI";
+import exchangeReducer from "../slices/exchange.slice";
 
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -28,6 +30,7 @@ const ProductPerisReducer = persistReducer(persistConfig, ProductReducer);
 const UserPerisReducer = persistReducer(persistConfig, UserReducer);
 const AuthPerisReducer = persistReducer(persistConfig, AuthReducer);
 const PostPerisReducer = persistReducer(persistConfig, postReducer);
+const ExchangePerisReducer = persistReducer(persistConfig, exchangeReducer);
 export const store = configureStore({
   reducer: {
     [flowerApi.reducerPath]: flowerApi.reducer,
@@ -40,6 +43,8 @@ export const store = configureStore({
     auth: AuthPerisReducer,
     [postAPI.reducerPath]: postAPI.reducer,
     post: PostPerisReducer,
+    [exchangeAPI.reducerPath]: exchangeAPI.reducer,
+    exchange: ExchangePerisReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -47,7 +52,8 @@ export const store = configureStore({
       productAPI.middleware,
       userAPI.middleware,
       authApi.middleware,
-      postAPI.middleware
+      postAPI.middleware,
+      exchangeAPI.middleware,
     ),
 });
 
