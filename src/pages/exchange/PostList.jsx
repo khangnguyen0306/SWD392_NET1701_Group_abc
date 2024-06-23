@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal } from 'antd';
+import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image } from 'antd';
 import { useDeletePostMutation, useGetAllPostQuery } from '../../services/postAPI';
-import { EllipsisOutlined, UserOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../slices/auth.slice';
 
 const { confirm } = Modal;
 
@@ -12,9 +14,14 @@ const PostList = () => {
     const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
+    const user = useSelector(selectCurrentUser);
+
     useEffect(() => {
         refetchPostData();
     }, [refetchPostData]);
+
+    // Ensure sorting creates a new array if needed
+    const sortedPosts = postData ? [...postData].sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
 
     const showDeleteConfirm = (postId) => {
         confirm({
@@ -52,7 +59,6 @@ const PostList = () => {
         setIsEditModalVisible(false);
     };
 
-
     const handleReport = (postId) => {
         // Implement report functionality here
         message.info(`Report post ${postId}`);
@@ -64,18 +70,7 @@ const PostList = () => {
     };
 
     if (isLoadingPost) {
-        return (
-            <List
-                itemLayout="vertical"
-                size="large"
-                dataSource={[...Array(10).keys()]}
-                renderItem={() => (
-                    <List.Item>
-                        <Skeleton active />
-                    </List.Item>
-                )}
-            />
-        );
+        return <Skeleton active />;
     }
 
     if (!postData || postData.length === 0) {
@@ -87,45 +82,65 @@ const PostList = () => {
             <List
                 itemLayout="vertical"
                 size="large"
-                dataSource={postData}
+                dataSource={sortedPosts}
                 renderItem={post => (
                     <List.Item key={post.id}>
-
                         <Card
                             title={
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <Avatar icon={<UserOutlined />} /> <p style={{ marginLeft: '1rem' }}>User</p>
-                                </div>}
-                            loading={isLoadingPost}
+                                    {post.user.imgUrl ? (
+                                        <Avatar src={post.user.imgUrl} size={'large'} />
+                                    ) : (
+                                        <Avatar icon={<UserOutlined />} />
+                                    )}
+                                    <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{post.user.userName}</p>
+                                    
+                                </div>
+                            }
                             hoverable
                             extra={
                                 <Dropdown
                                     overlay={
                                         <Menu>
-                                            <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
-                                                Edit
-                                            </Menu.Item>
-                                            <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                Delete
-                                            </Menu.Item>
-                                            <Menu.Item key="report" onClick={() => handleReport(post.id)}>
-                                                Report
-                                            </Menu.Item>
+                                            {post?.user?.id === user?.id && (
+                                                <>
+                                                    <Menu.Item key="edit" onClick={() => handleEdit(post.id)} prefix={<EditOutlined />}>
+                                                        Chỉnh sửa 
+                                                    </Menu.Item>
+                                                    <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
+                                                        Xóa
+                                                    </Menu.Item>
+                                                </>
+                                            )}
+                                            {/* <Menu.Item key="report" onClick={() => handleReport(post.id)}>
+                                                Báo cáo
+                                            </Menu.Item> */}
                                         </Menu>
                                     }
                                     trigger={['click']}
                                 >
-                                    <Button type="text" icon={<EllipsisOutlined />} />
+                                    <Button type="text" icon={<EllipsisOutlined />} size="small" />
                                 </Dropdown>
                             }
                         >
                             <Link to={`/postDetail/${post.id}`}>
-                                <div dangerouslySetInnerHTML={{ __html: post.description }} style={{ marginLeft: '2rem', color: 'black' }} />
-                                <p>{convertStatus[post.status]}</p>
+                                <Row gutter={[16, 16]}>
+                                    <Col xs={24} md={15}>
+                                        <div style={{ marginLeft: '2rem', color: 'black' }}>
+                                            <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
+                                            <div dangerouslySetInnerHTML={{ __html: post.description }} />
+                                            <p style={{ marginTop: '1rem',position:'absolute',bottom:'0' }}>{convertStatus[post.publicStatus]}</p>
+                                        </div>
+                                    </Col>
+                                    <Col xs={24} md={6}>
+                                        <div style={{ textAlign: 'center' }}>
+                                            <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                        </div>
+                                    </Col>
+                                </Row>
                             </Link>
                         </Card>
-
-                    </List.Item >
+                    </List.Item>
                 )}
             />
             <EditPostModal

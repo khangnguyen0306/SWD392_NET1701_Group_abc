@@ -1,6 +1,7 @@
 .about-us-container {
-    padding-top: 80px; 
+    padding-top: 7rem; 
     padding-bottom: 50px; 
+    height: 100vh;
   }
   
   .image-card {

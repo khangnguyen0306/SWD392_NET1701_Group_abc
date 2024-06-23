@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGetAllPendingPostsQuery, useCreatePostMutation, useEditPostMutation, useDeletePostMutation, useApprovePostMutation } from "../../services/postAPI";
 import TablePost from './TablePost';
 import { Button, Form, Layout, message } from 'antd';
 import AddPostModal from './AddPostModal';
 import EditPostModal from './EditPostModal';
+import CustomHeader from '../../components/Header/CustomHeader';
+import CustomFooter from '../../components/Footer/CustomFooter';
 
 const PostManagement = () => {
   const { data: postData, isLoading: isLoadingPostData, refetch: refetchPostData } = useGetAllPendingPostsQuery();
@@ -21,6 +23,11 @@ const PostManagement = () => {
   const handleEditCancel = () => setIsEditModalVisible(false);
 
   const showModal = () => setIsModalVisible(true);
+
+  useEffect(() => {
+    refetchPostData()
+
+  }, [refetchPostData]);
 
   const handleAddPost = async (post) => {
     try {
@@ -52,7 +59,7 @@ const PostManagement = () => {
 
   const handleApprovePost = async (postId) => {
     try {
-      await approvePost(postId).unwrap();
+      await approvePost({ id: postId, newStatus: true }).unwrap();
       refetchPostData();
       message.success("Post approved successfully!", 1.5);
     } catch (error) {
@@ -86,19 +93,23 @@ const PostManagement = () => {
   };
 
   return (
-    <Layout>
-      <div style={{ display: 'flex', justifyContent: 'end', marginTop: '6.5rem' }}>
-        <Button onClick={showModal}>Add Post</Button>
-      </div>
-      <TablePost
-        postData={postData}
-        onEdit={showEditModal}
-        onApprove={handleApprovePost}
-        onDelete={handleDeletePost}
-      />
-      <AddPostModal {...addModalParams} />
-      <EditPostModal {...editModalParams} />
-    </Layout>
+    <>
+      <CustomHeader />
+      <Layout>
+        <div style={{ display: 'flex', justifyContent: 'end', marginTop: '6.5rem' }}>
+          <Button onClick={showModal}>Add Post</Button>
+        </div>
+        <TablePost
+          postData={postData}
+          onEdit={showEditModal}
+          onApprove={handleApprovePost}
+          onDelete={handleDeletePost}
+        />
+        <AddPostModal {...addModalParams} />
+        <EditPostModal {...editModalParams} />
+      </Layout>
+      <CustomFooter />
+    </>
   );
 };
 

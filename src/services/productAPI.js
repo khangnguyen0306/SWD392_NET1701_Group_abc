@@ -7,7 +7,7 @@ import { selectTokens } from "../slices/auth.slice";
 export const productAPI = createApi({
     reducerPath: "productManagement",
     // Tag types are used for caching and invalidation.
-    tagTypes: ["ProductList"],
+    tagTypes: ["ProductList,CategoriesList"],
     baseQuery: fetchBaseQuery({
         baseUrl: BE_API_LOCAL,
 
@@ -35,8 +35,26 @@ export const productAPI = createApi({
                     ? result.map(({ id }) => ({ type: "ProductList", id }))
                     : [{ type: "ProductList", id: "LIST" }],
         }),
+        getAllCategoriesForCProduct: builder.query({
+            query: () => `category/getallcategory`,
+            // `providesTags` determines which 'tag' is attached to the
+            // cached data returned by the query.
+            providesTags: (result) =>
+                result
+                    ? result.map(({ id }) => ({ type: "CategoriesList", id }))
+                    : [{ type: "CategoriesList", id: "LIST" }],
+        }),
+        getAllSubCategories: builder.query({
+            query: (payload) => `subcategory/getsubcategorybycategoryid/${payload}`,
+            // `providesTags` determines which 'tag' is attached to the
+            // cached data returned by the query.
+            providesTags: (result) =>
+                result
+                    ? result.map(({ id }) => ({ type: "CategoriesList", id }))
+                    : [{ type: "CategoriesList", id: "LIST" }],
+        }),
         getAllProductForExchange: builder.query({
-            query: () => `product/getallforexchange`,
+            query: () => `product/getallforexchangebyuserid`,
             // `providesTags` determines which 'tag' is attached to the
             // cached data returned by the query.
             providesTags: (result) =>
@@ -51,13 +69,22 @@ export const productAPI = createApi({
             }),
         }),
         getAllCategories: builder.query({
-            query: () => `category/getallcategory`,
+            query: () => `category/getallcategorywithsubcategory`,
             // `providesTags` determines which 'tag' is attached to the
             // cached data returned by the query.
             providesTags: (result) =>
                 result
                     ? result.map(({ id }) => ({ type: "CategoriesList", id }))
                     : [{ type: "CategoriesList", id: "LIST" }],
+        }),
+        getAllProductByUserId: builder.query({
+            query: () => `product/getproductbyuserid`,
+            // `providesTags` determines which 'tag' is attached to the
+            // cached data returned by the query.
+            providesTags: (result) =>
+                result
+                    ? result.map(({ id }) => ({ type: "ProductList", id }))
+                    : [{ type: "ProductList", id: "LIST" }],
         }),
 
         // getClassById: builder.query({
@@ -90,16 +117,26 @@ export const productAPI = createApi({
         //   invalidatesTags: [{ type: "ClassList", id: "LIST" }],
         // }),
 
-        // createClass: builder.mutation({
-        //   query: (body) => {
-        //     return {
-        //       method: "POST",
-        //       url: `class/create`,
-        //       body,
-        //     };
-        //   },
-        //   invalidatesTags: [{ type: "ClassList", id: "LIST" }],
-        // }),
+        createProduct: builder.mutation({
+          query: (body) => {
+            return {
+              method: "POST",
+              url: `product/addproduct`,
+              body,
+            };
+          },
+          invalidatesTags: [{ type: "ProductList", id: "LIST" }],
+        }),
+        createProductForExchange: builder.mutation({
+          query: (body) => {
+            return {
+              method: "POST",
+              url: `product/addproductforexchange`,
+              body,
+            };
+          },
+          invalidatesTags: [{ type: "ProductList", id: "LIST" }],
+        }),
 
         // editClass: builder.mutation({
         //   query: (payload) => {
@@ -111,17 +148,17 @@ export const productAPI = createApi({
         //   },
         //   invalidatesTags: (res, err, arg) => [{ type: "ClassList", id: arg.id }],
         // }),
-        // deleteClass: builder.mutation({
-        //   query: (payload) => {
-        //     return {
-        //       method: "DELETE",
-        //       url: `viewclass/` + payload.id,
-        //     };
-        //   },
-        //   invalidatesTags: (_res, _err, _arg) => [
-        //     { type: "ClassList", id: "LIST" },
-        //   ],
-        // }),
+        deleteProduct: builder.mutation({
+          query: (payload) => {
+            return {
+              method: "PUT",
+              url: `product/delete/` + payload,
+            };
+          },
+          invalidatesTags: (_res, _err, _arg) => [
+            { type: "ProductList", id: "LIST" },
+          ],
+        }),
     }),
 });
 
@@ -132,7 +169,13 @@ export const {
     useGetAllProductQuery,
     useGetAllCategoriesQuery,
     useGetProductDetailQuery,
-    useGetAllProductForExchangeQuery
+    useGetAllProductForExchangeQuery,
+    useGetAllCategoriesForCProductQuery,
+    useGetAllSubCategoriesQuery,
+    useCreateProductMutation,
+    useGetAllProductByUserIdQuery,
+    useDeleteProductMutation,
+    useCreateProductForExchangeMutation
     //   useDuplicateClassMutation,
     //   useCreateClassMutation,
     //   useGetClassByIdQuery,

@@ -1,30 +1,44 @@
-import { Button, Form, Input, Select, message } from 'antd';
-import React from 'react';
-import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
+import React, { useState } from 'react';
+import { Form, Input, Select, Button, message, Image } from 'antd';
 import ReactQuill from 'react-quill';
 import { useCreatePostMutation, useGetAllPostQuery } from '../../services/postAPI';
+import UploadWidget from '../../components/uploadWidget/uploadWidget';
+import { v4 as uuidv4 } from 'uuid';
 
-const CreatePost = ({ setIsModalVisible }) => {
+const { Option } = Select;
+
+const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
   const [form] = Form.useForm();
-  const { data: productData, isLoading: isLoadingProduct, refetch } = useGetAllProductForExchangeQuery();
   const [createPost] = useCreatePostMutation();
   const { refetch: refetchPosts } = useGetAllPostQuery();
+  const [images, setImages] = useState([]);
+  const [folder] = useState(uuidv4());
+
   const handleSubmit = async (values) => {
-    console.log(values);
     try {
+      const { title, description, productId } = values;
       await createPost({
-        title: values.title,
-        description: values.description,
-        productId: values.productId,
+        title,
+        description,
+        productId,
+        imageUrl: images.length > 0 ? images[0] : '',
       }).unwrap();
       message.success('Post created successfully');
-      refetchPosts(); 
+      refetchPosts();
       form.resetFields();
       setIsModalVisible(false);
     } catch (error) {
       message.error('Failed to create post');
     }
   };
+
+  const handleImageChange = (value) => {
+    setImages(value);
+  };
+
+  if (!productData) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <Form
@@ -56,16 +70,35 @@ const CreatePost = ({ setIsModalVisible }) => {
         label="Select Product"
         rules={[{ required: true, message: 'Please select a product' }]}
       >
-        <Select
-          placeholder="Select a product"
-          loading={isLoadingProduct}
-        >
-          {productData && productData.map(product => (
-            <Select.Option key={product.id} value={product.id}>
+        <Select placeholder="Select a product">
+          {productData.map((product) => (
+            <Option key={product.id} value={product.id}>
               {product.name}
-            </Select.Option>
+            </Option>
           ))}
         </Select>
+      </Form.Item>
+      <Form.Item name="image" label="Image">
+        <UploadWidget
+          uwConfig={{
+            multiple: true,
+            cloudName: "dnnvrqoiu",
+            uploadPreset: "estate",
+          }}
+          folder={`posts/${folder}`}
+          setState={handleImageChange}
+        />
+        <div style={{ marginTop: '10px' }}>
+          {images.map((image, index) => (
+            <Image
+              key={index}
+              src={image}
+              alt={`Uploaded Image ${index + 1}`}
+              width={200}
+              style={{ marginRight: '10px' }}
+            />
+          ))}
+        </div>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">

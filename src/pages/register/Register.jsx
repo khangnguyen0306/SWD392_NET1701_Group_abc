@@ -16,18 +16,16 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
-    const user = await registerUser(values);
-    console.log(user)
+
     try {
+      const user = await registerUser(values);
+      console.log(values)
+      console.log(user)
+      message.success(user.data.message);
+      form.resetFields();
+      navigate("/login");
       console.log(user);
-      if (user.data.status == "OK") {
-        message.success(user.data.message);
-        form.resetFields();
-        navigate("/login");
-      } else {
-        message.error(user.error.data.message);
-        form.resetFields();
-      }
+
     } catch (error) {
       message.error(user.error.data.message);
     }
@@ -113,16 +111,16 @@ const Register = () => {
                   <Input type="" placeholder="Phone number" className="form-input" />
                 </Form.Item>
 
-                {/* <Form.Item
+                <Form.Item
                   label="Gender"
-                  name="gender"
+                  name="Gender"
                   rules={[{ required: true, message: "Please select gender!" }]}
                 >
                   <Radio.Group>
-                    <Radio value={true}>Male</Radio>
-                    <Radio value={false}>Female</Radio>
+                    <Radio value={"Male"}>Male</Radio>
+                    <Radio value={"Female"}>Female</Radio>
                   </Radio.Group>
-                </Form.Item> */}
+                </Form.Item>
                 <Form.Item
                   label="DOB"
                   name="dob"

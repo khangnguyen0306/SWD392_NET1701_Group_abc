@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom"; // Thay đổi từ Link sang NavLink
 import { Button, Layout, Menu, Drawer, Grid, Avatar, Badge, Dropdown, notification } from "antd";
 import "./CustomHeader.scss"; // Import SCSS file
 import { MenuOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
@@ -52,10 +52,10 @@ const CustomHeader = () => {
     const menu = (
         <Menu>
             <Menu.Item key="profile">
-                <Link to="/user-profile">User Profile</Link>
+                <NavLink to="/user-profile" activeClassName="active">User Profile</NavLink> {/* Thay đổi từ Link sang NavLink */}
             </Menu.Item>
             <Menu.Item key="history">
-                <Link to="/user-transaction-history">Transaction History</Link>
+                <NavLink to="/user-transaction-history" activeClassName="active">Transaction History</NavLink> {/* Thay đổi từ Link sang NavLink */}
             </Menu.Item>
             <Menu.Item key="logout">
                 <Link onClick={handleLogout}>Log out</Link>
@@ -68,13 +68,27 @@ const CustomHeader = () => {
             return (
                 <>
                     <Menu.Item key="dashboard">
-                        <Link to="/dashboard">Dashboard</Link>
+                        <NavLink to="/dashboard" activeClassName="active">Dashboard</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-products">
-                        <Link to="/manage-products">Manage Products</Link>
+                        <NavLink to="/manage-products" activeClassName="active">Manage Products</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-posts">
-                        <Link to="/manage-posts">Manage Posts</Link>
+                        <NavLink to="/manage-posts" activeClassName="active">Manage Posts</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                    </Menu.Item>
+                </>
+            );
+        } else if (user?.roleId === 3) {
+            return (
+                <>
+                    <Menu.Item key="post-management">
+                        <NavLink to="/postmanager" activeClassName="active">Post Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                    </Menu.Item>
+                    <Menu.Item key="manage-products">
+                        <NavLink to="/manage-products" activeClassName="active">Manage Products</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                    </Menu.Item>
+                    <Menu.Item key="manage-posts">
+                        <NavLink to="/manage-posts" activeClassName="active">Manage Report</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                 </>
             );
@@ -82,19 +96,22 @@ const CustomHeader = () => {
             return (
                 <>
                     <Menu.Item key="1">
-                        <Link to="/">Home</Link>
+                        <NavLink exact to="/" activeClassName="active">Home</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        <NavLink to="/product" activeClassName="active"> Buy Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="3">
-                        <Link to="/product">Product</Link>
+                        <NavLink to="/exchange" activeClassName="active">Exchange Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="4">
-                        <Link to="/exchange">Exchange Product</Link>
+                        <NavLink to="/about" activeClassName="active">About us</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="5">
-                        <Link to="/about">About us</Link>
+                        <NavLink to="/activity" activeClassName="active">Activity</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="6">
-                        <Link to="admin">Blog</Link>
+                        <NavLink to="admin" activeClassName="active">Blog</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                 </>
             );
@@ -103,11 +120,11 @@ const CustomHeader = () => {
 
     return (
         <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: '1' }}>
-            <Link to={"/"}>
+            <NavLink to={"/"}>
                 <div className="header-logo">
                     <p><span style={{ color: 'black' }}>Exchange</span> <span >Web</span></p>
                 </div>
-            </Link>
+            </NavLink>
             {screens.md ? (
                 <>
                     <div>

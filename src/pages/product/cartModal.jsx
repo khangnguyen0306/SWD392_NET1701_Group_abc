@@ -77,7 +77,7 @@ const CartModal = ({ visible, onClose }) => {
       dataIndex: 'product',
       render: (_, item) => (
         <Space>
-          <Image src={item.imageURL} width={50} />
+          <Image src={item.urlImg} width={50} />
           <div>{item.name}</div>
         </Space>
       ),

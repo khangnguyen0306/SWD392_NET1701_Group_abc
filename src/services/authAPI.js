@@ -29,7 +29,8 @@ export const authApi = createApi({
             // role_id: body.UserType,
             // created_by: "string",
             // modified_by: "string",
-            // gender: body.gender
+            Gender: body.Gender,
+            ImgURL:"aaaaa"
           }
           return {
             method: "POST",

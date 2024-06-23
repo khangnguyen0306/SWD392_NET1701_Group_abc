@@ -6,8 +6,14 @@ $blue-main-color: #5c98f2;
     font-family: $font-content;
 }
 
+.toggle-buttons .active {
+    background-color: #1890ff; // Or any color you prefer for the active button
+    color: white; // Ensure the text color contrasts well with the background
+}
+
 .product-page {
-    padding: 8rem;
+    padding: 8rem 4rem 4rem 4rem;
+
 
     .filter-section {
         padding: 16px;
@@ -74,10 +80,11 @@ $blue-main-color: #5c98f2;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 280px;
 
             .product-image {
                 transition: transform 0.3s ease;
-               
+
 
             }
 
@@ -97,9 +104,15 @@ $blue-main-color: #5c98f2;
                 padding: 10px 0;
 
             }
-            .card-product-price {
 
+            .card-actions {
+                display: flex;
+                justify-content: space-around;
+                padding: 10px 0;
+                border-top: 1px solid #f0f0f0;
             }
+
+            .card-product-price {}
 
 
         }

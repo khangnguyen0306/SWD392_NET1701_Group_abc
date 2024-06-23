@@ -20,7 +20,7 @@ const ProductDetail = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const token = useSelector(selectCurrentToken);
     const userId = useSelector(selectCurrentUser)
-  
+
 
     const handleIncreaseQuantity = () => {
         if (buyQuantity < ProductDetail.quantity) {
@@ -48,10 +48,16 @@ const ProductDetail = () => {
 
     useEffect(() => {
         dispatch(loadCartFromLocalStorage());
-        if (ProductDetail?.imageURL?.length) {
-            setMainImage(ProductDetail?.imageURL[0]);
-        }
+        // if (ProductDetail?.urlImg?.length) {
+        setMainImage(ProductDetail?.urlImg);
+        // }
     }, [dispatch, ProductDetail]);
+    // useEffect(() => {
+    //     dispatch(loadCartFromLocalStorage());
+    //     if (ProductDetail?.urlImg?.length) {
+    //         setMainImage(ProductDetail?.urlImg[0]);
+    //     }
+    // }, [dispatch, ProductDetail]);
 
     const handleAddToCart = (product) => {
         const isProductInCart = cart.some(item => item.id === product.id);
@@ -74,7 +80,7 @@ const ProductDetail = () => {
             }
         }
     };
-    
+
 
     const handleThumbnailClick = (image) => {
         setMainImage(image);
@@ -127,7 +133,7 @@ const ProductDetail = () => {
                                 </Col>
                             ))}
                         </Row>
-                        {ProductDetail?.imageURL?.length > 4 && (
+                        {ProductDetail?.urlImg?.length > 4 && (
                             <Button type="link" onClick={showModal} className='view-all-image-btn'>
                                 View all images
                             </Button>
@@ -140,7 +146,7 @@ const ProductDetail = () => {
                                 <b>Stock: </b> <span style={{ color: 'red' }}>{ProductDetail?.stockQuantity}</span></Tag></p>
                             <p className="productCategory">{ProductDetail?.category} | {ProductDetail?.subcategoryName}</p>
                             <p className="productPrice"> ₫ {ProductDetail?.price}</p>
-                            <p className="productDescription">{ProductDetail?.description}</p>
+                            <p className="productDescription" dangerouslySetInnerHTML={{ __html: ProductDetail?.description }} />
 
                             <div className="addToCart-btn">
                                 <Space >
@@ -170,29 +176,26 @@ const ProductDetail = () => {
                     </Col>
 
                 </Row>
-                <Row>
-                    <div style={{ padding: '3rem 0 0 0' }}>
-                        <p style={{ paddingLeft: ' 10rem ' }} className='related-Title'>Related Products</p>
-                    </div>
-                    <Row gutter={[16, 16]} justify={'center'}>
-                        {relatedProducts?.map(relatedProduct => (
-                            <Col key={relatedProduct.id} md={4} sm={8} xs={12}>
-                                <Link to={`/productDetail/${relatedProduct.id}`}>
-                                    <div className="relatedProductItem">
-                                        <Image src={relatedProduct.imageURL} preview={false} style={{ Height: '300px' }} />
-                                        <div className="content-related-item">
-                                            <p className='relatedProductName'>{relatedProduct.name}</p>
-                                            <p style={{ color: '#000', paddingBottom: '0.7rem' }}>
-                                                {getShortDescription(relatedProduct.description)}
-                                            </p>
-                                            <p className='relatedProductPrice'>₫ {relatedProduct.price}</p>
-
-                                        </div>
+                <div style={{ padding: '3rem 0 0 0' }}>
+                    <p style={{ paddingLeft: ' 10rem ' }} className='related-Title'>Related Products</p>
+                </div>
+                <Row gutter={[16, 16]} justify={'center'}>
+                    {relatedProducts?.map(relatedProduct => (
+                        <Col key={relatedProduct.id} md={4} sm={8} xs={12}>
+                            <Link to={`/productDetail/${relatedProduct.id}`}>
+                                <div className="relatedProductItem">
+                                    <Image src={relatedProduct.urlImg} preview={false} style={{ maxWidth: '100%', height: '300px' }} />
+                                    <div className="content-related-item">
+                                        <p className='relatedProductName'>{relatedProduct.name}</p>
+                                        <p style={{ color: '#000', paddingBottom: '0.7rem' }}>
+                                            {getShortDescription(relatedProduct.description)}
+                                        </p>
+                                        <p className='relatedProductPrice'>₫ {relatedProduct.price}</p>
                                     </div>
-                                </Link>
-                            </Col>
-                        ))}
-                    </Row>
+                                </div>
+                            </Link>
+                        </Col>
+                    ))}
                 </Row>
 
             </Layout>

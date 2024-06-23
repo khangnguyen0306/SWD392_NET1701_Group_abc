@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useGetPostDetailQuery } from '../../services/postAPI';
 import { Card, Skeleton, Badge, Avatar, Alert, Layout, Row, Col, Tag, Image, Button, Modal } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
 import ExchangeModal from './ExchangeModal';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../slices/auth.slice';
+
+const { Content } = Layout;
 
 const PostDetail = () => {
     const { postId } = useParams();
-    const { data: postDetail, isLoading, error } = useGetPostDetailQuery(postId);
+    const { data: postDetail, isLoading, error, refetch } = useGetPostDetailQuery(postId);
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [isExchangeModalVisible, setIsExchangeModalVisible] = useState(false);
+    const user = useSelector(selectCurrentUser);
+
+    useEffect(() => {
+        refetchPostDetail();
+    }, [postId]);
+
     const showModal = () => {
         setIsModalVisible(true);
     };
@@ -25,9 +35,6 @@ const PostDetail = () => {
 
     const handleModalCancel = () => {
         setIsModalVisible(false);
-    };
-    const handleImageModalCancel = () => {
-        setIsImageModalVisible(false);
     };
 
     const handleExchangeButtonClick = () => {
@@ -41,6 +48,14 @@ const PostDetail = () => {
     const convertStatus = {
         true: <Badge color={"#33ff00"} text={"Đã được duyệt"} />,
         false: <Badge color={"#ffc125"} text={"Chưa được duyệt"} />
+    };
+
+    const refetchPostDetail = async () => {
+        try {
+            await refetch();
+        } catch (error) {
+            console.error('Error refetching post detail:', error);
+        }
     };
 
     if (isLoading) {
@@ -69,23 +84,30 @@ const PostDetail = () => {
     return (
         <>
             <CustomHeader />
-            <Layout style={{ minHeight: '100vh' }}>
+            <Content style={{ minHeight: '100vh' }}>
                 <Button
                     style={{ position: 'absolute', marginTop: '7rem', left: '2rem' }}
                     onClick={() => navigate(-1)}
+                    type='primary'
+                    icon={<ArrowLeftOutlined />}
                 >
                     Back
                 </Button>
                 <Row justify={'center'} style={{ padding: '20px', marginTop: '7rem' }}>
                     <Col md={10} span={24} className='product-image'>
                         <Image
-                            src="https://cdn.tgdd.vn/Products/Images/42/305658/iphone-15-pro-max-blue-thumbnew-600x600.jpg"
+                            src={postDetail?.imageUrl}
                             alt="Product Image"
                         />
                         <Row gutter={[8, 8]} className="thumbnail-row" style={{ marginTop: '1rem' }}>
                             {postDetail?.imageURL?.slice(0, 4).map((image, index) => (
                                 <Col key={index} span={6}>
                                     <Image
+                                        style={{
+                                            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                                            marginRight: '10px',
+                                            cursor: 'pointer'
+                                        }}
                                         height={"130px"}
                                         width={"150px"}
                                         src={image}
@@ -106,24 +128,64 @@ const PostDetail = () => {
                         <div className='product-detail-description'>
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', justifyContent: 'space-between' }}>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <Avatar icon={<UserOutlined />} />
-                                    <p style={{ marginLeft: '1rem' }}>User</p>
+                                    {postDetail?.user?.imgUrl ? (
+                                        <Avatar src={postDetail.user.imgUrl} size={'large'} />
+                                    ) : (
+                                        <Avatar icon={<UserOutlined />} />
+                                    )}
+                                    <hr />
+                                    <div style={{display:'flex'}}>
+                                        <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
+                                        <p style={{ marginLeft: '11rem' }}>{convertStatus[postDetail?.publicStatus]}</p>
+                                    </div>
                                 </div>
-                                <Button type='primary' onClick={handleExchangeButtonClick}>Exchange</Button>
+                                {postDetail.user.id != user.id ? (
+                                    <Button type='primary' onClick={handleExchangeButtonClick}>Exchange</Button>
+                                ) : (
+                                    null
+                                )}
                             </div>
                             <p style={{ fontSize: '2rem', fontWeight: 'bold', padding: '1rem' }}>{postDetail?.title}</p>
                             <div dangerouslySetInnerHTML={{ __html: postDetail?.description }} />
                         </div>
                     </Col>
                 </Row>
-            </Layout>
+                {/* Product Card */}
+                <Row justify="center" style={{ padding: '20px' }}>
+                    <Col xs={24} md={20} lg={18} xl={16}>
+                        <Card
+                            title="Product"
+                            style={{ width: '100%', marginBottom: '20px' }}
+                            bodyStyle={{ display: 'flex', alignItems: 'center' }} // Center align content inside the card body
+                        >
+                            <Image
+                                src={postDetail.product.urlImg}
+                                alt={postDetail.product.name}
+                                width={300}
+                                preview={false} // Disable preview on click
+                                style={{ marginRight: '20px' }} // Add margin to the right of the image
+                            />
+                            <div style={{ marginLeft: '3rem' }}>
+                                <h2>{postDetail.product.name}</h2>
+                                <Link to={`/productDetailForAll/${postDetail.product.id}`}>
+                                    <Button type="primary">View Product Details</Button>
+                                </Link>
+                            </div>
+                        </Card>
+                    </Col>
+                </Row>
+            </Content>
             <CustomFooter />
-            <Modal visible={isModalVisible} footer={null} onCancel={handleModalCancel}>
+            <Modal open={isModalVisible} footer={null} onCancel={handleModalCancel}>
                 <Image src={selectedImage} alt="Selected Image" style={{ width: '100%' }} />
             </Modal>
             <ExchangeModal
                 isVisible={isExchangeModalVisible}
-                onClose={handleExchangeModalCancel}
+                onClose={() => {
+                    handleExchangeModalCancel();
+                    refetchPostDetail();
+                }}
+                postId={postId}
             />
         </>
     );

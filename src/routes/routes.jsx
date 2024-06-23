@@ -15,6 +15,8 @@ const AboutUs = Loadable({ loader: () => import("../pages/About/AboutUs") });
 const dashboardAdmin = Loadable({ loader: () => import("../pages/dashboard/jsx/DashboardManagement") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Postmanager = Loadable({ loader: () => import("../pages/Postmanager/PostManagement") });
+const AddProductExchange = Loadable({ loader: () => import("../pages/exchange/ModalAddProductForEx") });
+const ProductDetailForAll = Loadable({ loader: () => import("../pages/product/ProductDetailForAll") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
@@ -54,6 +56,10 @@ export const router = createBrowserRouter([
     path: "/about",
     element: AboutUs,
   },
+  {
+    path: "/productDetailForAll/:productId",
+    element: ProductDetailForAll,
+  },
 
   {
     path: "/productDetail/:productId",
@@ -87,6 +93,10 @@ export const router = createBrowserRouter([
           {
             path:"dashboard",
             element:dashboardAdmin
+          },
+          {
+            path:"addProductForExchange",
+            element:AddProductExchange
           },
          
          

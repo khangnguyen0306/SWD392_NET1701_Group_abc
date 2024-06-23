@@ -108,23 +108,6 @@ const EditUserModal = ({ visible, handleEdit, handleCancel, userData }) => {
                 >
                     <Input />
                 </Form.Item>
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                        {
-                            pattern: validationPatterns.password.pattern,
-                            message: validationPatterns.password.message,
-                        },
-
-                    ]}
-                >
-
-                    <Input.Password
-                        placeholder="new password"
-                        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                    />
-                </Form.Item>
 
                 <Form.Item
                     label="Phone Number"
