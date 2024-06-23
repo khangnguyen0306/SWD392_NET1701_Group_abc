@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../slices/auth.slice';
+import { format } from 'date-fns';
 
 const { confirm } = Modal;
 
@@ -94,7 +95,8 @@ const PostList = () => {
                                         <Avatar icon={<UserOutlined />} />
                                     )}
                                     <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{post.user.userName}</p>
-                                    
+
+
                                 </div>
                             }
                             hoverable
@@ -105,16 +107,16 @@ const PostList = () => {
                                             {post?.user?.id === user?.id && (
                                                 <>
                                                     <Menu.Item key="edit" onClick={() => handleEdit(post.id)} prefix={<EditOutlined />}>
-                                                        Chỉnh sửa 
+                                                        Chỉnh sửa
                                                     </Menu.Item>
                                                     <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
                                                         Xóa
                                                     </Menu.Item>
                                                 </>
                                             )}
-                                            {/* <Menu.Item key="report" onClick={() => handleReport(post.id)}>
+                                            <Menu.Item key="report" onClick={() => handleReport(post.id)}>
                                                 Báo cáo
-                                            </Menu.Item> */}
+                                            </Menu.Item>
                                         </Menu>
                                     }
                                     trigger={['click']}
@@ -126,11 +128,12 @@ const PostList = () => {
                             <Link to={`/postDetail/${post.id}`}>
                                 <Row gutter={[16, 16]}>
                                     <Col xs={24} md={15}>
-                                        <div style={{ marginLeft: '2rem', color: 'black' }}>
+                                        <div style={{ marginLeft: '2rem', color: 'black',paddingBottom:'3rem' }}>
+                                            <p style={{ fontSize: '14px', color: 'GrayText',marginLeft:'-20px',marginBottom:'30px' }}>Posted on {format(new Date(post.date), 'MMMM dd, yyyy HH:mm')}</p>
                                             <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
                                             <div dangerouslySetInnerHTML={{ __html: post.description }} />
-                                            <p style={{ marginTop: '1rem',position:'absolute',bottom:'0' }}>{convertStatus[post.publicStatus]}</p>
                                         </div>
+                                        <p style={{ marginTop: '2rem', position: 'absolute', bottom: '0',left:'20px' }}>{convertStatus[post.publicStatus]}</p>
                                     </Col>
                                     <Col xs={24} md={6}>
                                         <div style={{ textAlign: 'center' }}>

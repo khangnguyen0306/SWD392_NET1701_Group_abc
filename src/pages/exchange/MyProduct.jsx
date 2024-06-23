@@ -35,12 +35,14 @@ const MyProducts = () => {
                 <Row gutter={16} style={{ marginTop: '3rem' }}>
                     {productData.map(product => (
                         <Col span={8} key={product.id} style={{ marginBottom: '16px' }}>
+                            <Link to={`/productDetailForAll/${product.id}`}>
                             <Card
                                 hoverable
                                 cover={<Image src={product.urlImg} style={{ height: '300px', objectFit: 'cover' }} />} // Set height and objectFit style
                             >
                                 <Card.Meta title={product.name} description={`Price: $${product.price}`} />
                             </Card>
+                            </Link>
                         </Col>
                     ))}
                 </Row>
