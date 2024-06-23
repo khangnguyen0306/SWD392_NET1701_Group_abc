@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form, Spin, Tag, Switch } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Modal, Button, Form, Spin, Tag, Switch, message } from 'antd';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
@@ -14,10 +14,13 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
     const [createExchange] = useCreateExchangeMutation();
     const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
 
+
+
+
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            
+
             if (!isLocked) {
                 console.log('Please lock the exchange before submitting.');
                 return;
@@ -28,16 +31,22 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
                 description: description,
                 postId: parseInt(postId, 10)
             };
+            try {
+                const { exchange } = await createExchange(formValues);
+                message.success('Exchange created successfully');
+            } catch (e) {
+                message.error("Error creating exchange");
+                return;
+            }
 
-            await createExchange(formValues); 
-
-            onClose(); // Close modal or perform other actions after successful exchange creation
+            onClose();
         } catch (errorInfo) {
             console.log('Validate Failed:', errorInfo);
         }
     };
 
     const handleTransferChange = (targetKeys) => {
+
         setSelectedProductKeys(targetKeys);
     };
 

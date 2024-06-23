@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Input, Checkbox, Slider, Button, Select, Row, Col, Card, message, Pagination, Spin } from 'antd';
-import { SearchOutlined, AppstoreOutlined, BarsOutlined, FilterOutlined } from '@ant-design/icons';
+import { Layout, Input, Checkbox, Button, Select, Row, Col, Card, message, Pagination, Spin, Modal, Tag, Skeleton } from 'antd';
+import { SearchOutlined, AppstoreOutlined, BarsOutlined, FilterOutlined, PlusCircleOutlined, SettingOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 import './ProductPage.scss';
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
 import { NumericFormat } from 'react-number-format';
 import { VietnameseProvinces } from '../../utils/utils';
 import Search from 'antd/es/input/Search';
-import { useGetAllCategoriesQuery, useGetAllProductQuery } from '../../services/productAPI';
-import { useDispatch } from 'react-redux';
+import { useDeleteProductMutation, useGetAllCategoriesQuery, useGetAllProductByUserIdQuery, useGetAllProductQuery } from '../../services/productAPI';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, loadCartFromLocalStorage } from '../../slices/product.slice';
 import { Link } from 'react-router-dom';
+import AddProductModal from './AddProductModal';
+import { selectCurrentUser } from '../../slices/auth.slice';
 
 const { Sider, Content } = Layout;
 const { Option } = Select;
-
+const { confirm } = Modal;
 
 const ProductPage = () => {
-    const { data: productData, isLoadingProduct } = useGetAllProductQuery();
-    const { data: categoriesData, isLoadingCategories } = useGetAllCategoriesQuery();
+    const { data: allProductData, isLoadingProduct, refetch: refetchProductData } = useGetAllProductQuery();
+    const { data: productByUserIdData, isLoadingProductByUserId, refetch: refetchProductByIdData } = useGetAllProductByUserIdQuery();
+    const { data: categoriesData, isLoadingCategories, refetch: refetchCategories } = useGetAllCategoriesQuery();
+    const user = useSelector(selectCurrentUser);
+    const [deleteProduct] = useDeleteProductMutation();
     const [cart, setCart] = useState([]);
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [isModalAddVisible, setIsModalAddVisible] = useState(false);
     const pageSize = 24;
     const [view, setView] = useState('grid'); // 'grid' or 'list'
     const dispatch = useDispatch();
@@ -32,6 +38,7 @@ const ProductPage = () => {
         condition: [],
         location: null,
     });
+    const [showUserProducts, setShowUserProducts] = useState(false);
 
     useEffect(() => {
         dispatch(loadCartFromLocalStorage());
@@ -40,6 +47,12 @@ const ProductPage = () => {
     const handleFilterChange = (type, value) => {
         setFilters({ ...filters, [type]: value });
     };
+
+    useEffect(() => {
+        refetchProductData();
+        refetchProductByIdData();
+        refetchCategories()
+    }, [refetchProductData, refetchProductByIdData, refetchCategories]);
 
     const handleCategoryChange = (category, checked) => {
         const updatedCategories = checked
@@ -66,7 +79,7 @@ const ProductPage = () => {
         setSearch('');
     };
 
-    const filteredProducts = productData?.filter(product => {
+    const filteredProducts = (showUserProducts ? productByUserIdData : allProductData)?.filter(product => {
         const categoryMatches = filters.categories.length === 0 || filters.categories.includes(product.categoryId);
         const subcategoryMatches = filters.subcategories.length === 0 || filters.subcategories.includes(product.subcategoryId);
         const priceMatches = product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
@@ -74,7 +87,7 @@ const ProductPage = () => {
         const searchMatches = !search ||
             product.name.toLowerCase().includes(search.toLowerCase()) ||
             (product.subcategoryName && product.subcategoryName.toLowerCase().includes(search.toLowerCase()));
-    
+
         // Condition filter logic
         const conditionMatches = filters.condition.length === 0 || filters.condition.some(condition => {
             if (condition === '50-70' && product.condition >= 50 && product.condition <= 70) {
@@ -86,28 +99,71 @@ const ProductPage = () => {
             }
             return false;
         });
-    
+
         return categoryMatches && subcategoryMatches && priceMatches && conditionMatches && locationMatches && searchMatches;
     });
-    
+
+    const handleAddProduct = () => {
+        setIsModalAddVisible(true);
+    };
+
+    const handleModalAddOk = () => {
+        setIsModalAddVisible(false);
+    };
+
+    const handleModalAddCancel = () => {
+        setIsModalAddVisible(false);
+    };
+
+    const handleEditProduct = (productId) => {
+        // Implement the edit functionality here
+        console.log('Edit product with id:', productId);
+    };
+
+    const handleDeleteProduct = (productId) => {
+        confirm({
+            title: 'Are you sure you want to delete this product?',
+            content: 'This action cannot be undone.',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                try {
+                    await deleteProduct(productId).unwrap();
+                    message.success('Product deleted successfully');
+                    refetchProductData();
+                    refetchProductByIdData();
+                } catch (error) {
+                    console.log(error);
+                    if (error.originalStatus === 200) {
+                        message.success('Deleted successfully');
+                    } else {
+                        message.error('Failed to delete the product');
+                    }
+                }
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+    };
+
     const paginatedProducts = filteredProducts?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-    
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
-    if (isLoadingProduct && isLoadingCategories) {
-        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Spin size="large" />
-        </div>;
+    if (isLoadingProduct && isLoadingCategories && isLoadingProductByUserId) {
+        return <Skeleton active />;
     }
+
     return (
         <>
             <CustomHeader />
             <Layout className="product-page">
                 <Sider width={300} className="filter-section">
-                    <h3> <span style={{ marginRight: '0.7rem' }}><FilterOutlined /></span>Filter</h3>
+                    <h3><span style={{ marginRight: '0.7rem' }}><FilterOutlined /></span>Filter</h3>
                     <div className="filter-group">
                         <p className='title-filter'>Categories</p>
                         {categoriesData?.map((category) => (
@@ -116,7 +172,6 @@ const ProductPage = () => {
                                     style={{ fontSize: '16px', fontWeight: '500' }}
                                     checked={filters.categories.includes(category.id)}
                                     onChange={(e) => handleCategoryChange(category, e.target.checked)}
-
                                 >
                                     {category.name}
                                 </Checkbox>
@@ -176,7 +231,6 @@ const ProductPage = () => {
                             <Checkbox value="90+">90%+</Checkbox>
                         </Checkbox.Group>
                     </div>
-
                     <div className="filter-group">
                         <h4>Location</h4>
                         <Select
@@ -197,30 +251,66 @@ const ProductPage = () => {
                 </Sider>
                 <Content className="product-section">
                     <div className="product-header">
-                        <Search placeholder="input search text"
+                        <Search
+                            placeholder="input search text"
                             onSearch={(e) => setSearch(e)}
                             enterButton
                             className="search-input"
                         />
-
                         <div className="view-buttons">
                             <Button icon={<AppstoreOutlined />} onClick={() => setView('grid')}>4 per row</Button>
                             <Button icon={<BarsOutlined />} onClick={() => setView('list')}>1 per row</Button>
                         </div>
+                        <div className="toggle-buttons">
+                            <Button
+                                className={!showUserProducts ? 'active' : ''}
+                                onClick={() => setShowUserProducts(false)}
+
+                            >
+                                All Products
+                            </Button>
+                            <Button
+                                className={showUserProducts ? 'active' : ''}
+                                onClick={() => setShowUserProducts(true)}
+                            >
+                                My Products
+                            </Button>
+                        </div>
+                        <Button
+                            icon={<PlusCircleOutlined />}
+                            size='large'
+                            onClick={handleAddProduct}
+                            type='primary' > Add product</Button>
                     </div>
                     <div className={`product-list ${view}`}>
                         <Row gutter={[16, 16]}>
                             {paginatedProducts?.map(product => (
                                 <Col key={product.id} span={view === 'grid' ? 6 : 24}>
-                                    <Link to={`/productDetail/${product.id}`}>
-                                        <Card className='card-product'>
-                                            <img src={product?.urlImg} width={"190px"} height={"170px"} className='product-image' />
-                                            <p className='card-product-name'>{product.name}</p>
-                                            <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product.price}₫</span></p>
-                                            <p>Condition: {product.condition}%</p>
-                                            <p>Location: {product.location}</p>
-                                        </Card>
-                                    </Link>
+
+                                    <Card className='card-product'>
+                                        <Link
+                                            to={`/productDetail/${product.id}`}
+                                            onClick={(e) => e.stopPropagation()}
+                                            style={{ color: 'black' }}>
+                                            <div style={{ marginBottom: '1rem' }}>
+                                                <img src={product?.urlImg} width={"190px"} height={"170px"} className='product-image' />
+                                                <p className='card-product-name'>{product.name}</p>
+                                                <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product.price}₫</span></p>
+                                                {product.price === 0 && <Tag color="gold">Product for Exchange</Tag>}
+                                                <p>Condition: {product.condition}%</p>
+                                                <p>Location: {product.location}</p>
+                                            </div>
+                                        </Link>
+                                        {(user.id === product.userId) ? (
+                                            <div className="card-actions">
+                                                <EditOutlined key="edit" onClick={(e) => { e.stopPropagation(); dispatch(handleEditProduct(product.id)); }} />
+                                                <DeleteOutlined key="delete" onClick={(e) => { e.stopPropagation(); dispatch(handleDeleteProduct(product.id)); }} />
+                                            </div>
+                                        ) : (
+                                            <div className="card-actions"></div>
+                                        )}
+                                    </Card>
+
                                 </Col>
                             ))}
                         </Row>
@@ -236,6 +326,12 @@ const ProductPage = () => {
                 </Content>
             </Layout>
             <CustomFooter />
+            <AddProductModal
+                visible={isModalAddVisible}
+                onOk={handleModalAddOk}
+                onCancel={handleModalAddCancel}
+                refetchProductData={refetchProductData}
+            />
         </>
     );
 };

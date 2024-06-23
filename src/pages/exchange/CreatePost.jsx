@@ -1,27 +1,27 @@
-import { Button, Form, Input, Select, message, Image } from 'antd';
 import React, { useState } from 'react';
-import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
+import { Form, Input, Select, Button, message, Image } from 'antd';
 import ReactQuill from 'react-quill';
 import { useCreatePostMutation, useGetAllPostQuery } from '../../services/postAPI';
 import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { v4 as uuidv4 } from 'uuid';
 
-const CreatePost = ({ setIsModalVisible }) => {
+const { Option } = Select;
+
+const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
   const [form] = Form.useForm();
-  const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
   const [createPost] = useCreatePostMutation();
   const { refetch: refetchPosts } = useGetAllPostQuery();
   const [images, setImages] = useState([]);
   const [folder] = useState(uuidv4());
 
   const handleSubmit = async (values) => {
-    console.log(values);
     try {
+      const { title, description, productId } = values;
       await createPost({
-        title: values.title,
-        description: values.description,
-        productId: values.productId,
-        imageUrl: images.length > 0 ? images[0] : '',  // Lưu URL của hình ảnh đầu tiên
+        title,
+        description,
+        productId,
+        imageUrl: images.length > 0 ? images[0] : '',
       }).unwrap();
       message.success('Post created successfully');
       refetchPosts();
@@ -35,6 +35,10 @@ const CreatePost = ({ setIsModalVisible }) => {
   const handleImageChange = (value) => {
     setImages(value);
   };
+
+  if (!productData) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <Form
@@ -66,14 +70,11 @@ const CreatePost = ({ setIsModalVisible }) => {
         label="Select Product"
         rules={[{ required: true, message: 'Please select a product' }]}
       >
-        <Select
-          placeholder="Select a product"
-          loading={isLoadingProduct}
-        >
-          {productData && productData.map(product => (
-            <Select.Option key={product.id} value={product.id}>
+        <Select placeholder="Select a product">
+          {productData.map((product) => (
+            <Option key={product.id} value={product.id}>
               {product.name}
-            </Select.Option>
+            </Option>
           ))}
         </Select>
       </Form.Item>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image } from 'antd';
 import { useDeletePostMutation, useGetAllPostQuery } from '../../services/postAPI';
-import { EllipsisOutlined, UserOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
 import { useSelector } from 'react-redux';
@@ -19,6 +19,9 @@ const PostList = () => {
     useEffect(() => {
         refetchPostData();
     }, [refetchPostData]);
+
+    // Ensure sorting creates a new array if needed
+    const sortedPosts = postData ? [...postData].sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
 
     const showDeleteConfirm = (postId) => {
         confirm({
@@ -67,18 +70,7 @@ const PostList = () => {
     };
 
     if (isLoadingPost) {
-        return (
-            <List
-                itemLayout="vertical"
-                size="large"
-                dataSource={[...Array(10).keys()]}
-                renderItem={() => (
-                    <List.Item>
-                        <Skeleton active />
-                    </List.Item>
-                )}
-            />
-        );
+        return <Skeleton active />;
     }
 
     if (!postData || postData.length === 0) {
@@ -90,7 +82,7 @@ const PostList = () => {
             <List
                 itemLayout="vertical"
                 size="large"
-                dataSource={postData}
+                dataSource={sortedPosts}
                 renderItem={post => (
                     <List.Item key={post.id}>
                         <Card
@@ -101,33 +93,33 @@ const PostList = () => {
                                     ) : (
                                         <Avatar icon={<UserOutlined />} />
                                     )}
-                                    <p style={{ marginLeft: '1rem' }}>{post.user.userName}</p>
+                                    <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{post.user.userName}</p>
+                                    
                                 </div>
                             }
-                            loading={isLoadingPost}
                             hoverable
                             extra={
                                 <Dropdown
                                     overlay={
                                         <Menu>
-                                            {post.user.id === user.id && (
+                                            {post?.user?.id === user?.id && (
                                                 <>
-                                                    <Menu.Item key="edit" onClick={() => handleEdit(post)}>
-                                                        Edit
+                                                    <Menu.Item key="edit" onClick={() => handleEdit(post.id)} prefix={<EditOutlined />}>
+                                                        Chỉnh sửa 
                                                     </Menu.Item>
                                                     <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                        Delete
+                                                        Xóa
                                                     </Menu.Item>
                                                 </>
                                             )}
-                                            <Menu.Item key="report" onClick={() => handleReport(post.id)}>
-                                                Report
-                                            </Menu.Item>
+                                            {/* <Menu.Item key="report" onClick={() => handleReport(post.id)}>
+                                                Báo cáo
+                                            </Menu.Item> */}
                                         </Menu>
                                     }
                                     trigger={['click']}
                                 >
-                                    <Button type="text" icon={<EllipsisOutlined />} />
+                                    <Button type="text" icon={<EllipsisOutlined />} size="small" />
                                 </Dropdown>
                             }
                         >
@@ -135,14 +127,14 @@ const PostList = () => {
                                 <Row gutter={[16, 16]}>
                                     <Col xs={24} md={15}>
                                         <div style={{ marginLeft: '2rem', color: 'black' }}>
-                                            <p style={{ fontSize: '26px', fontWeight: 'bold' }}>{post.title}</p>
+                                            <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
                                             <div dangerouslySetInnerHTML={{ __html: post.description }} />
-                                            <p style={{ marginTop: '2rem' }}>{convertStatus[post.publicStatus]}</p>
+                                            <p style={{ marginTop: '1rem',position:'absolute',bottom:'0' }}>{convertStatus[post.publicStatus]}</p>
                                         </div>
                                     </Col>
                                     <Col xs={24} md={6}>
                                         <div style={{ textAlign: 'center' }}>
-                                            <Image src={post?.imageUrl} alt='Post image' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                            <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
                                         </div>
                                     </Col>
                                 </Row>
