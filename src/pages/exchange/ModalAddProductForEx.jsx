@@ -6,6 +6,7 @@ import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { v4 as uuidv4 } from 'uuid';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { NumberFormatBase } from 'react-number-format';
 const { Option } = Select;
 
 const AddProductPage = () => {
@@ -19,7 +20,7 @@ const AddProductPage = () => {
 
     const [filteredSubcategories, setFilteredSubcategories] = useState([]);
     const [images, setImages] = useState([]);
-    const [addProduct] = useCreateProductForExchangeMutation();
+    const [addProduct] = useCreateProductForExchangeMutation()
     const [folder] = useState(uuidv4());
     const navigate = useNavigate();
 
@@ -41,14 +42,19 @@ const AddProductPage = () => {
 
     const handleSubmit = async () => {
         try {
-          const values = await form.validateFields();
-          await addProduct({ ...values, urlImg: images[0] }).unwrap();
-          message.success('Product added successfully');
-          navigate('/exchange');
+            const values = await form.validateFields();
+            try {
+                await addProduct({ ...values, urlImg: images[0] });
+                message.success('Product added successfully');
+                refetch();
+                navigate(-1)
+            } catch (error) {
+                message.error('Failed to add product');
+            }
         } catch (error) {
-          message.error('Failed to add product');
+            console.error('Validate Failed:', error);
         }
-      };
+    };
 
     return (
         <Row justify="center" align="middle" style={{ minHeight: '100vh', width: '100%', marginTop: '6rem' }}>
@@ -57,7 +63,7 @@ const AddProductPage = () => {
 
                 <div className="form-container">
 
-                    <Button onClick={handleBack} type='primary' icon={<ArrowLeftOutlined />} style={{ position: 'absolute', left: '-20rem', top: '50px' }}>Back</Button>
+                    <Button onClick={handleBack} type='primary' icon={<ArrowLeftOutlined />} style={{ position: 'absolute', left: '-10rem', top: '50px' }}>Back</Button>
                     <h1 className="form-title" style={{ margin: '2rem 0' }}>Add Product</h1>
                     <Form form={form} layout="vertical">
                         <Form.Item name="categoryId" label="Category" rules={[{ required: true, message: 'Please select a category' }]}>
@@ -90,7 +96,14 @@ const AddProductPage = () => {
                             <Input />
                         </Form.Item>
                         <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price' }]}>
-                            <Input type="number" />
+                            <NumberFormatBase
+                                customInput={Input}
+                                thousandSeparator=","
+                                prefix="₫"
+                                decimalScale={0}
+                                className="ant-input"
+                                displayType="input"
+                            />
                         </Form.Item>
                         <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter the description' }]}>
                             <Input.TextArea rows={4} />

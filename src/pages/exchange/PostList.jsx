@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image } from 'antd';
+import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Empty } from 'antd';
 import { useDeletePostMutation, useGetAllPostQuery } from '../../services/postAPI';
 import { EditOutlined, EllipsisOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -75,7 +75,7 @@ const PostList = () => {
     }
 
     if (!postData || postData.length === 0) {
-        return <div>No posts available</div>;
+        return <Empty description="No posts available" />; 
     }
 
     return (
