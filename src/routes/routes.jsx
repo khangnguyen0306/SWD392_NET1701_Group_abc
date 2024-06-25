@@ -17,7 +17,7 @@ const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
 const Postmanager = Loadable({ loader: () => import("../pages/Postmanager/PostManagement") });
 const AddProductExchange = Loadable({ loader: () => import("../pages/exchange/ModalAddProductForEx") });
 const ProductDetailForAll = Loadable({ loader: () => import("../pages/product/ProductDetailForAll") });
-const Activity = Loadable({ loader: () => import("../pages/activity/Activity") });
+const Activity = Loadable({ loader: () => import("../pages/activity/ActivityMain") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });

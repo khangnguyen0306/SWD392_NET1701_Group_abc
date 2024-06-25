@@ -98,18 +98,20 @@ const CustomHeader = () => {
                     <Menu.Item key="1">
                         <NavLink exact to="/" activeClassName="active">Home</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
+                 
                     <Menu.Item key="2">
                         <NavLink to="/product" activeClassName="active"> Buy Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="3">
                         <NavLink to="/exchange" activeClassName="active">Exchange Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
-                    <Menu.Item key="4">
-                        <NavLink to="/about" activeClassName="active">About us</NavLink> {/* Thay đổi từ Link sang NavLink */}
-                    </Menu.Item>
                     <Menu.Item key="5">
                         <NavLink to="/activity" activeClassName="active">Activity</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
+                    <Menu.Item key="4">
+                        <NavLink to="/about" activeClassName="active">About us</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                    </Menu.Item>
+                 
                     <Menu.Item key="6">
                         <NavLink to="admin" activeClassName="active">Blog</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>

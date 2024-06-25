@@ -64,7 +64,7 @@ const PostListByUser = () => {
 
     // Phân loại bài đăng đã được duyệt và chưa được duyệt
     const approvedPosts = postData?.filter(post => post.publicStatus === true)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-    const unapprovedPosts = postData?.filter(post => post.publicStatus === false)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
+    const unapprovedPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
 
     if (isLoadingPost) {
         return (
@@ -82,7 +82,7 @@ const PostListByUser = () => {
     }
 
     if (!postData || postData.length === 0) {
-        return <Empty description="No posts available" />; // Display Ant Design Empty component
+        return <Empty description="No posts available" />;
     }
 
     return (
