@@ -136,7 +136,7 @@ const PostDetail = () => {
                                     <hr />
                                     <div style={{display:'flex'}}>
                                         <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
-                                        <p style={{ marginLeft: '11rem' }}>{convertStatus[postDetail?.publicStatus]}</p>
+                                        <p style={{ marginLeft: '2rem' }}>{convertStatus[postDetail?.publicStatus]}</p>
                                     </div>
                                 </div>
                                 {postDetail.user.id != user.id ? (
@@ -162,8 +162,8 @@ const PostDetail = () => {
                                 src={postDetail.product.urlImg}
                                 alt={postDetail.product.name}
                                 width={300}
-                                preview={false} // Disable preview on click
-                                style={{ marginRight: '20px' }} // Add margin to the right of the image
+                                preview={false} 
+                                style={{ marginRight: '20px' }}
                             />
                             <div style={{ marginLeft: '3rem' }}>
                                 <h2>{postDetail.product.name}</h2>

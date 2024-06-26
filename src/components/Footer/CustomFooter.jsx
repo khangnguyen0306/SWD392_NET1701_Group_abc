@@ -6,7 +6,7 @@ const { Footer } = Layout;
 
 function CustomFooter() {
   return (
-    <Footer style={{ backgroundColor: "#f0f2f5", padding: "20px 50px", backgroundColor: '#1a1a1a', margin: '0' }}>
+    <Footer style={{  padding: "20px 50px", backgroundColor: '#1a1a1a', margin: '0' }}>
       <Row justify="center" style={{ margin: '50px 30px' }}>
         <Col span={6}>
           <div>

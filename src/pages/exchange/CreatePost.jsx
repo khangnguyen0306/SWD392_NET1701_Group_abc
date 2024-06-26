@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Select, Button, message, Image } from 'antd';
 import ReactQuill from 'react-quill';
-import { useCreatePostMutation, useGetAllPostQuery } from '../../services/postAPI';
+import { useCreatePostMutation, useGetAllPostByUserQuery } from '../../services/postAPI';
 import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,7 +10,7 @@ const { Option } = Select;
 const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
   const [form] = Form.useForm();
   const [createPost] = useCreatePostMutation();
-  const { refetch: refetchPosts } = useGetAllPostQuery();
+  const { refetch: refetchPosts } = useGetAllPostByUserQuery();
   const [images, setImages] = useState([]);
   const [folder] = useState(uuidv4());
 
