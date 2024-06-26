@@ -138,16 +138,16 @@ export const productAPI = createApi({
       invalidatesTags: [{ type: "ProductExchangeList", id: "LIST" }],
     }),
 
-    // editClass: builder.mutation({
-    //   query: (payload) => {
-    //     return {
-    //       method: "PUT",
-    //       url: `viewclass/` + payload.id,
-    //       body: payload.body,
-    //     };
-    //   },
-    //   invalidatesTags: (res, err, arg) => [{ type: "ClassList", id: arg.id }],
-    // }),
+    editProduct: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "PUT",
+          url: `product/updateproduct/` + payload.id,
+          body: payload.body,
+        };
+      },
+      invalidatesTags: (res, err, arg) => [{ type: "ProductList", id: arg.id }],
+    }),
     deleteProduct: builder.mutation({
       query: (payload) => {
         return {
@@ -175,7 +175,8 @@ export const {
   useCreateProductMutation,
   useGetAllProductByUserIdQuery,
   useDeleteProductMutation,
-  useCreateProductForExchangeMutation
+  useCreateProductForExchangeMutation,
+  useEditProductMutation
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,
   //   useGetClassByIdQuery,

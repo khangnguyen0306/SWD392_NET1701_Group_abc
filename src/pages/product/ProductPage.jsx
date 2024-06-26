@@ -13,6 +13,7 @@ import { addToCart, loadCartFromLocalStorage } from '../../slices/product.slice'
 import { Link } from 'react-router-dom';
 import AddProductModal from './AddProductModal';
 import { selectCurrentUser } from '../../slices/auth.slice';
+import ModalEditProduct from './EditProductModal';
 
 const { Sider, Content } = Layout;
 const { Option } = Select;
@@ -24,10 +25,11 @@ const ProductPage = () => {
     const { data: categoriesData, isLoadingCategories, refetch: refetchCategories } = useGetAllCategoriesQuery();
     const user = useSelector(selectCurrentUser);
     const [deleteProduct] = useDeleteProductMutation();
-    const [cart, setCart] = useState([]);
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [isModalAddVisible, setIsModalAddVisible] = useState(false);
+    const [isModalEditVisible, setIsModalEditVisible] = useState(false); // State for edit modal visibility
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const pageSize = 24;
     const [view, setView] = useState('grid'); // 'grid' or 'list'
     const dispatch = useDispatch();
@@ -73,7 +75,6 @@ const ProductPage = () => {
             categories: [],
             subcategories: [],
             priceRange: [1000, 100000000],
-            condition: [],
             location: null,
         });
         setSearch('');
@@ -89,18 +90,8 @@ const ProductPage = () => {
             (product.subcategoryName && product.subcategoryName.toLowerCase().includes(search.toLowerCase()));
 
         // Condition filter logic
-        const conditionMatches = filters.condition.length === 0 || filters.condition.some(condition => {
-            if (condition === '50-70' && product.condition >= 50 && product.condition <= 70) {
-                return true;
-            } else if (condition === '70-90' && product.condition > 70 && product.condition <= 90) {
-                return true;
-            } else if (condition === '90+' && product.condition > 90) {
-                return true;
-            }
-            return false;
-        });
 
-        return categoryMatches && subcategoryMatches && priceMatches && conditionMatches && locationMatches && searchMatches;
+        return categoryMatches && subcategoryMatches && priceMatches && locationMatches && searchMatches;
     });
 
     const handleAddProduct = () => {
@@ -115,9 +106,22 @@ const ProductPage = () => {
         setIsModalAddVisible(false);
     };
 
+    //Edit Product
+
     const handleEditProduct = (productId) => {
-        // Implement the edit functionality here
-        console.log('Edit product with id:', productId);
+        setSelectedProduct(productId);
+        setIsModalEditVisible(true);
+    };
+
+    const handleModalEditOk = () => {
+        setIsModalEditVisible(false);
+        setSelectedProduct(null);
+        refetchProductData();
+    };
+
+    const handleModalEditCancel = () => {
+        setIsModalEditVisible(false);
+        setSelectedProduct(null);
     };
 
     const handleDeleteProduct = (productId) => {
@@ -221,17 +225,6 @@ const ProductPage = () => {
                         />
                     </div>
                     <div className="filter-group">
-                        <h4>Condition</h4>
-                        <Checkbox.Group
-                            onChange={(checkedValues) => handleFilterChange('condition', checkedValues)}
-                            value={filters.condition}
-                        >
-                            <Checkbox value="50-70">50-70%</Checkbox>
-                            <Checkbox value="70-90">70-90%</Checkbox>
-                            <Checkbox value="90+">90%+</Checkbox>
-                        </Checkbox.Group>
-                    </div>
-                    <div className="filter-group">
                         <h4>Location</h4>
                         <Select
                             style={{ width: '100%' }}
@@ -297,13 +290,12 @@ const ProductPage = () => {
                                                 <p className='card-product-name'>{product.name}</p>
                                                 <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product.price}₫</span></p>
                                                 {product.price === 0 && <Tag color="gold">Product for Exchange</Tag>}
-                                                <p>Condition: {product.condition}%</p>
                                                 <p>Location: {product.location}</p>
                                             </div>
                                         </Link>
                                         {(user.id === product.userId) ? (
                                             <div className="card-actions">
-                                                <EditOutlined key="edit" onClick={(e) => { e.stopPropagation(); dispatch(handleEditProduct(product.id)); }} />
+                                                <EditOutlined key="edit" onClick={(e) => { e.stopPropagation(); handleEditProduct(product.id); }} />
                                                 <DeleteOutlined key="delete" onClick={(e) => { e.stopPropagation(); dispatch(handleDeleteProduct(product.id)); }} />
                                             </div>
                                         ) : (
@@ -330,6 +322,13 @@ const ProductPage = () => {
                 visible={isModalAddVisible}
                 onOk={handleModalAddOk}
                 onCancel={handleModalAddCancel}
+                refetchProductData={refetchProductData}
+            />
+               <ModalEditProduct
+                visible={isModalEditVisible}
+                onOk={handleModalEditOk}
+                onCancel={handleModalEditCancel}
+                productData={selectedProduct} 
                 refetchProductData={refetchProductData}
             />
         </>

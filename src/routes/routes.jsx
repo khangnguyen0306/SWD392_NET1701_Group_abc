@@ -18,6 +18,7 @@ const Postmanager = Loadable({ loader: () => import("../pages/Postmanager/PostMa
 const AddProductExchange = Loadable({ loader: () => import("../pages/exchange/ModalAddProductForEx") });
 const ProductDetailForAll = Loadable({ loader: () => import("../pages/product/ProductDetailForAll") });
 const Activity = Loadable({ loader: () => import("../pages/activity/ActivityMain") });
+const Chat = Loadable({ loader: () => import("../pages/chat/ChatPage") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
@@ -103,6 +104,10 @@ export const router = createBrowserRouter([
           {
             path: "/activity",
             element: Activity,
+          },
+          {
+            path: "/chat",
+            element: Chat,
           },
          
         ],

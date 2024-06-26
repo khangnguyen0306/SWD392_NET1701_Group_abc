@@ -1,7 +1,7 @@
 // ProductDetailPage.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, Row, Col, Button, Image, Tag } from 'antd';
+import { Card, Row, Col, Button, Image, Tag, Skeleton, Empty } from 'antd';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
@@ -13,12 +13,16 @@ import { selectCurrentUser } from '../../slices/auth.slice';
 const ProductDetailPage = () => {
     const { productId } = useParams();
     const { data: productData, isLoading, error, refetch } = useGetProductDetailQuery(productId);
-    console.log(productData)
     const user = useSelector(selectCurrentUser);
-    console.log(user)
     const navigate = useNavigate();
+
+    useEffect(() => {
+        refetch();
+    }, [refetch])
+
+
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <Skeleton active />;
     }
 
     if (error) {
@@ -26,7 +30,7 @@ const ProductDetailPage = () => {
     }
 
     if (!productData) {
-        return <div>No post details available</div>;
+        return <Empty description="No posts available" />; 
     }
 
     return (
@@ -49,15 +53,24 @@ const ProductDetailPage = () => {
                             <div className="product-content">
 
 
-                                <div className="product-image">
-                                    <Image src={productData.urlImg} alt={productData.name} />
+                                <div className="product-image" style={{ textAlign: 'center' }}>
+                                    <Image
+                                        src={productData.urlImg}
+                                        alt={productData.name}
+                                        height={"500px"}
+                                        width={"100%"}
+                                        style={{
+                                            display: 'block',
+                                            margin: '0 auto',
+                                        }}
+                                    />
                                 </div>
                                 <div className="product-details">
                                     <Card.Meta
                                         title={productData.name}
                                         description={
                                             <>
-                                                <p><strong>Price:</strong> ${productData.price}</p>
+                                                <p><strong>Price:</strong> {productData.price} VND</p>
                                                 <p><strong>Category:</strong> {productData.categoryName}</p>
                                                 <p><strong>Subcategory:</strong> {productData.subcategoryName}</p>
                                                 <p><strong>Location:</strong> {productData.location}</p>
