@@ -13,7 +13,7 @@ import { CloseSquareOutlined, DeleteOutlined, EditOutlined, ManOutlined, MoreOut
 // };
 
 
-const TableUser = ({ userData, onEdit }) => {
+const TableUser = ({ userData, onEdit, onDelete, onBan }) => {
     const [sortedInfo, setSortedInfo] = useState({});
 
 
@@ -39,24 +39,28 @@ const TableUser = ({ userData, onEdit }) => {
     const actionsMenu = (record) => (
         <Menu>
             <Menu.Item key="edit" className='submenu-usertable' onClick={() => onEdit(record)}>
-                <span>Edit User</span>
+                <p><span style={{ color: "#1E90FF", paddingRight: ' 10px' }}><EditOutlined /></span><span>Edit User</span></p>
             </Menu.Item>
             {/* <Menu.Item key="changePermission">
                 <Dropdown overlay={() => permissionMenu(record)} placement='bottomRight'>
                     <p className='submenu-usertable-dropdown' ><span><UserSwitchOutlined /></span> <span>Change Role</span></p>
                 </Dropdown>
             </Menu.Item> */}
-            <Menu.Item key="de-ActiveUSer" className='submenu-usertable'>
-                <CloseSquareOutlined /><span>De-actice user</span>
+            <Menu.Item key="de-ActiveUSer" className='submenu-usertable' onClick={() => onBan(record.id)}>
+                <p >
+                    <span style={{ color: "#FFD700", paddingRight: ' 10px' }}>
+                        <CloseSquareOutlined /></span>
+                    <span>Ban user</span>
+                </p>
             </Menu.Item>
             <Menu.Item key="delete">
                 <Popconfirm
                     title="Are you sure you want to delete this user?"
-                    // onConfirm={() => handleDeleteUser(record.id)}
+                    onConfirm={() => onDelete(record.id)}
                     okText="Yes"
                     cancelText="No"
                 >
-                    <p className='submenu-usertable-dropdown-delete'><span><DeleteOutlined /></span><span>Delete user</span></p>
+                    <p ><span style={{ color: '#EE2C2C', paddingRight: ' 10px' }}><DeleteOutlined /></span><span>Delete user</span></p>
                 </Popconfirm>
             </Menu.Item>
         </Menu>
@@ -96,7 +100,7 @@ const TableUser = ({ userData, onEdit }) => {
             key: 'gender',
             sorter: (a, b) => a.gender - b.gender,
             sortOrder: sortedInfo.columnKey === 'gender' && sortedInfo.order,
-            render: (gender) => (gender == true ? <ManOutlined /> : <WomanOutlined />),
+            render: (gender) => (gender == "Male" ? <Tag color="blue">Male</Tag> : <Tag color="volcano">Female</Tag>),
         },
         {
             title: 'User Type',

@@ -159,7 +159,7 @@ const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
                 >
                     <DatePicker />
                 </Form.Item>
-{/* 
+
                 <Form.Item
                     label="Gender"
                     name="gender"
@@ -169,7 +169,7 @@ const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
                         <Radio value="Male">Male</Radio>
                         <Radio value="Female">Female</Radio>
                     </Radio.Group>
-                </Form.Item> */}
+                </Form.Item>
 
                 <Form.Item
                     label="Status"

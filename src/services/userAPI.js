@@ -125,6 +125,18 @@ export const userAPI = createApi({
     //   invalidatesTags: [{ type: "ClassList", id: "LIST" }],
     // }),
 
+    BanUser: builder.mutation({
+
+      query: (payload) => {
+        const status = false;
+        return {
+          method: "PUT",
+          url: `users/` + payload,
+          body: { status: status },
+        };
+      },
+      invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
+    }),
     editProfile: builder.mutation({
       query: (payload) => {
         return {
@@ -135,17 +147,17 @@ export const userAPI = createApi({
       },
       invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
     }),
-    // deleteClass: builder.mutation({
-    //   query: (payload) => {
-    //     return {
-    //       method: "DELETE",
-    //       url: `viewclass/` + payload.id,
-    //     };
-    //   },
-    //   invalidatesTags: (_res, _err, _arg) => [
-    //     { type: "ClassList", id: "LIST" },
-    //   ],
-    // }),
+    deleteUser: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "DELETE",
+          url: `users/` + payload,
+        };
+      },
+      invalidatesTags: (_res, _err, _arg) => [
+        { type: "UserList", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -157,7 +169,9 @@ export const {
   useGetUserProfileQuery,
   useEditProfileMutation,
   useAddUserMutation,
-  useEditUserMutation
+  useEditUserMutation,
+  useDeleteUserMutation,
+  useBanUserMutation
   // useGetAllProductQuery,
   // useGetAllCategoriesQuery,
   // useGetProductDetailQuery
