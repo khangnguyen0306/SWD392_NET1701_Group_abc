@@ -7,6 +7,7 @@ import EditPostModal from './ModalEdit';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../slices/auth.slice';
 import { format } from 'date-fns';
+import ReportModal from './ReportModal';
 
 const { confirm } = Modal;
 
@@ -14,8 +15,10 @@ const PostList = () => {
     const { data: postData, isLoading: isLoadingPost, refetch: refetchPostData } = useGetAllPostQuery();
     const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
     const user = useSelector(selectCurrentUser);
+    const [postDataForReport, setPostDataForReport] = useState('');
 
     useEffect(() => {
         refetchPostData();
@@ -47,6 +50,7 @@ const PostList = () => {
         });
     };
 
+    //Edit Modal
     const handleEdit = (post) => {
         setSelectedPost(post);
         setIsEditModalVisible(true);
@@ -60,14 +64,25 @@ const PostList = () => {
         setIsEditModalVisible(false);
     };
 
-    const handleReport = (postId) => {
-        // Implement report functionality here
-        message.info(`Report post ${postId}`);
+    //Report modal
+
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleClose = () => {
+        setIsModalVisible(false);
+    };
+    const handleReport = (post) => {
+        setPostDataForReport(post);
+        showModal();
+        console.log(post)
     };
 
     const convertStatus = {
-        true: <Badge color={"#33ff00"} text={"Đã được duyệt"} />,
-        false: <Badge color={"#ffc125"} text={"Chưa được duyệt"} />
+        true: <Badge color={"#33ff00"} text={"Approved"} />,
+        false: <Badge color={"#ffc125"} text={"Not approved"} />
     };
 
     if (isLoadingPost) {
@@ -75,7 +90,7 @@ const PostList = () => {
     }
 
     if (!postData || postData.length === 0) {
-        return <Empty description="No posts available" />; 
+        return <Empty description="No posts available" />;
     }
 
     return (
@@ -107,15 +122,15 @@ const PostList = () => {
                                             {post?.user?.id === user?.id && (
                                                 <>
                                                     <Menu.Item key="edit" onClick={() => handleEdit(post.id)} prefix={<EditOutlined />}>
-                                                        Chỉnh sửa
+                                                        Edit
                                                     </Menu.Item>
                                                     <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                        Xóa
+                                                        Delete
                                                     </Menu.Item>
                                                 </>
                                             )}
-                                            <Menu.Item key="report" onClick={() => handleReport(post.id)}>
-                                                Báo cáo
+                                            <Menu.Item key="report" onClick={() => handleReport(post)}>
+                                                Report
                                             </Menu.Item>
                                         </Menu>
                                     }
@@ -128,16 +143,16 @@ const PostList = () => {
                             <Link to={`/postDetail/${post.id}`}>
                                 <Row gutter={[16, 16]}>
                                     <Col xs={24} md={15}>
-                                        <div style={{ marginLeft: '2rem', color: 'black',paddingBottom:'3rem' }}>
-                                            <p style={{ fontSize: '14px', color: 'GrayText',marginLeft:'-20px',marginBottom:'30px' }}>Posted on {format(new Date(post.date), 'MMMM dd, yyyy HH:mm')}</p>
+                                        <div style={{ marginLeft: '2rem', color: 'black', paddingBottom: '3rem' }}>
+                                            <p style={{ fontSize: '14px', color: 'GrayText', marginLeft: '-20px', marginBottom: '30px' }}>Posted on {format(new Date(post.date), 'MMMM dd, yyyy HH:mm')}</p>
                                             <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
                                             <div dangerouslySetInnerHTML={{ __html: post.description }} />
                                         </div>
-                                        <p style={{ marginTop: '2rem', position: 'absolute', bottom: '0',left:'20px' }}>{convertStatus[post.publicStatus]}</p>
+                                        <p style={{ marginTop: '2rem', position: 'absolute', bottom: '0', left: '20px' }}>{convertStatus[post.publicStatus]}</p>
                                     </Col>
                                     <Col xs={24} md={6}>
                                         <div style={{ textAlign: 'center' }}>
-                                            <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                            <Image src={post?.imageUrl} alt='post image' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
                                         </div>
                                     </Col>
                                 </Row>
@@ -152,6 +167,11 @@ const PostList = () => {
                 onCancel={handleEditCancel}
                 post={selectedPost}
                 refetchPostData={refetchPostData}
+            />
+            <ReportModal
+                visible={isModalVisible}
+                onClose={handleClose}
+                postData={postDataForReport}
             />
         </>
     );

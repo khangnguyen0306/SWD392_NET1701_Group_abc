@@ -146,7 +146,7 @@ const EditUserModal = ({ visible, handleEdit, handleCancel, userData }) => {
                     <DatePicker />
                 </Form.Item>
 
-                {/* <Form.Item
+                <Form.Item
                     label="Gender"
                     name="gender"
                     rules={[{ required: true, message: 'Please select user gender!' }]}
@@ -155,7 +155,7 @@ const EditUserModal = ({ visible, handleEdit, handleCancel, userData }) => {
                         <Radio value={"Male"}>Male</Radio>
                         <Radio value={"Female"}>Female</Radio>
                     </Radio.Group>
-                </Form.Item> */}
+                </Form.Item>
 
                 <Form.Item
                     label="Status"

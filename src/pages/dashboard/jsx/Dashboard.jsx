@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../slices/auth.slice";
 import CustomHeader from "../../../components/Header/CustomHeader";
 import CustomFooter from "../../../components/Footer/CustomFooter";
+import PostManagement from "../../Postmanager/PostManagement";
+import DashboardManagement from "./DashboardManagement";
 function Dashboard() {
 
   const { data: productData, isLoadingProduct } = useGetAllProductQuery();
@@ -176,11 +178,11 @@ function Dashboard() {
         </>
 
       ) : (
-
-        <div className="containerForAdmin" style={{ marginTop: "8rem" }}>
-          <h1>Hien dang role {Role[user?.roleId]}</h1>
-        </div>
-        //  authorization more
+        user.roleId == 3 ? (
+          <PostManagement />
+        ) : (
+          <DashboardManagement/>
+        )
       )
       }
       <CustomFooter />

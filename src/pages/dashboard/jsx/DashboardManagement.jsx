@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAddUserMutation, useEditUserMutation, useGetAllUserQuery } from '../../../services/userAPI';
+import { useAddUserMutation, useBanUserMutation, useDeleteUserMutation, useEditUserMutation, useGetAllUserQuery } from '../../../services/userAPI';
 import TableUser from './TableUser';
 import { Button, Form, Layout, message } from 'antd';
 import AddUserModal from './AddUserModal';
@@ -7,13 +7,15 @@ import EditUserModal from './EditUserModal';
 
 const DashboardManagement = () => {
     const { data: userData, isLoadingUserData, refetch: refetchUserData } = useGetAllUserQuery();
-    console.log(userData)
+    console.table(userData)
     const [form] = Form.useForm();
     const [userDataEdit, setUserDataEdit] = useState();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditModalVisible, setisEditModalVisible] = useState(false);
     const [addUser] = useAddUserMutation();
     const [editUser] = useEditUserMutation();
+    const [deleteUser] = useDeleteUserMutation();
+    const [BanUser] = useBanUserMutation();
 
 
     //  show/off Modal
@@ -54,7 +56,7 @@ const DashboardManagement = () => {
         setIsModalVisible(false);
     };
 
-    //Edit 
+    //Edit Modal
 
     const showEditModal = (user) => {
         setisEditModalVisible(true);
@@ -77,24 +79,54 @@ const DashboardManagement = () => {
         }
     };
 
+    //HandleDelete
+    const handleDeleteUser = async (user) => {
+        try {
+            const { deleteU } = await deleteUser(user);    // no return value
+            refetchUserData();
+            const messageEdit = "User Delete successfully!";
+            handleEditOk(messageEdit);
+        } catch (error) {
+            message.error("User Delete unsuccessfully!");
+            console.log(error);
+        }
+    };
+    const handleBanUser = async (user) => {
+        try {
+            await BanUser(user);  //no return value
+            refetchUserData();
+            const messageReturn = "User Banned successfully!";
+            handleEditOk(messageReturn);
+        } catch (error) {
+            message.error("User Banned unsuccessfully!");
+            console.log(error);
+        }
+    };
+
     const handleEditOk = (values) => {
         message.success(values, [1.5]);
         setisEditModalVisible(false);
     };
 
 
-    const addModalParams = {
+    const addModalProps = {
         handleCancel: handleCancel,
         handleOk: handleAddUser,
         visible: isModalVisible,
         form: form,
     }
-    const editModalParams = {
+    const editModalProps = {
         handleCancel: handleEditCancel,
         handleEdit: handleEditUser,
         visible: isEditModalVisible,
         userData: userDataEdit,
         form: form,
+    }
+    const TableUserProps = {
+        userData: userData,
+        onEdit :showEditModal,
+        onDelete: handleDeleteUser,
+        onBan: handleBanUser
     }
 
 
@@ -103,12 +135,9 @@ const DashboardManagement = () => {
             <div style={{ display: "flex", justifyContent: 'end', marginTop: '6.5rem' }}>
                 <Button onClick={showModal}>Add User</Button>
             </div>
-            <TableUser
-                userData={userData}
-                onEdit={showEditModal}
-            />
-            <AddUserModal {...addModalParams} />
-            <EditUserModal {...editModalParams} />
+            <TableUser {...TableUserProps}/>
+            <AddUserModal {...addModalProps} />
+            <EditUserModal {...editModalProps} />
         </Layout>
     )
 }
