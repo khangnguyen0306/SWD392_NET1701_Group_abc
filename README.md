@@ -13,10 +13,10 @@ Welcome to our Hotel Booking Website project! This application is designed to pr
 ## Team Members
 Meet the talented individuals behind this project:
 - **Nguyễn Trọng Khang**
-- **Đỗ Minh Chính**
-- **Lâm Quốc Vinh**
-- **Nguyễn Đức Thắng**
-- **Hoàng Tuấn Khang**
+- **Lưu Hiệp**
+- **Kim Ngân**
+- **Minh Khôi**
+- **Nguyễn Cao Duy Thuấn**
 
 ## Technologies Used
 This project leverages a variety of technologies to deliver a robust hotel booking experience:

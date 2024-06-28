@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Empty } from 'antd';
-import { useDeletePostMutation, useGetAllPostQuery } from '../../services/postAPI';
+import { useCreateReportMutation, useDeletePostMutation, useGetAllPostQuery } from '../../services/postAPI';
 import { EditOutlined, EllipsisOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
@@ -14,6 +14,7 @@ const { confirm } = Modal;
 const PostList = () => {
     const { data: postData, isLoading: isLoadingPost, refetch: refetchPostData } = useGetAllPostQuery();
     const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
+    const [report] = useCreateReportMutation();
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
@@ -79,6 +80,24 @@ const PostList = () => {
         showModal();
         console.log(post)
     };
+
+    const onReport = async (post) => {
+        try {
+            try {
+                await report({
+                    id: post.id,
+                    body: post.body
+                });
+                message.success('Report post successfully');
+                // refetchProductData();
+                handleClose();
+            } catch {
+                message.error('Failed to Report post');
+            }
+        } catch (error) {
+            message.error('Failed to Report post');
+        }
+    }
 
     const convertStatus = {
         true: <Badge color={"#33ff00"} text={"Approved"} />,
@@ -172,6 +191,7 @@ const PostList = () => {
                 visible={isModalVisible}
                 onClose={handleClose}
                 postData={postDataForReport}
+                onReport={onReport}
             />
         </>
     );
