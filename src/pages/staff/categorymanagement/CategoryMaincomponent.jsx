@@ -1,10 +1,12 @@
 import React from 'react'
-import ReportTable from './TableReport'
 import { useDeletePostStaffMutation, useDeleteReportStaffMutation, useGetAllPendingPostsQuery, useGetReportQuery } from '../../../services/postAPI'
 import { message } from 'antd';
+import TableCategories from './TableCategoty';
+import { useGetAllCategoriesQuery } from '../../../services/productAPI';
 
-const reportMainComponent = () => {
-    const { data: reportData, isLoading, refetch: refetchDataReport } = useGetReportQuery();
+const CategoriesMainComponent = () => {
+    const { data: categoryData, isLoading, refetch: refetchDataCategory } = useGetAllCategoriesQuery();
+    console.log(categoryData);
     const { refetch: refetchPostData } = useGetAllPendingPostsQuery();
     const [deletePost] = useDeletePostStaffMutation();
     const [deleteReport] = useDeleteReportStaffMutation();
@@ -23,12 +25,13 @@ const reportMainComponent = () => {
 
     return (
         <div style={{ marginTop: '6.5rem', width: '100%' }}>
-            <ReportTable
-                reportData={reportData}
+            <TableCategories
+                categoryData={categoryData}
                 onDelete={handleDeletePost}
+                refetchDataCategory={refetchDataCategory}
             />
         </div>
     )
 }
 
-export default reportMainComponent
+export default CategoriesMainComponent

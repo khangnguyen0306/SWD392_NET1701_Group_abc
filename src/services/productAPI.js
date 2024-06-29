@@ -7,7 +7,7 @@ import { selectTokens } from "../slices/auth.slice";
 export const productAPI = createApi({
   reducerPath: "productManagement",
   // Tag types are used for caching and invalidation.
-  tagTypes: ["ProductList,CategoriesList,ProductExchangeList"],
+  tagTypes: ["ProductList,CategoriesList,ProductExchangeList", "SubcategoryList"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
@@ -87,24 +87,12 @@ export const productAPI = createApi({
           : [{ type: "ProductList", id: "LIST" }],
     }),
 
-    // getClassById: builder.query({
-    //   query: (classId) => ({
-    //     url: `viewclass/${classId}`, // Use template literal for security
-    //     method: "GET",
-    //   }),
-    //   providesTags: (result) => {
-    //     if (Array.isArray(result)) {
-    //       // Handle array case (multiple classes)
-    //       return result.map(({ id }) => ({ type: "ClassList", id }));
-    //     } else if (result && result.id) {
-    //       // Handle object case (single class)
-    //       return [{ type: "ClassList", id: result.id }];
-    //     } else {
-    //       // Handle no data case (optional)
-    //       return [];
-    //     }
-    //   },
-    // }),
+    getSubCategoryById: builder.query({
+      query: (subCId) => ({
+        url: `subcategory/getsubcategorybyid/${subCId}`, // Use template literal for security
+        method: "GET",
+      }),
+    }),
 
     // duplicateClass: builder.mutation({
     //   query: (body) => {
@@ -136,6 +124,38 @@ export const productAPI = createApi({
         };
       },
       invalidatesTags: [{ type: "ProductExchangeList", id: "LIST" }],
+    }),
+    createSubcategory: builder.mutation({
+      query: (body) => {
+        return {
+          method: "POST",
+          url: `subcategory/addsubcategory`,
+          body,
+        };
+      },
+      invalidatesTags: [{ type: "SubcategoryList", id: "LIST" }],
+    }),
+
+    editSubcategory: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "PUT",
+          url: `subcategory/updatesubcategory/` + payload.id,
+          body: payload.body,
+        };
+      },
+      invalidatesTags: (res, err, arg) => [{ type: "SubcategoryList", id: arg.id }],
+    }),
+    deleteSubcategory: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "PUT",
+          url: `subcategory/deletesubcategory/` + payload,
+        };
+      },
+      invalidatesTags: (_res, _err, _arg) => [
+        { type: "SubcategoryList", id: "LIST" },
+      ],
     }),
 
     editProduct: builder.mutation({
@@ -176,7 +196,11 @@ export const {
   useGetAllProductByUserIdQuery,
   useDeleteProductMutation,
   useCreateProductForExchangeMutation,
-  useEditProductMutation
+  useEditProductMutation,
+  useCreateSubcategoryMutation,
+  useEditSubcategoryMutation,
+  useDeleteSubcategoryMutation,
+  useGetSubCategoryByIdQuery
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,
   //   useGetClassByIdQuery,

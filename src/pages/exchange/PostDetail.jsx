@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useGetPostDetailQuery } from '../../services/postAPI';
-import { Card, Skeleton, Badge, Avatar, Alert, Layout, Row, Col, Tag, Image, Button, Modal } from 'antd';
+import { Card, Skeleton, Badge, Avatar, Alert, Layout, Row, Col, Tag, Image, Button, Modal, message } from 'antd';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
@@ -54,7 +54,8 @@ const PostDetail = () => {
         try {
             await refetch();
         } catch (error) {
-            console.error('Error refetching post detail:', error);
+            message.warning("Login expired, please log in again.")
+            navigate('/login');
         }
     };
 
@@ -83,7 +84,6 @@ const PostDetail = () => {
 
     return (
         <>
-            <CustomHeader />
             <Content style={{ minHeight: '100vh' }}>
                 <Button
                     style={{ position: 'absolute', marginTop: '7rem', left: '2rem' }}
@@ -175,7 +175,6 @@ const PostDetail = () => {
                     </Col>
                 </Row>
             </Content>
-            <CustomFooter />
             <Modal open={isModalVisible} footer={null} onCancel={handleModalCancel}>
                 <Image src={selectedImage} alt="Selected Image" style={{ width: '100%' }} />
             </Modal>

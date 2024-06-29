@@ -19,6 +19,7 @@ const AddProductExchange = Loadable({ loader: () => import("../pages/exchange/Mo
 const ProductDetailForAll = Loadable({ loader: () => import("../pages/product/ProductDetailForAll") });
 const Activity = Loadable({ loader: () => import("../pages/activity/ActivityMain") });
 const Chat = Loadable({ loader: () => import("../pages/chat/ChatPage") });
+const Category = Loadable({ loader: () => import("../pages/staff/categorymanagement/CategoryMaincomponent") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
@@ -66,10 +67,8 @@ export const router = createBrowserRouter([
     element: ProductDetail,
   },
 
-  {
-    path: "/postDetail/:postId",
-    element: PostDetail,
-  },
+
+
   {
     element: <MainLayout />,
     children: [
@@ -110,6 +109,15 @@ export const router = createBrowserRouter([
             path: "postmanager",
             element: Postmanager
           },
+          {
+            path: "/postDetail/:postId",
+            element: PostDetail,
+          },
+          {
+            path: "/manage-categories",
+            element: Category,
+          },
+
 
         ],
       },

@@ -62,6 +62,16 @@ const CustomHeader = () => {
             </Menu.Item>
         </Menu>
     );
+    const menuNologin = (
+        <Menu>
+            <Menu.Item key="login">
+                <NavLink to="/login" activeClassName="active">Login</NavLink> {/* Thay đổi từ Link sang NavLink */}
+            </Menu.Item>
+            <Menu.Item key="register">
+                <NavLink to="/register" activeClassName="active">Register</NavLink> {/* Thay đổi từ Link sang NavLink */}
+            </Menu.Item>
+        </Menu>
+    );
 
     const renderMenuItems = () => {
         if (user?.roleId === 1) {
@@ -88,7 +98,7 @@ const CustomHeader = () => {
                         <NavLink to="/postmanager" activeClassName="active">Report Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-products">
-                        <NavLink to="/manage-products" activeClassName="active">Manage Products</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-categories" activeClassName="active"> Category Management </NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-posts">
                         <NavLink to="/manage-posts" activeClassName="active">Manage Report</NavLink> {/* Thay đổi từ Link sang NavLink */}
@@ -143,9 +153,16 @@ const CustomHeader = () => {
                                 <ShoppingCartOutlined style={{ fontSize: '30px' }} />
                             </Badge>
                         </p>
-                        <Dropdown overlay={menu} trigger={['hover']}>
-                            <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
-                        </Dropdown>
+                        {user ? (
+                            <Dropdown overlay={menu} trigger={['hover']}>
+                                <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
+                            </Dropdown>
+                        ) : (
+                            <Dropdown overlay={menuNologin} trigger={['hover']}>
+                                <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
+                            </Dropdown>
+
+                        )}
                     </div>
                 </>
             ) : (

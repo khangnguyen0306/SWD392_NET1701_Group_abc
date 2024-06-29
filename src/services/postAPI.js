@@ -4,7 +4,7 @@ import { selectTokens } from '../slices/auth.slice';
 
 export const postAPI = createApi({
     reducerPath: "postManagement",
-    tagTypes: ["PostList", "ExchangeList","ReportList"],
+    tagTypes: ["PostList", "ExchangeList", "ReportList"],
     baseQuery: fetchBaseQuery({
         baseUrl: BE_API_LOCAL,
         prepareHeaders: (headers, { getState }) => {
@@ -131,7 +131,7 @@ export const postAPI = createApi({
             },
             invalidatesTags: [{ type: "ReportList", id: "LIST" }],
         }),
-        
+
         createPost: builder.mutation({
             query: (body) => {
                 return {
@@ -181,6 +181,20 @@ export const postAPI = createApi({
 
             }),
         }),
+        deletePostStaff: builder.mutation({
+            query: (payload) => ({
+                method: 'PUT',
+                url: `posts/updatestatuspost/${payload.id}?newStatus=${payload.newStatus}`,
+
+            }),
+        }),
+        deleteReportStaff: builder.mutation({
+            query: (payload) => ({
+                method: 'PUT',
+                url: `report/deletereport/${payload}`,
+
+            }),
+        }),
 
     }),
 });
@@ -196,7 +210,9 @@ export const {
     useApprovePostMutation,
     useGetAllPostByUserQuery,
     useCreateReportMutation,
-    useGetReportQuery
+    useGetReportQuery,
+    useDeletePostStaffMutation,
+    useDeleteReportStaffMutation
     // useGetAllCategoriesQuery,
     // useGetProductDetailQuery
     //   useDuplicateClassMutation,

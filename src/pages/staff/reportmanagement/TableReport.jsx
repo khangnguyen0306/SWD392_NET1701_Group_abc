@@ -1,26 +1,31 @@
 import React, { useState } from 'react';
 import { Table, Tag, Menu, Popconfirm, Dropdown, Button } from 'antd';
-import { CloseSquareOutlined, DeleteOutlined, EditOutlined, MoreOutlined } from '@ant-design/icons';
+import { CloseSquareOutlined, DeleteOutlined, EditOutlined, InfoCircleOutlined, MoreOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
-const ReportTable = ({ reportData, onEdit }) => {
+const ReportTable = ({ reportData, onDelete }) => {
     const [sortedInfo, setSortedInfo] = useState({});
 
     const actionsMenu = (record) => (
         <Menu>
-            <Menu.Item key="edit" onClick={() => onEdit(record)}>
-                <EditOutlined /><span>Edit Report</span>
-            </Menu.Item>
-            <Menu.Item key="de-ActiveReport">
-                <CloseSquareOutlined /><span>De-activate Report</span>
+            <Menu.Item key="edit">
+                <Link to={`/postDetail/${record.id}`}>
+                    <p style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ paddingRight: '0.5rem', color: '#EEC900', fontSize: '18px' }}>
+                            <InfoCircleOutlined /></span><span>View post detail</span></p>
+                </Link>
             </Menu.Item>
             <Menu.Item key="delete">
                 <Popconfirm
                     title="Are you sure you want to delete this report?"
-                    // onConfirm={() => handleDeleteReport(record.id)}
+                    onConfirm={() => onDelete(record.postId, record.id)}
                     okText="Yes"
                     cancelText="No"
                 >
-                    <DeleteOutlined /><span>Delete Report</span>
+                    <p>
+                        <span style={{ paddingRight: '0.5rem', color: '#EE2C2C', fontSize: '18px' }}>
+                            <DeleteOutlined /></span>
+                        <span>Delete Report</span></p>
                 </Popconfirm>
             </Menu.Item>
         </Menu>
@@ -89,7 +94,7 @@ const ReportTable = ({ reportData, onEdit }) => {
             key: 'actions',
             render: (text, record) => (
                 <Dropdown placement="bottomRight" trigger={['click']} overlay={() => actionsMenu(record)}>
-                    <span style={{ cursor: 'pointer' }}><MoreOutlined /></span>
+                    <span style={{ cursor: 'pointer', fontSize: '20px' }}><MoreOutlined /></span>
                 </Dropdown>
             ),
         },

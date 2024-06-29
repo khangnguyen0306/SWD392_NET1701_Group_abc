@@ -1,17 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Avatar, Input, Modal, Tabs, Form, Button } from 'antd';
+import { Card, Avatar, Input, Modal, Tabs, Form, Button, Space, Typography } from 'antd';
 import "./ExchangePage.scss";
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
 import PostList from './PostList';
 import CreatePost from './CreatePost';
-
 import PostListByUser from './PostListByUserId';
 import MyProducts from './MyProduct';
 import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../slices/auth.slice';
+import { useNavigate } from 'react-router-dom';
+import { LoginOutlined, UserOutlined } from '@ant-design/icons';
 
 const { TabPane } = Tabs;
-
+const { Title, Text } = Typography;
 const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
   const [product, setProduct] = useState({
     user_id: '',
@@ -25,14 +28,13 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
     userAvatar: 'path_to_avatar_image',
     userName: 'User Name',
   });
-  const [posts, setPosts] = useState(initialPosts);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingPostId, setEditingPostId] = useState(null);
   const [activeTab, setActiveTab] = useState('1');
-  const fileInputRef = useRef(null);
-  const form = Form.useForm();
   const { data: productData, isLoading: isLoadingProduct, refetch } = useGetAllProductForExchangeQuery();
-  const [isAddProductModalVisible, setIsAddProductModalVisible] = useState(false);
+  const user = useSelector(selectCurrentUser);
+  const navigate = useNavigate();
+  console.log(user);
 
   useEffect(() => {
     refetch();
@@ -59,38 +61,40 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
     setEditingPostId(null);
   };
 
-  const openAddProductModal = () => {
-    setIsAddProductModalVisible(true);
-  };
+  // const openAddProductModal = () => {
+  //   setIsAddProductModalVisible(true);
+  // };
 
-  const closeAddProductModal = () => {
-    setIsAddProductModalVisible(false);
-  };
+  // const closeAddProductModal = () => {
+  //   setIsAddProductModalVisible(false);
+  // };
 
-  const handleEdit = (post) => {
-    setProduct(post);
-    setEditingPostId(post.id);
-    setIsModalVisible(true);
-  };
+  // const handleEdit = (post) => {
+  //   setProduct(post);
+  //   setEditingPostId(post.id);
+  //   setIsModalVisible(true);
+  // };
 
-  const handleDelete = (postId) => {
-    const updatedPosts = posts.filter(post => post.id !== postId);
-    setPosts(updatedPosts);
-    onSubmit(updatedPosts);
-  };
+  // const handleDelete = (postId) => {
+  //   const updatedPosts = posts.filter(post => post.id !== postId);
+  //   setPosts(updatedPosts);
+  //   onSubmit(updatedPosts);
+  // };
 
   return (
     <>
       <CustomHeader />
 
       <div className="exchange-page" style={{ marginTop: '10rem' }}>
-        <Card>
-          <div className="input-placeholder" onClick={openModal}>
-            <Avatar src="path_to_avatar_image" />
-            <Input placeholder="Bạn muốn bán hay trao đổi đồ vật gì đấy?" readOnly />
-          </div>
-        </Card>
-   
+        {user ? (
+          <Card>
+            <div className="input-placeholder" onClick={openModal}>
+              <Avatar src="path_to_avatar_image" />
+              <Input placeholder="Bạn muốn bán hay trao đổi đồ vật gì đấy?" readOnly />
+            </div>
+          </Card>
+        ) : null}
+
         <Modal
           title="Create post"
           open={isModalVisible}
@@ -109,10 +113,52 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
             <PostList />
           </TabPane>
           <TabPane tab="My post" key="2">
-            <PostListByUser />
+            {user ? (
+              <PostListByUser />
+            ) : (
+              <div style={{ textAlign: 'center' }}>
+                <Space direction="vertical" size="large" align="center">
+                  <Title level={4}>Login Required</Title>
+                  <p style={{ fontSize: '3rem' }}><UserOutlined /></p>
+                  <Text type="secondary">
+                    You need to login to see your products.
+                  </Text>
+
+                  <Button
+                    type="primary"
+                    icon={<LoginOutlined />}
+                    size="large"
+                    onClick={() => navigate('/login', { state: { from: '/exchange' } })}
+                  >
+                    Login to see your products
+                  </Button>
+                </Space>
+              </div>
+            )}
           </TabPane>
           <TabPane tab="My Product" key="3">
-            <MyProducts />
+            {user ? (
+              <MyProducts />
+            ) : (
+              <div style={{ textAlign: 'center' }}>
+                <Space direction="vertical" size="large" align="center">
+                  <Title level={4}>Login Required</Title>
+                  <p style={{ fontSize: '3rem' }}><UserOutlined /></p>
+                  <Text type="secondary">
+                    You need to login to see your products.
+                  </Text>
+
+                  <Button
+                    type="primary"
+                    icon={<LoginOutlined />}
+                    size="large"
+                    onClick={() => navigate('/login', { state: { from: '/exchange' } })}
+                  >
+                    Login to see your products
+                  </Button>
+                </Space>
+              </div>
+            )}
           </TabPane>
         </Tabs>
       </div>
