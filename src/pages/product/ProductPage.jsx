@@ -10,7 +10,7 @@ import Search from 'antd/es/input/Search';
 import { useDeleteProductMutation, useGetAllCategoriesQuery, useGetAllProductByUserIdQuery, useGetAllProductQuery } from '../../services/productAPI';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, loadCartFromLocalStorage } from '../../slices/product.slice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AddProductModal from './AddProductModal';
 import { selectCurrentUser } from '../../slices/auth.slice';
 import ModalEditProduct from './EditProductModal';
@@ -24,6 +24,7 @@ const ProductPage = () => {
     const { data: productByUserIdData, isLoadingProductByUserId, refetch: refetchProductByIdData } = useGetAllProductByUserIdQuery();
     const { data: categoriesData, isLoadingCategories, refetch: refetchCategories } = useGetAllCategoriesQuery();
     const user = useSelector(selectCurrentUser);
+    const navigate = useNavigate();
     const [deleteProduct] = useDeleteProductMutation();
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -94,6 +95,9 @@ const ProductPage = () => {
         return categoryMatches && subcategoryMatches && priceMatches && locationMatches && searchMatches;
     });
 
+    const handleRedirect = () => {
+        navigate("/login")
+    };
     const handleAddProduct = () => {
         setIsModalAddVisible(true);
     };
@@ -269,34 +273,43 @@ const ProductPage = () => {
                                 My Products
                             </Button>
                         </div>
-                        <Button
-                            icon={<PlusCircleOutlined />}
-                            size='large'
-                            onClick={handleAddProduct}
-                            type='primary' > Add product</Button>
+                        {user ? (
+                            <Button
+                                icon={<PlusCircleOutlined />}
+                                size='large'
+                                onClick={handleAddProduct}
+                                type='primary' > Add product</Button>
+                        ) : (
+                            <Button
+                                icon={<PlusCircleOutlined />}
+                                size='large'
+                                type='primary'
+                                onClick={handleRedirect}
+                            >Add product</Button>
+                        )}
                     </div>
                     <div className={`product-list ${view}`}>
                         <Row gutter={[16, 16]}>
                             {paginatedProducts?.map(product => (
-                                <Col key={product.id} span={view === 'grid' ? 6 : 24}>
+                                <Col key={product?.id} span={view === 'grid' ? 6 : 24}>
 
                                     <Card className='card-product'>
                                         <Link
-                                            to={`/productDetail/${product.id}`}
+                                            to={`/productDetail/${product?.id}`}
                                             onClick={(e) => e.stopPropagation()}
                                             style={{ color: 'black' }}>
                                             <div style={{ marginBottom: '1rem' }}>
                                                 <img src={product?.urlImg} width={"190px"} height={"170px"} className='product-image' />
-                                                <p className='card-product-name'>{product.name}</p>
-                                                <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product.price}₫</span></p>
-                                                {product.price === 0 && <Tag color="gold">Product for Exchange</Tag>}
-                                                <p>Location: {product.location}</p>
+                                                <p className='card-product-name'>{product?.name}</p>
+                                                <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product?.price}₫</span></p>
+                                                {product?.price === 0 && <Tag color="gold">Product for Exchange</Tag>}
+                                                <p>Location: {product?.location}</p>
                                             </div>
                                         </Link>
-                                        {(user.id === product.userId) ? (
+                                        {(user?.id === product?.userId) ? (
                                             <div className="card-actions">
-                                                <EditOutlined key="edit" onClick={(e) => { e.stopPropagation(); handleEditProduct(product.id); }} />
-                                                <DeleteOutlined key="delete" onClick={(e) => { e.stopPropagation(); dispatch(handleDeleteProduct(product.id)); }} />
+                                                <EditOutlined key="edit" onClick={(e) => { e.stopPropagation(); handleEditProduct(product?.id); }} />
+                                                <DeleteOutlined key="delete" onClick={(e) => { e.stopPropagation(); dispatch(handleDeleteProduct(product?.id)); }} />
                                             </div>
                                         ) : (
                                             <div className="card-actions"></div>
@@ -324,11 +337,11 @@ const ProductPage = () => {
                 onCancel={handleModalAddCancel}
                 refetchProductData={refetchProductData}
             />
-               <ModalEditProduct
+            <ModalEditProduct
                 visible={isModalEditVisible}
                 onOk={handleModalEditOk}
                 onCancel={handleModalEditCancel}
-                productData={selectedProduct} 
+                productData={selectedProduct}
                 refetchProductData={refetchProductData}
             />
         </>

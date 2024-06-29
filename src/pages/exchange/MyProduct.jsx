@@ -70,7 +70,7 @@ const MyProducts = () => {
 
     // Calculate the products to be displayed on the current page
     const startIndex = (currentPage - 1) * pageSize;
-    const currentProducts = productData.slice(startIndex, startIndex + pageSize);
+    const currentProducts = productData?.slice(startIndex, startIndex + pageSize);
 
     return (
         <div style={{ padding: '20px' }}>
@@ -82,12 +82,12 @@ const MyProducts = () => {
                     </Button>
                 </Link>
             </div>
-            {productData.length === 0 ? (
+            {productData?.length === 0 ? (
                 <Empty description="No products available" />
             ) : (
                 <>
                     <Row gutter={16} style={{ marginTop: '3rem' }}>
-                        {currentProducts.map(product => (
+                        {currentProducts?.map(product => (
                             <Col span={8} key={product.id} style={{ marginBottom: '16px' }}>
                                 <Card
                                     hoverable
@@ -115,7 +115,7 @@ const MyProducts = () => {
                     <Pagination
                         current={currentPage}
                         pageSize={pageSize}
-                        total={productData.length}
+                        total={productData?.length}
                         onChange={page => setCurrentPage(page)}
                         style={{ marginTop: '2rem', textAlign: 'center' }}
                     />

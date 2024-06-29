@@ -14,11 +14,12 @@ const PostDetail = Loadable({ loader: () => import("../pages/exchange/PostDetail
 const AboutUs = Loadable({ loader: () => import("../pages/About/AboutUs") });
 const dashboardAdmin = Loadable({ loader: () => import("../pages/dashboard/jsx/DashboardManagement") });
 const errorPage = Loadable({ loader: () => import("../pages/error/Error") });
-const Postmanager = Loadable({ loader: () => import("../pages/Postmanager/PostManagement") });
+const Postmanager = Loadable({ loader: () => import("../pages/staff/reportmanagement/reportMainComponent") });
 const AddProductExchange = Loadable({ loader: () => import("../pages/exchange/ModalAddProductForEx") });
 const ProductDetailForAll = Loadable({ loader: () => import("../pages/product/ProductDetailForAll") });
 const Activity = Loadable({ loader: () => import("../pages/activity/ActivityMain") });
 const Chat = Loadable({ loader: () => import("../pages/chat/ChatPage") });
+const Category = Loadable({ loader: () => import("../pages/staff/categorymanagement/CategoryMaincomponent") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
@@ -30,10 +31,7 @@ export const router = createBrowserRouter([
     path: "/login",
     element: Login,
   },
-  {
-    path:"postmanager",
-    element:Postmanager
-  },
+
   {
     path: "/register",
     element: Register,
@@ -58,7 +56,7 @@ export const router = createBrowserRouter([
     path: "/about",
     element: AboutUs,
   },
-  
+
   {
     path: "/productDetailForAll/:productId",
     element: ProductDetailForAll,
@@ -69,10 +67,8 @@ export const router = createBrowserRouter([
     element: ProductDetail,
   },
 
-  {
-    path: "/postDetail/:postId",
-    element: PostDetail,
-  },
+
+
   {
     element: <MainLayout />,
     children: [
@@ -94,12 +90,12 @@ export const router = createBrowserRouter([
             element: UserProfile,
           },
           {
-            path:"dashboard",
-            element:dashboardAdmin
+            path: "dashboard",
+            element: dashboardAdmin
           },
           {
-            path:"addProductForExchange",
-            element:AddProductExchange
+            path: "addProductForExchange",
+            element: AddProductExchange
           },
           {
             path: "/activity",
@@ -109,7 +105,20 @@ export const router = createBrowserRouter([
             path: "/chat",
             element: Chat,
           },
-         
+          {
+            path: "postmanager",
+            element: Postmanager
+          },
+          {
+            path: "/postDetail/:postId",
+            element: PostDetail,
+          },
+          {
+            path: "/manage-categories",
+            element: Category,
+          },
+
+
         ],
       },
     ]

@@ -17,8 +17,8 @@ const CustomHeader = () => {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const [drawerVisible, setDrawerVisible] = useState(false);
-    const [cartVisible, setCartVisible] = useState(false); 
-    const totalProducts = useSelector(selectTotalProducts); 
+    const [cartVisible, setCartVisible] = useState(false);
+    const totalProducts = useSelector(selectTotalProducts);
     const user = useSelector(selectCurrentUser);
     const navigate = useNavigate();
 
@@ -62,6 +62,16 @@ const CustomHeader = () => {
             </Menu.Item>
         </Menu>
     );
+    const menuNologin = (
+        <Menu>
+            <Menu.Item key="login">
+                <NavLink to="/login" activeClassName="active">Login</NavLink> {/* Thay đổi từ Link sang NavLink */}
+            </Menu.Item>
+            <Menu.Item key="register">
+                <NavLink to="/register" activeClassName="active">Register</NavLink> {/* Thay đổi từ Link sang NavLink */}
+            </Menu.Item>
+        </Menu>
+    );
 
     const renderMenuItems = () => {
         if (user?.roleId === 1) {
@@ -82,10 +92,13 @@ const CustomHeader = () => {
             return (
                 <>
                     <Menu.Item key="post-management">
-                        <NavLink to="/postmanager" activeClassName="active">Post Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/" activeClassName="active">Post Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                    </Menu.Item>
+                    <Menu.Item key="report-management">
+                        <NavLink to="/postmanager" activeClassName="active">Report Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-products">
-                        <NavLink to="/manage-products" activeClassName="active">Manage Products</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-categories" activeClassName="active"> Category Management </NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-posts">
                         <NavLink to="/manage-posts" activeClassName="active">Manage Report</NavLink> {/* Thay đổi từ Link sang NavLink */}
@@ -98,20 +111,20 @@ const CustomHeader = () => {
                     <Menu.Item key="1">
                         <NavLink exact to="/" activeClassName="active">Home</NavLink>
                     </Menu.Item>
-                 
+
                     <Menu.Item key="2">
-                        <NavLink to="/product" activeClassName="active"> Buy Product</NavLink> 
+                        <NavLink to="/product" activeClassName="active"> Buy Product</NavLink>
                     </Menu.Item>
                     <Menu.Item key="3">
-                        <NavLink to="/exchange" activeClassName="active">Exchange Product</NavLink> 
+                        <NavLink to="/exchange" activeClassName="active">Exchange Product</NavLink>
                     </Menu.Item>
                     <Menu.Item key="5">
                         <NavLink to="/activity" activeClassName="active">Activity</NavLink>
                     </Menu.Item>
                     <Menu.Item key="4">
-                        <NavLink to="/about" activeClassName="active">About us</NavLink> 
+                        <NavLink to="/about" activeClassName="active">About us</NavLink>
                     </Menu.Item>
-                 
+
                     <Menu.Item key="6">
                         <NavLink to="/chat" activeClassName="active">Chat</NavLink>
                     </Menu.Item>
@@ -140,9 +153,16 @@ const CustomHeader = () => {
                                 <ShoppingCartOutlined style={{ fontSize: '30px' }} />
                             </Badge>
                         </p>
-                        <Dropdown overlay={menu} trigger={['hover']}>
-                            <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
-                        </Dropdown>
+                        {user ? (
+                            <Dropdown overlay={menu} trigger={['hover']}>
+                                <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
+                            </Dropdown>
+                        ) : (
+                            <Dropdown overlay={menuNologin} trigger={['hover']}>
+                                <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
+                            </Dropdown>
+
+                        )}
                     </div>
                 </>
             ) : (

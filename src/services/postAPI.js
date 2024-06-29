@@ -4,7 +4,7 @@ import { selectTokens } from '../slices/auth.slice';
 
 export const postAPI = createApi({
     reducerPath: "postManagement",
-    tagTypes: ["PostList", "ExchangeList"],
+    tagTypes: ["PostList", "ExchangeList", "ReportList"],
     baseQuery: fetchBaseQuery({
         baseUrl: BE_API_LOCAL,
         prepareHeaders: (headers, { getState }) => {
@@ -111,6 +111,26 @@ export const postAPI = createApi({
         //   },
         //   invalidatesTags: [{ type: "ClassList", id: "LIST" }],
         // }),
+        getReport: builder.query({
+            query: () => 'report/getallreport',
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ id }) => ({ type: 'ReportList', id })),
+                        { type: 'ReportList', id: 'PENDING_LIST' },
+                    ]
+                    : [{ type: 'ReportList', id: 'PENDING_LIST' }],
+        }),
+        createReport: builder.mutation({
+            query: (payload) => {
+                return {
+                    method: "POST",
+                    url: `report/addreport`,
+                    body: { postId: payload.id, description: payload.body },
+                };
+            },
+            invalidatesTags: [{ type: "ReportList", id: "LIST" }],
+        }),
 
         createPost: builder.mutation({
             query: (body) => {
@@ -158,7 +178,21 @@ export const postAPI = createApi({
             query: (payload) => ({
                 method: 'PUT',
                 url: `posts/updatestatuspost/${payload.id}?newStatus=${payload.newStatus}`,
-               
+
+            }),
+        }),
+        deletePostStaff: builder.mutation({
+            query: (payload) => ({
+                method: 'PUT',
+                url: `posts/updatestatuspost/${payload.id}?newStatus=${payload.newStatus}`,
+
+            }),
+        }),
+        deleteReportStaff: builder.mutation({
+            query: (payload) => ({
+                method: 'PUT',
+                url: `report/deletereport/${payload}`,
+
             }),
         }),
 
@@ -174,7 +208,11 @@ export const {
     useCreateExchangeMutation,
     useGetAllPendingPostsQuery,
     useApprovePostMutation,
-    useGetAllPostByUserQuery
+    useGetAllPostByUserQuery,
+    useCreateReportMutation,
+    useGetReportQuery,
+    useDeletePostStaffMutation,
+    useDeleteReportStaffMutation
     // useGetAllCategoriesQuery,
     // useGetProductDetailQuery
     //   useDuplicateClassMutation,
