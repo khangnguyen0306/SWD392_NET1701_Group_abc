@@ -19,7 +19,8 @@ const AddProductExchange = Loadable({ loader: () => import("../pages/exchange/Mo
 const ProductDetailForAll = Loadable({ loader: () => import("../pages/product/ProductDetailForAll") });
 const Activity = Loadable({ loader: () => import("../pages/activity/ActivityMain") });
 const Chat = Loadable({ loader: () => import("../pages/chat/ChatPage") });
-const Category = Loadable({ loader: () => import("../pages/staff/categorymanagement/CategoryMaincomponent") });
+const Category = Loadable({ loader: () => import("../pages/staff/subcategorymanagement/CategoryMaincomponent") });
+const ProductManagement = Loadable({ loader: () => import("../pages/productManagement/MainComponent") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([
           {
             path: "/manage-categories",
             element: Category,
+          },
+          {
+            path: "/manage-products",
+            element: ProductManagement,
           },
 
 

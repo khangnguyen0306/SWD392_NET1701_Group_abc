@@ -12,7 +12,7 @@ const EditUserModal = ({ visible, handleEdit, handleCancel, userData }) => {
     const [emailError, setEmailError] = useState('');
 
     useEffect(() => {
-        if (userData) {
+        if (visible && userData) {
             const userDataWithMomentDOB = {
                 ...userData,
                 dob: moment(userData.DOB), // Convert DOB to a moment object
@@ -20,7 +20,7 @@ const EditUserModal = ({ visible, handleEdit, handleCancel, userData }) => {
             };
             form.setFieldsValue(userDataWithMomentDOB);
         }
-    }, [userData, form]);
+    }, [visible, userData, form]);
     const onFinish = (values) => {
         // const { email } = values;
         // const emailExists = existingEmails.includes(email && email !== userData.email);
@@ -95,14 +95,14 @@ const EditUserModal = ({ visible, handleEdit, handleCancel, userData }) => {
                 <Form.Item
                     label="Address"
                     name="address"
-                    // rules={[
-                    //     {
-                    //         pattern: validationPatterns.email.pattern,
-                    //         required: true,
-                    //         message: validationPatterns.email.message,
-                    //         type: 'email'
-                    //     },
-                    // ]}
+                // rules={[
+                //     {
+                //         pattern: validationPatterns.email.pattern,
+                //         required: true,
+                //         message: validationPatterns.email.message,
+                //         type: 'email'
+                //     },
+                // ]}
                 // validateStatus={emailError ? 'error' : ''}
                 // help={emailError}
                 >
