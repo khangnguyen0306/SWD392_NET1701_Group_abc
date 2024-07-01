@@ -63,6 +63,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                 });
                 message.success('Product updated successfully');
                 refetchProductData();
+                setNewImageUrl(null);
                 onCancel();
             } catch {
                 message.error('Failed to update Product');

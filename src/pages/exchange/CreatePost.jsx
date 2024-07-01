@@ -26,6 +26,7 @@ const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
       message.success('Post created successfully');
       refetchPosts();
       form.resetFields();
+      setImages(null);
       setIsModalVisible(false);
     } catch (error) {
       message.error('Failed to create post');
@@ -89,7 +90,7 @@ const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
           setState={handleImageChange}
         />
         <div style={{ marginTop: '10px' }}>
-          {images.map((image, index) => (
+          {images?.map((image, index) => (
             <Image
               key={index}
               src={image}

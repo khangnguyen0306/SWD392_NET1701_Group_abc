@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Avatar, Input, Modal, Tabs, Form, Button, Space, Typography } from 'antd';
+import { Card, Avatar, Input, Modal, Tabs, Form, Button, Space, Typography, Layout } from 'antd';
 import "./ExchangePage.scss";
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
@@ -85,7 +85,7 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
     <>
       <CustomHeader />
 
-      <div className="exchange-page" style={{ marginTop: '10rem' }}>
+      <div className="exchange-page" style={{ marginTop: '10rem',minHeight:'80vh'}}>
         {user ? (
           <Card>
             <div className="input-placeholder" onClick={openModal}>

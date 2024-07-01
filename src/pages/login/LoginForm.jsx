@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Form, Input, Button, Alert, notification } from "antd";
+import { Form, Input, Button, Alert, notification, message } from "antd";
 import "./Login.scss";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { EyeInvisibleOutlined, EyeTwoTone, LockFilled, LockOutlined, SmileFilled, SmileOutlined, UserOutlined } from "@ant-design/icons";
@@ -19,33 +19,36 @@ const LoginForm = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const result = await loginUser({ username: values.email, password: values.password });                                                                 // missing user Data
-      if (result.data.data.user && result.data.data.token) {
-        dispatch(setUser(result.data.data.user));
-        // console.log(result.data.roles)
-        dispatch(setToken(result.data.data.token));
-        localStorage.setItem("token", result.data.data.token);
+        const result = await loginUser({ email: values.email, password: values.password });
+        console.log(result);
+        if (result.data.data.user && result.data.data.token) {
+            dispatch(setUser(result.data.data.user));
+            dispatch(setToken(result.data.data.token));
+            localStorage.setItem("token", result.data.data.token);
 
-        notification.success({
-          message: "Login successfully",
-          description:
-            <div>
-              Welcome   {result.data.data.user.userName}   <SmileOutlined />
-            </div>,
-        });
-        const from = location.state?.from?.pathname || "/"; // Check for intended path
-        navigate(from)
-      } else {
-        notification.error({
-          message: "Login error",
-          description: "Invalid email or password. Try again!",
-        });
-        form.resetFields(); // Xóa dữ liệu trong các ô input
-      }
+            notification.success({
+                message: "Login successfully",
+                description: (
+                    <div>
+                        Welcome {result.data.data.user.userName} <SmileOutlined />
+                    </div>
+                ),
+            });
+
+            const from = location.state?.from || "/";
+            navigate(from);
+        } else {
+            notification.error({
+                message: "Login error",
+                description: "Invalid email or password. Try again!",
+            });
+            form.resetFields();
+        }
     } catch (error) {
-      setError("An error occurred while attempting to log in");
+        console.log("Login error:", error);
+        message.error("Username or Password incorrect");
     }
-  };
+};
 
   return (
     <div className="form-container">
@@ -58,8 +61,10 @@ const LoginForm = () => {
           </>
         )}
         <Form.Item
+        
           style={{ marginBottom: '2rem' }}
           name="email"
+          rules={[{ required: true, message: "Please input your Email" }]}
         // rules={[
         //   {
         //     required: true,
@@ -72,12 +77,12 @@ const LoginForm = () => {
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
+          rules={[{ required: true, message: "Please input your password" }]}
         >
           <Input.Password
             placeholder="new password"
             size="large" className="form-input"
-            prefix={<LockOutlined />} 
+            prefix={<LockOutlined />}
             iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
           />
         </Form.Item>

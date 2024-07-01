@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Input, Checkbox, Button, Select, Row, Col, Card, message, Pagination, Spin, Modal, Tag, Skeleton } from 'antd';
-import { SearchOutlined, AppstoreOutlined, BarsOutlined, FilterOutlined, PlusCircleOutlined, SettingOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { Layout, Input, Checkbox, Button, Select, Row, Col, Card, message, Pagination, Spin, Modal, Tag, Skeleton, Image, Dropdown, Menu } from 'antd';
+import { SearchOutlined, AppstoreOutlined, BarsOutlined, FilterOutlined, PlusCircleOutlined, SettingOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined, MenuOutlined, MoreOutlined } from '@ant-design/icons';
 import './ProductPage.scss';
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
@@ -155,6 +155,22 @@ const ProductPage = () => {
             },
         });
     };
+    const truncateName = (name, maxChars) => {
+        if (name.length > maxChars) {
+            return name.slice(0, maxChars) + '...';
+        }
+        return name;
+    };
+    // const menu = (productId) => (
+    //     <Menu>
+    //         <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => handleEditProduct(productId)}>
+    //             Edit
+    //         </Menu.Item>
+    //         <Menu.Item key="delete" icon={<DeleteOutlined />} onClick={() => handleDeleteProduct(productId)}>
+    //             Delete
+    //         </Menu.Item>
+    //     </Menu>
+    // );
 
     const paginatedProducts = filteredProducts?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
@@ -293,27 +309,43 @@ const ProductPage = () => {
                             {paginatedProducts?.map(product => (
                                 <Col key={product?.id} span={view === 'grid' ? 6 : 24}>
 
-                                    <Card className='card-product'>
+                                    <Card className="card-product">
+                                        {user?.id === product?.userId ? (
+                                            <div className='dropdown-menu'>
+                                                <Dropdown overlay={
+                                                    <Menu>
+                                                        <Menu.Item key="edit" icon={<EditOutlined style={{ color: '#EEC900' }} />} onClick={() => handleEditProduct(product.id)}>
+                                                            Edit
+                                                        </Menu.Item>
+                                                        <Menu.Item key="delete" icon={<DeleteOutlined style={{ color: '#EE2C2C' }} />} onClick={() => handleDeleteProduct(product.id)}>
+                                                            Delete
+                                                        </Menu.Item>
+                                                    </Menu>
+                                                } trigger={['hover']}>
+                                                    <Button type="text" icon={<SettingOutlined style={{ fontSize: '20px' }} />} size="large" />
+                                                </Dropdown>
+                                            </div>
+                                        ) : null}
                                         <Link
                                             to={`/productDetail/${product?.id}`}
                                             onClick={(e) => e.stopPropagation()}
-                                            style={{ color: 'black' }}>
-                                            <div style={{ marginBottom: '1rem' }}>
-                                                <img src={product?.urlImg} width={"190px"} height={"170px"} className='product-image' />
-                                                <p className='card-product-name'>{product?.name}</p>
-                                                <p className='card-product-price'>Price: <span style={{ color: '#000', fontWeight: 'bold' }}>{product?.price}₫</span></p>
-                                                {product?.price === 0 && <Tag color="gold">Product for Exchange</Tag>}
-                                                <p>Location: {product?.location}</p>
+                                            style={{ color: 'black' }}
+                                        >
+
+                                            <Image
+                                                src={product?.urlImg}
+                                                className="product-image"
+                                                preview={false}
+                                            />
+                                            <div className="card-content">
+                                                <p className="card-product-name">{truncateName(product?.name, 20)}</p>
+                                                <p className="card-product-price">
+                                                    Price: <span className="price-highlight"><span style={{ color: '#f05d40' }}>{product?.price}  ₫</span></span>
+                                                </p>
+                                                <p>Location: <span style={{ fontWeight: 'bold' }}>{product?.location}</span></p>
                                             </div>
                                         </Link>
-                                        {(user?.id === product?.userId) ? (
-                                            <div className="card-actions">
-                                                <EditOutlined key="edit" onClick={(e) => { e.stopPropagation(); handleEditProduct(product?.id); }} />
-                                                <DeleteOutlined key="delete" onClick={(e) => { e.stopPropagation(); dispatch(handleDeleteProduct(product?.id)); }} />
-                                            </div>
-                                        ) : (
-                                            <div className="card-actions"></div>
-                                        )}
+
                                     </Card>
 
                                 </Col>

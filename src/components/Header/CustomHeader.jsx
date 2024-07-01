@@ -92,16 +92,16 @@ const CustomHeader = () => {
             return (
                 <>
                     <Menu.Item key="post-management">
-                        <NavLink to="/" activeClassName="active">Post Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/" activeClassName="active">Post</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="report-management">
-                        <NavLink to="/postmanager" activeClassName="active">Report Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/postmanager" activeClassName="active">Report</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-Category">
-                        <NavLink to="/manage-categories" activeClassName="active"> Category Management </NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-categories" activeClassName="active"> Category </NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-posts">
-                        <NavLink to="/manage-products" activeClassName="active">Manage Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-products" activeClassName="active">Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                 </>
             );
@@ -111,7 +111,9 @@ const CustomHeader = () => {
                     <Menu.Item key="1">
                         <NavLink exact to="/" activeClassName="active">Home</NavLink>
                     </Menu.Item>
-
+                    <Menu.Item key="4">
+                        <NavLink to="/about" activeClassName="active">About us</NavLink>
+                    </Menu.Item>
                     <Menu.Item key="2">
                         <NavLink to="/product" activeClassName="active"> Buy Product</NavLink>
                     </Menu.Item>
@@ -121,9 +123,7 @@ const CustomHeader = () => {
                     <Menu.Item key="5">
                         <NavLink to="/activity" activeClassName="active">Activity</NavLink>
                     </Menu.Item>
-                    <Menu.Item key="4">
-                        <NavLink to="/about" activeClassName="active">About us</NavLink>
-                    </Menu.Item>
+
 
                     <Menu.Item key="6">
                         <NavLink to="/chat" activeClassName="active">Chat</NavLink>

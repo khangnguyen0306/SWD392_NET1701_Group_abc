@@ -11,7 +11,7 @@ const reportMainComponent = () => {
     const handleDeletePost = async (postId, reportId) => {
         console.log(postId);
         try {
-            await deletePost({ id: postId, newStatus: false }).unwrap();        ///chinh API 
+            await deletePost({ id: postId, newStatus: false }).unwrap();      
             await deleteReport(reportId);
             refetchDataReport();
             refetchPostData();
@@ -22,7 +22,7 @@ const reportMainComponent = () => {
     };
 
     return (
-        <div style={{ marginTop: '6.5rem', width: '100%' }}>
+        <div style={{ marginTop: '6.5rem', width: '100%',height:'100vh' }}>
             <ReportTable
                 reportData={reportData}
                 onDelete={handleDeletePost}

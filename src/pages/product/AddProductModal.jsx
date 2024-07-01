@@ -77,7 +77,7 @@ const ModalAddProduct = ({ visible, onOk, onCancel,refetchProductData }) => {
                         ))}
                     </Select>
                 </Form.Item>
-                <Form.Item name="subcategoryId" label="Subcategory" rules={[{ required: true, message: 'Please select a subcategory' }]}>
+                <Form.Item name="subcategoryId" label="Subcategory" >
                     <Select
                         loading={isLoadingSubcategories}
                         placeholder="Select Subcategory"

@@ -82,8 +82,9 @@ const PostListByUser = () => {
     }
 
     if (!postData || postData.length === 0) {
-        return <Empty description="No posts available" />;
-    }
+        return(
+        <div><Empty description="No posts available" /></div>
+    )}
 
     return (
         <div style={{ paddingLeft: '240px' }}>

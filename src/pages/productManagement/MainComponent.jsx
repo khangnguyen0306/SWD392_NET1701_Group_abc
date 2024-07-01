@@ -7,19 +7,22 @@ import { useGetAllProductQuery } from '../../services/productAPI';
 const { TabPane } = Tabs;
 
 const MainComponent = () => {
-    const { data: productsForSale, error: errorSale, isLoading: loadingSale } = useGetAllProductQuery();
+    const { data: productsForSale, error: errorSale, isLoading: loadingSale, refetch: refetchProductData } = useGetAllProductQuery();
     const { data: productsForExchange, error: errorExchange, isLoading: loadingExchange } = useGetAllProductQuery();
 
     return (
-        <Tabs defaultActiveKey="1" style={{ width: '100%',marginTop:'6rem' }}>
+        <Tabs defaultActiveKey="1" style={{ width: '100%', marginTop: '6rem' }}>
             <TabPane tab="Products for Sale" key="1" style={{ width: '100%' }}>
                 {loadingSale ? (
                     <p>Loading...</p>
                 ) : errorSale ? (
                     <p>Error loading products for sale</p>
                 ) : (
-                    <div style={{ width: '100%' }}>
-                        <TableProductForSale productData={productsForSale} />
+                    <div style={{ width: '100%',height:'100%' }}>
+                        <TableProductForSale
+                            productData={productsForSale}
+                            refetchProductData={refetchProductData}
+                        />
                     </div>
                 )}
             </TabPane>

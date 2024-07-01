@@ -94,8 +94,7 @@ const PostManagement = () => {
 
   return (
     <>
-      <CustomHeader />
-      <Layout>
+      <Layout style={{height:'100vh'}}>
         <div style={{ display: 'flex', justifyContent: 'end', marginTop: '6.5rem' }}>
           <Button onClick={showModal}>Add Post</Button>
         </div>
@@ -108,7 +107,6 @@ const PostManagement = () => {
         <AddPostModal {...addModalParams} />
         <EditPostModal {...editModalParams} />
       </Layout>
-      <CustomFooter />
     </>
   );
 };

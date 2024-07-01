@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Col, Form, Input, Row, Select, Spin } from "antd";
+import { Badge, Button, Card, Col, Form, Image, Input, Row, Select, Spin } from "antd";
 
 import SlideShow from "./SlideShow";
 import "../scss/Dashboard.scss";
@@ -25,6 +25,12 @@ function Dashboard() {
   }
 
 
+  const truncateName = (name, maxChars) => {
+    if (name.length > maxChars) {
+      return name.slice(0, maxChars) + '...';
+    }
+    return name;
+  };
 
   console.log(user)
   if (isLoadingProduct) {
@@ -59,7 +65,7 @@ function Dashboard() {
                 </div>
                 <div className="btn-homePage">
                   {/* change url diarec */}
-                  <Link to={"/"}>
+                  <Link to={"/exchange"}>
                     <button className="btn-home">
                       Start Exchange
                     </button>
@@ -82,20 +88,34 @@ function Dashboard() {
               <div className="product-related">
                 <p>Featured Product</p>
               </div>
-              <Row gutter={[16, 16]} justify="center" style={{ width: '100%' }}>
-                {productsToShow?.map((product) => (
-                  <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
-                    <Link to={`/productDetail/${product.id}`}>
-                      <Card
-                        hoverable
-                        cover={<img alt={product.name} src={product.imageURL} />}
-                      >
-                        <Card.Meta title={product.name} description={`$${product.price}`} />
-                      </Card>
-                    </Link>
-                  </Col>
-                ))}
-              </Row>
+              <div
+                style={{
+                  maxHeight: 400,
+                  overflowY: 'auto',
+                  width: '100%',
+                }}
+              >
+                <Row gutter={[16, 16]} justify="center" style={{ width: '100%' }}>
+                  {productsToShow?.map((product) => (
+                    <Col key={product.id} xs={24} sm={12} md={6} lg={6}>
+                      <Link to={`/productDetail/${product.id}`}>
+                        <Card
+                          style={{ margin: '1rem 0' }}
+                          hoverable
+                          cover={<Image alt={product.name} src={product.urlImg} preview={false} style={{ height: '200px' }} />}
+                        >
+                          <Card.Meta title={<span style={{ color: '#5c98f2' }}>{truncateName(product.name, 25)}</span>} description={
+                            <div>
+                              <p style={{ marginBottom: '0.5rem' }}>{truncateName(product.description, 30)}</p>
+                              <p style={{ color: '#f05d40', paddingBottom: '0.7rem', fontWeight: 'bold' }}>₫ {product.price}</p>
+                            </div>
+                          } />
+                        </Card>
+                      </Link>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
             </Card>
             <Card style={{ width: '100%', marginTop: '4rem' }}>
               <div className="why-choose-us">
@@ -181,7 +201,7 @@ function Dashboard() {
         user.roleId == 3 ? (
           <PostManagement />
         ) : (
-          <DashboardManagement/>
+          <DashboardManagement />
         )
       )
       }
