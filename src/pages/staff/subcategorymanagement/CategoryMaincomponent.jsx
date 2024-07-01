@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDeletePostStaffMutation, useDeleteReportStaffMutation, useGetAllPendingPostsQuery, useGetReportQuery } from '../../../services/postAPI'
 import { message } from 'antd';
-import TableCategories from './TableCategoty';
+import TableCategories from '../TableCategoty';
 import { useGetAllCategoriesQuery } from '../../../services/productAPI';
 
 const CategoriesMainComponent = () => {

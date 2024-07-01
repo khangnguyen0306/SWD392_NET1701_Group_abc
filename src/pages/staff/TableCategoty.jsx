@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { Table, Button, Dropdown, Menu, Popconfirm, message, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import ModalCreateSubcategory from './ModalCreateSubcategory';
-import ModalEditSubcategory from './ModalEditSubcategory';
-import { useCreateSubcategoryMutation, useDeleteSubcategoryMutation, useEditSubcategoryMutation } from '../../../services/productAPI';
+import ModalCreateSubcategory from './subcategorymanagement/ModalCreateSubcategory';
+import ModalEditSubcategory from './subcategorymanagement/ModalEditSubcategory';
+import { useCreateCategoryMutation, useCreateSubcategoryMutation, useDeleteCategoryMutation, useDeleteSubcategoryMutation, useEditCategoryMutation, useEditSubcategoryMutation } from '../../services/productAPI';
+import ModalCreateCategory from './categorymanagement/ModalAddcategory';
+import ModalEditCategory from './categorymanagement/ModalEditCategory';
 
 const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }) => {
     const [sortedInfo, setSortedInfo] = useState({});
     const [isModalCreateSCVisible, setIsModalCreateSCVisible] = useState(false);
     const [isModalEditSCVisible, setIsModalEditSCVisible] = useState(false);
+    const [isModalCategoryVisible, setIsModalCategoryVisible] = useState(false);
+    const [isModalEditCategoryVisible, setIsModalEditCategoryVisible] = useState(false);
     const [currentSubcategoryId, setCurrentSubcategoryId] = useState(null);
+    const [currentCategoryId, setCurrentCategoryId] = useState(null);
+
+    const [addCategory] = useCreateCategoryMutation();
+    const [updateCategory] = useEditCategoryMutation();
+    const [deleteCategory] = useDeleteCategoryMutation();
     const [addSubCategory] = useCreateSubcategoryMutation();
     const [updateSubcategory] = useEditSubcategoryMutation();
     const [deleteSubcategory] = useDeleteSubcategoryMutation();
@@ -17,6 +26,35 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
     const handleTableChange = (pagination, filters, sorter) => {
         setSortedInfo(sorter);
     };
+
+    //Create Category
+    const openModalCreateCategory = () => {
+        setIsModalCategoryVisible(true);
+    };
+
+    const closeModalCreateCategory = () => {
+        setIsModalCategoryVisible(false);
+    };
+
+    const handleCreateCategory = () => {
+        openModalCreateCategory();
+    }
+
+    const handleAddCategoryOk = async (value) => {
+        try {
+            const addSC = await addCategory(value);
+            if (addSC.error.originalStatus === 200) {
+                message.success("Add Category successfully!");
+                closeModalCreateCategory();
+                refetchDataCategory();
+            } else {
+                message.error("Add Category unsuccessfully!");
+            }
+        } catch (error) {
+            message.error("Add Category unsuccessfully !");
+        }
+    };
+
 
     // Add Sub-category
     const openModalCreateSc = () => {
@@ -45,6 +83,48 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
             message.error("Add sub-Categories unsuccessfully !");
         }
     };
+
+    // Edit Sub-category
+    const openModalEditCategory = (categoryId) => {
+        setCurrentCategoryId(categoryId);
+        setIsModalEditCategoryVisible(true);
+    };
+
+    const closeModalEditcategory = () => {
+        setIsModalEditCategoryVisible(false);
+        setCurrentCategoryId(null);
+    };
+
+    const handleEditCategoryOk = async (value) => {
+        try {
+            const updateSC = await updateCategory({ id: currentCategoryId, body: value });
+            if (updateSC.error.originalStatus === 200) {
+                message.success("Edit sub-Category successfully!");
+                closeModalEditcategory();
+                refetchDataCategory();
+            } else {
+                message.error("Edit sub-Category unsuccessfully!");
+            }
+        } catch (error) {
+            message.error("Edit sub-Category unsuccessfully !");
+        }
+    };
+
+    //Delete Category
+    const handleDeleteCategory = async (value) => {
+        console.log(value);
+        try {
+            const deleteSC = await deleteCategory(value);
+            if (deleteSC.error.originalStatus === 200) {
+                message.success("Delete sub-Category successfully!");
+                refetchDataCategory();
+            } else {
+                message.error("Delete sub-Category unsuccessfully!");
+            }
+        } catch (error) {
+            message.error("Delete sub-Category unsuccessfully");
+        }
+    }
 
     // Edit Sub-category
     const openModalEditSc = (subcategoryId) => {
@@ -118,6 +198,37 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
         </Menu>
     );
 
+    const CategoriesMenu = (record) => (
+        <Menu>
+            <Menu.Item key="add">
+                <p style={{ display: 'flex', alignItems: 'center' }} onClick={handleCreateCategory}>
+                    <PlusCircleOutlined style={{ paddingRight: '0.5rem', color: '#1E90FF', fontSize: '18px' }} />
+                    <span>Add Category</span>
+                </p>
+            </Menu.Item>
+            <Menu.Item key="edit-subcategory" onClick={() => openModalEditCategory(record.id)}>
+                <p style={{ display: 'flex', alignItems: 'center' }}>
+                    <EditOutlined style={{ paddingRight: '0.5rem', color: '#EEC900', fontSize: '18px' }} />
+                    <span>Edit Category</span>
+                </p>
+            </Menu.Item>
+            <Menu.Item key="delete">
+                <Popconfirm
+                    title="Are you sure you want to delete this subcategory?"
+                    onConfirm={() => handleDeleteCategory(record.id)}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <p style={{ display: 'flex', alignItems: 'center' }}>
+                        <DeleteOutlined style={{ paddingRight: '0.5rem', color: '#EE2C2C', fontSize: '18px' }} />
+                        <span>Delete Category</span>
+                    </p>
+                </Popconfirm>
+            </Menu.Item>
+        </Menu>
+    );
+
+
     const columns = [
         {
             title: 'ID',
@@ -137,7 +248,7 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
             title: 'Actions',
             key: 'actions',
             render: (text, record) => (
-                <Dropdown overlay={() => subcategoriesMenu(record)} trigger={['click']}>
+                <Dropdown overlay={() => CategoriesMenu(record)} trigger={['click']}>
                     <Button icon={<MoreOutlined />} />
                 </Dropdown>
             ),
@@ -206,6 +317,17 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
                 onCancel={closeModalEditSc}
                 subcategoryId={currentSubcategoryId}
 
+            />
+            <ModalCreateCategory
+                visible={isModalCategoryVisible}
+                onCreate={handleAddCategoryOk}
+                onCancel={closeModalCreateCategory}
+            />
+            <ModalEditCategory
+                categoryId={currentCategoryId}
+                onCancel={closeModalEditcategory}
+                onEdit={handleEditCategoryOk}
+                visible={isModalEditCategoryVisible}
             />
         </>
     );

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input, Select, Button, Spin, message } from 'antd';
+import { Modal, Form, Input, Select, Button, Spin, message, Skeleton } from 'antd';
 import { useGetAllCategoriesForCProductQuery, useGetSubCategoryByIdQuery } from '../../../services/productAPI';
 
 const ModalEditSubcategory = ({ visible, onEdit, onCancel, subcategoryId }) => {
@@ -32,6 +32,10 @@ const ModalEditSubcategory = ({ visible, onEdit, onCancel, subcategoryId }) => {
                 console.log('Validate Failed:', info);
             });
     };
+
+    if (categoriesLoading && subcategoryLoading) {
+        return <Skeleton active />;
+    }
 
     return (
         <Modal

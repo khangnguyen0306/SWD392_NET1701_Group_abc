@@ -97,11 +97,11 @@ const CustomHeader = () => {
                     <Menu.Item key="report-management">
                         <NavLink to="/postmanager" activeClassName="active">Report Management</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
-                    <Menu.Item key="manage-products">
+                    <Menu.Item key="manage-Category">
                         <NavLink to="/manage-categories" activeClassName="active"> Category Management </NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                     <Menu.Item key="manage-posts">
-                        <NavLink to="/manage-posts" activeClassName="active">Manage Report</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-products" activeClassName="active">Manage Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
                     </Menu.Item>
                 </>
             );

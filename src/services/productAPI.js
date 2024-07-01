@@ -7,7 +7,7 @@ import { selectTokens } from "../slices/auth.slice";
 export const productAPI = createApi({
   reducerPath: "productManagement",
   // Tag types are used for caching and invalidation.
-  tagTypes: ["ProductList,CategoriesList,ProductExchangeList", "SubcategoryList"],
+  tagTypes: ["ProductList,CategoriesList,ProductExchangeList", "SubcategoryList", "CategoryList"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
@@ -125,6 +125,44 @@ export const productAPI = createApi({
       },
       invalidatesTags: [{ type: "ProductExchangeList", id: "LIST" }],
     }),
+
+    getCategoryById: builder.query({
+      query: (subCId) => ({
+        url: `category/getcategorybyid/${subCId}`,
+        method: "GET",
+      }),
+    }),
+    createCategory: builder.mutation({
+      query: (body) => {
+        return {
+          method: "POST",
+          url: `category/addcategory`,
+          body,
+        };
+      },
+      invalidatesTags: [{ type: "CategoryList", id: "LIST" }],
+    }),
+    editCategory: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "PUT",
+          url: `category/updatecategory/` + payload.id,
+          body: payload.body,
+        };
+      },
+      invalidatesTags: (res, err, arg) => [{ type: "CategoryList", id: arg.id }],
+    }),
+    deleteCategory: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "PUT",
+          url: `category/deletecategory/` + payload,
+        };
+      },
+      invalidatesTags: (_res, _err, _arg) => [
+        { type: "CategoryList", id: "LIST" },
+      ],
+    }),
     createSubcategory: builder.mutation({
       query: (body) => {
         return {
@@ -200,7 +238,11 @@ export const {
   useCreateSubcategoryMutation,
   useEditSubcategoryMutation,
   useDeleteSubcategoryMutation,
-  useGetSubCategoryByIdQuery
+  useGetSubCategoryByIdQuery,
+  useCreateCategoryMutation,
+  useEditCategoryMutation,
+  useGetCategoryByIdQuery,
+  useDeleteCategoryMutation
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,
   //   useGetClassByIdQuery,
