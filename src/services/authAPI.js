@@ -5,14 +5,14 @@ import { BE_API_LOCAL } from "../config";
 
 export const authApi = createApi({
     reducerPath: "authManagement",
-    // baseQuery: fetchBaseQuery({baseUrl:"https://localhost:7293/api/"}),                        //chua fix
+    // baseQuery: fetchBaseQuery({baseUrl:"https://localhost:7293/api/"}),                
     baseQuery: fetchBaseQuery({ baseUrl: BE_API_LOCAL }),
     endpoints: (builder) => ({
         loginUser: builder.mutation({
-            query: ({ username, password }) => ({
+            query: ({ email, password }) => ({
                 url: `auth/login`,
                 method: "POST",
-                body: { username, password },
+                body: { email, password },
             }),
         }),
         
@@ -30,7 +30,7 @@ export const authApi = createApi({
             // created_by: "string",
             // modified_by: "string",
             Gender: body.Gender,
-            ImgURL:"aaaaa"
+            ImgURL:"https://static.vecteezy.com/system/resources/previews/024/983/914/original/simple-user-default-icon-free-png.png"
           }
           return {
             method: "POST",
@@ -38,7 +38,7 @@ export const authApi = createApi({
             body: users,
           }
         },
-        // invalidatesTags: [{ type: " UserList ", id: " LIST " }],
+        invalidatesTags: [{ type: " UserList ", id: " LIST " }],
       }),
       
   

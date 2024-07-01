@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Empty } from 'antd';
 import { useCreateReportMutation, useDeletePostMutation, useGetAllPostQuery } from '../../services/postAPI';
-import { EditOutlined, EllipsisOutlined, UserOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, MoreOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
 import { useSelector } from 'react-redux';
@@ -155,7 +155,7 @@ const PostList = () => {
                                     }
                                     trigger={['click']}
                                 >
-                                    <Button type="text" icon={<EllipsisOutlined />} size="small" />
+                                    <Button type='text' icon={<SettingOutlined />} size="large" />
                                 </Dropdown>
                             }
                         >

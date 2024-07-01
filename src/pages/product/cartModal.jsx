@@ -6,6 +6,7 @@ import { selectCurrentToken, selectCurrentUser } from '../../slices/auth.slice';
 import { Link, useLocation } from 'react-router-dom';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 
+
 const CartModal = ({ visible, onClose }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.product.cart);
@@ -78,7 +79,7 @@ const CartModal = ({ visible, onClose }) => {
       render: (_, item) => (
         <Space>
           <Image src={item.urlImg} width={50} />
-          <div>{item.name}</div>
+          <div>{truncateName(item.name,20)}</div>
         </Space>
       ),
     },
@@ -92,16 +93,16 @@ const CartModal = ({ visible, onClose }) => {
       dataIndex: 'quantity',
       render: (_, item) => (
         <Space>
-          <Button onClick={() => handleDecreaseQuantity(item.id)}>-</Button>
-          {item.quantity}
-          <Button onClick={() => handleIncreaseQuantity(item.id)}>+</Button>
+          {/* <Button onClick={() => handleDecreaseQuantity(item.id)}>-</Button> */}
+          1
+          {/* <Button onClick={() => handleIncreaseQuantity(item.id)}>+</Button> */}
         </Space>
       ),
     },
     {
       title: 'Money',
       dataIndex: 'money',
-      render: (_, item) => `${item.price * item.quantity} ₫`,
+      render: (_, item) => `${item.price} ₫`,
     },
     {
       title: 'Action',
@@ -116,6 +117,12 @@ const CartModal = ({ visible, onClose }) => {
     key: item?.id,
     ...item,
   }));
+  const truncateName = (name, maxChars) => {
+    if (name.length > maxChars) {
+        return name.slice(0, maxChars) + '...';
+    }
+    return name;
+};
 
   return (
     <Modal
@@ -136,7 +143,7 @@ const CartModal = ({ visible, onClose }) => {
                   return actions.order.create({
                     purchase_units: [{
                       amount: {
-                        value: (totalAmount / 23000).toFixed(2), // Convert VND to USD
+                        value: (totalAmount / 23000).toFixed(2), 
                         currency_code: 'USD'
                       },
                     }],
@@ -145,11 +152,12 @@ const CartModal = ({ visible, onClose }) => {
                 onApprove={(data, actions) => {
                   console.log(data);
                   return actions.order.capture().then((details) => {
+                    onClose();
                     message.success('Transaction completed by ' + details.payer.name.given_name);
                     if (currentUser) {
                       dispatch(clearPaidItems({ userID: currentUser.id, itemIds: selectedItems }));
                     }
-                    onClose();
+                    
                   });
                 }}
               />

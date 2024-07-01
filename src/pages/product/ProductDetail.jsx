@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useGetAllProductQuery, useGetProductDetailQuery } from '../../services/productAPI';
 import CustomFooter from '../../components/Footer/CustomFooter';
 import CustomHeader from '../../components/Header/CustomHeader';
-import { Button, Col, Image, InputNumber, Layout, Modal, Row, Space, Spin, Tag, message } from 'antd';
+import { Button, Card, Col, Image, InputNumber, Layout, Modal, Row, Space, Spin, Tag, message } from 'antd';
 import "./ProductDetail.scss"
 import { addToCart, loadCartFromLocalStorage, updateCartQuantity } from '../../slices/product.slice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,6 +21,8 @@ const ProductDetail = () => {
     const token = useSelector(selectCurrentToken);
     const userId = useSelector(selectCurrentUser)
 
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handleIncreaseQuantity = () => {
         if (buyQuantity < ProductDetail.quantity) {
@@ -62,22 +64,24 @@ const ProductDetail = () => {
     const handleAddToCart = (product) => {
         const isProductInCart = cart.some(item => item.id === product.id);
         if (isProductInCart) {
-            const cartItem = cart.find(item => item.id === product.id);
-            const totalQuantity = cartItem.quantity + buyQuantity;
-            if (totalQuantity > ProductDetail.quantity) {
-                message.error('The total quantity exceeds available stock!');
-            } else {
-                dispatch(updateCartQuantity({ id: product.id, change: buyQuantity }));
-                message.success('Product quantity updated in cart successfully!');
-            }
+            message.success("Product already in cart !")
+            // const cartItem = cart.find(item => item.id === product.id);
+            // const totalQuantity = cartItem.quantity + buyQuantity;
+
+            // if (totalQuantity > ProductDetail.quantity) {
+            //     message.error('The total quantity exceeds available stock!');
+            // } else {
+            //     dispatch(updateCartQuantity({ id: product.id, change: buyQuantity }));
+            //     message.success('Product quantity updated in cart successfully!');
+            // }
         } else {
-            if (buyQuantity > ProductDetail.quantity) {
-                message.error('The quantity exceeds available stock!');
-            } else {
-                // Truyền userID vào action payload khi dispatch
-                dispatch(addToCart({ userID: userId.id, newItem: { ...product, quantity: buyQuantity } }));
-                message.success('Product added to cart successfully!');
-            }
+            // if (buyQuantity > ProductDetail.quantity) {
+            //     message.error('The quantity exceeds available stock!');
+            // } else {
+            // Truyền userID vào action payload khi dispatch
+            dispatch(addToCart({ userID: userId.id, newItem: { ...product, quantity: buyQuantity } }));
+            message.success('Product added to cart successfully!');
+            // }
         }
     };
 
@@ -98,12 +102,16 @@ const ProductDetail = () => {
         setIsModalVisible(false);
     };
 
-    const getShortDescription = (description) => {
-        const words = description?.split(' ');
-        if (words?.length <= 10) {
-            return description;
+
+    const truncateName = (name, maxChars) => {
+        if (name.length > maxChars) {
+            return name.slice(0, maxChars) + '...';
         }
-        return words?.slice(0, 10).join(' ') + ' buy ...';
+        return name;
+    };
+    const handleLogin = () => {
+        // Điều hướng đến trang đăng nhập, truyền state là đường dẫn hiện tại
+        navigate('/login', { state: { from: location.pathname } });
     };
 
     if (isLoadingProduct && isLoadingAllProducts) {
@@ -118,7 +126,7 @@ const ProductDetail = () => {
             <Layout className="productdetail-layout">
                 <Row justify={'center'}>
                     <Col md={10} span={24} className='product-image'>
-                        <Image src={mainImage} />
+                        <Image src={mainImage} style={{ width: '600px', height: '600px' }} />
                         <Row gutter={[8, 8]} className="thumbnail-row" style={{ marginTop: '1rem' }}>
                             {ProductDetail?.imageURL?.slice(0, 4).map((image, index) => (
                                 <Col key={index} span={6}>
@@ -141,16 +149,16 @@ const ProductDetail = () => {
                     </Col>
                     <Col md={8} span={24}>
                         <div className='product-detail-description'>
-                            <p className="productTitle">{ProductDetail?.name}</p>
+                            <p style={{ width: '200px' }} className="productTitle">{ProductDetail?.name}</p>
                             <p className="productQuantity"> <Tag color="success">
-                                <b>Stock: </b> <span style={{ color: 'red' }}>{ProductDetail?.stockQuantity}</span></Tag></p>
+                                <b>Stock: </b> <span style={{ color: 'red' }}>{1}</span></Tag></p>
                             <p className="productCategory">{ProductDetail?.category} | {ProductDetail?.subcategoryName}</p>
                             <p className="productPrice"> ₫ {ProductDetail?.price}</p>
                             <p className="productDescription" dangerouslySetInnerHTML={{ __html: ProductDetail?.description }} />
 
                             <div className="addToCart-btn">
                                 <Space >
-                                    <Button onClick={handleDecreaseQuantity}>-</Button>
+                                    {/* <Button onClick={handleDecreaseQuantity}>-</Button> */}
                                     <InputNumber
                                         style={{ width: '50px' }}
                                         min={1}
@@ -158,19 +166,27 @@ const ProductDetail = () => {
                                         value={buyQuantity}
                                         onChange={handleQuantityChange}
                                     />
-                                    <Button onClick={handleIncreaseQuantity}>+</Button>
+                                    {/* <Button onClick={handleIncreaseQuantity}>+</Button> */}
                                 </Space>
-                                <Button
+                                {/* <Button
                                     onClick={() => handleAddToCart(ProductDetail)}
                                     style={{ marginLeft: '3rem', display: 'flex', alignItems: 'center', padding: '20px 20px' }}>
                                     <p style={{ fontSize: '20px', marginRight: '10px' }}><ShoppingCartOutlined /> </p> <p >Add to cart </p>
-                                </Button>
-                                <Button
-                                    type='primary'
-                                    // onClick={() => handleAddToCart(ProductDetail)}
-                                    style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', padding: '20px 20px' }}>
-                                    Buy Now
-                                </Button>
+                                </Button> */}
+                                {userId ? (
+                                    <Button
+                                        type='primary'
+                                        onClick={() => handleAddToCart(ProductDetail)}
+                                        style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', padding: '20px 20px' }}>
+                                        Buy Now
+                                    </Button>
+                                ) : (
+                                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '3rem' }}>
+                                        <p>You must login to Buy product</p>
+                                        <Button type='primary' style={{marginLeft:'1rem'}} onClick={handleLogin}>Login</Button>
+                                    </div>
+                                )
+                                }
                             </div>
                         </div>
                     </Col>
@@ -181,18 +197,28 @@ const ProductDetail = () => {
                 </div>
                 <Row gutter={[16, 16]} justify={'center'}>
                     {relatedProducts?.map(relatedProduct => (
-                        <Col key={relatedProduct.id} md={4} sm={8} xs={12}>
+
+                        <Col key={relatedProduct.id} xs={24} sm={12} md={6} lg={4}>
                             <Link to={`/productDetail/${relatedProduct.id}`}>
-                                <div className="relatedProductItem">
-                                    <Image src={relatedProduct.urlImg} preview={false} style={{ maxWidth: '100%', height: '300px' }} />
-                                    <div className="content-related-item">
-                                        <p className='relatedProductName'>{relatedProduct.name}</p>
-                                        <p style={{ color: '#000', paddingBottom: '0.7rem' }}>
-                                            {getShortDescription(relatedProduct.description)}
-                                        </p>
-                                        <p className='relatedProductPrice'>₫ {relatedProduct.price}</p>
-                                    </div>
-                                </div>
+                                <Card
+                                className='card-product'
+                                style={{boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'}}
+                                    hoverable
+                                    cover={
+                                        <Image
+                                            alt={relatedProduct.name}
+                                            src={relatedProduct.urlImg}
+                                            style={{ height: '200px' }}
+                                            preview={false}
+                                        />}
+                                >
+                                    <Card.Meta title={<span style={{ color: '#5c98f2' }}>{truncateName(relatedProduct.name, 20)}</span>} description={
+                                        <div>
+                                            <p style={{ marginBottom: '0.5rem' }}>{truncateName(relatedProduct.description, 20)}</p>
+                                            <p style={{ color: '#f05d40', paddingBottom: '0.7rem', fontWeight: 'bold' }}>₫ {relatedProduct.price}</p>
+                                        </div>
+                                    } />
+                                </Card>
                             </Link>
                         </Col>
                     ))}

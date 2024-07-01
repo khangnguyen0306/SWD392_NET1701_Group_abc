@@ -3,7 +3,7 @@ import { Modal, Form, Input, Select, Button, message, InputNumber, Image, Skelet
 import { VietnameseProvinces } from '../../utils/utils';
 import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { useEditProductMutation, useGetAllCategoriesForCProductQuery, useGetAllSubCategoriesQuery, useGetProductDetailQuery } from '../../services/productAPI';
-import PostDetail from '../exchange/PostDetail';
+// import PostDetail from '../exchange/PostDetail';
 
 const { Option } = Select;
 
@@ -24,14 +24,16 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
     const [newImageUrl, setNewImageUrl] = useState([]);
 
     useEffect(() => {
-        setFilteredSubcategories(subcategories || []);
-    }, [subcategories]);
+        if (visible && productDetail) {
+            setFilteredSubcategories(subcategories || []);
+        }
+    }, [visible,subcategories]);
 
 
     const [updateProduct] = useEditProductMutation();
 
     useEffect(() => {
-        if (visible && PostDetail)
+        if (visible,productDetail)
             form.setFieldsValue({
                 categoryId: productDetail?.categoryId,
                 subcategoryId: productDetail?.subcategoryId,
@@ -41,7 +43,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                 location: productDetail?.location,
             });
         setCurrentImageUrl(productDetail?.urlImg || '');
-    }, [productDetail, productData, form]);
+    }, [visible, productDetail, productData, form]);
 
     const handleCategoryChange = (categoryId) => {
         setSelectedCategoryId(categoryId);
@@ -62,6 +64,8 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                     body: { ...values, urlImg: imageUrlToUpdate }
                 });
                 message.success('Product updated successfully');
+                form.resetFields();
+                setNewImageUrl(null);
                 refetchProductData();
                 onCancel();
             } catch {
@@ -158,7 +162,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                             setState={handleImageChange}
                         />
                     </div>
-                    {newImageUrl.length > 0 ? (
+                    {newImageUrl?.length > 0 ? (
                         <img
                             src={newImageUrl[0]}
                             alt="Uploaded Image"

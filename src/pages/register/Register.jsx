@@ -19,8 +19,11 @@ const Register = () => {
 
     try {
       const user = await registerUser(values);
-      console.log(values)
-      console.log(user)
+      console.log(user);
+      if(user.error){
+        message.error(user.error.data.message);
+        return;
+      }
       message.success(user.data.message);
       form.resetFields();
       navigate("/login");
@@ -30,15 +33,6 @@ const Register = () => {
       message.error(user.error.data.message);
     }
   }
-
-  // {
-  //   "username": "string",
-  //   "password": "string",
-  //   "email": "string",
-  //   "dob": "2024-06-04T17:15:12.684Z",
-  //   "address": "string",
-  //   "phoneNumber": "string"
-  // }
 
   return (
     <Layout style={{ height: '100%' }} className='register-layout'>
@@ -68,7 +62,7 @@ const Register = () => {
                 </Form.Item>
                 <Form.Item
                   hasFeedback
-                  label="User name"
+                  label="Full name"
                   name="username"
                   rules={[
                     {
