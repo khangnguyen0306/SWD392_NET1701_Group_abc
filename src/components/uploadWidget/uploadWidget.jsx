@@ -1,5 +1,5 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, Spin } from "antd";
 import { createContext, useEffect, useState } from "react";
 
 // Create a context to manage the script loading state
@@ -7,6 +7,7 @@ const CloudinaryScriptContext = createContext();
 
 function UploadWidget({ uwConfig, folder, setState }) {
     const [loaded, setLoaded] = useState(false);
+    const [loading, setLoading] = useState(false); // State to manage button loading
 
     useEffect(() => {
         // Check if the script is already loaded
@@ -30,13 +31,15 @@ function UploadWidget({ uwConfig, folder, setState }) {
         if (loaded) {
             const initializeCloudinaryWidget = (event) => {
                 event.preventDefault();
+                setLoading(true); // Set loading state to true
                 var myWidget = window.cloudinary.createUploadWidget(
                     { ...uwConfig, folder },  // Use the dynamic folder here
                     (error, result) => {
                         if (!error && result && result.event === "success") {
                             console.log("Done! Here is the image info: ", result.info);
-                            setState(prev => [ result.info.secure_url]);
+                            setState(prev => [result.info.secure_url]);
                         }
+                        setLoading(false); // Set loading state to false after the upload
                     }
                 );
 
@@ -56,7 +59,9 @@ function UploadWidget({ uwConfig, folder, setState }) {
 
     return (
         <CloudinaryScriptContext.Provider value={{ loaded }}>
-            <Button id="upload_widget" icon={<UploadOutlined />}>Upload</Button>
+            <Button id="upload_widget" icon={<UploadOutlined />} loading={loading}>
+                {loading ? 'Loading...' : 'Upload'}
+            </Button>
         </CloudinaryScriptContext.Provider>
     );
 }

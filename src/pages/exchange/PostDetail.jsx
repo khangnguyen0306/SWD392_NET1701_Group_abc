@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useGetPostDetailQuery } from '../../services/postAPI';
-import { Card, Skeleton, Badge, Avatar, Alert, Layout, Row, Col, Tag, Image, Button, Modal, message } from 'antd';
+import { Card, Skeleton, Badge, Avatar, Alert, Layout, Row, Col, Tag, Image, Button, Modal, message, Input } from 'antd';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import CustomHeader from '../../components/Header/CustomHeader';
 import CustomFooter from '../../components/Footer/CustomFooter';
@@ -10,13 +10,14 @@ import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../slices/auth.slice';
 
 const { Content } = Layout;
-
+const { Search } = Input; 
 const PostDetail = () => {
     const { postId } = useParams();
     const { data: postDetail, isLoading, error, refetch } = useGetPostDetailQuery(postId);
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const [isExchangeModalVisible, setIsExchangeModalVisible] = useState(false);
     const user = useSelector(selectCurrentUser);
 
@@ -44,10 +45,14 @@ const PostDetail = () => {
     const handleExchangeModalCancel = () => {
         setIsExchangeModalVisible(false);
     };
+    const handleSearch = (value) => {
+        setSearchTerm(value);
+        searchPosts({ productName: value });
+    };
 
     const convertStatus = {
-        true: <Badge color={"#33ff00"} text={"Đã được duyệt"} />,
-        false: <Badge color={"#ffc125"} text={"Chưa được duyệt"} />
+        true: <Badge color={"#33ff00"} text={"Approved"} />,
+        false: <Badge color={"#ffc125"} text={"Not approved"} />
     };
 
     const refetchPostDetail = async () => {
@@ -93,6 +98,7 @@ const PostDetail = () => {
                 >
                     Back
                 </Button>
+                
                 <Row justify={'center'} style={{ padding: '20px', marginTop: '7rem' }}>
                     <Col md={10} span={24} className='product-image'>
                         <Image
@@ -134,41 +140,64 @@ const PostDetail = () => {
                                         <Avatar icon={<UserOutlined />} />
                                     )}
                                     <hr />
-                                    <div style={{display:'flex'}}>
+                                    <div style={{ display: 'flex' }}>
                                         <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
                                         <p style={{ marginLeft: '2rem' }}>{convertStatus[postDetail?.publicStatus]}</p>
                                     </div>
                                 </div>
                                 {postDetail.user.id != user.id ? (
-                                    <Button type='primary' onClick={handleExchangeButtonClick} style={{marginRight:'-7rem'}}>Exchange</Button>
+                                    <Button type='primary' onClick={handleExchangeButtonClick} style={{ marginRight: '-7rem' }}>Exchange</Button>
                                 ) : (
                                     null
                                 )}
                             </div>
                             <p style={{ fontSize: '2rem', fontWeight: 'bold', padding: '1rem' }}>{postDetail?.title}</p>
-                            <div dangerouslySetInnerHTML={{ __html: postDetail?.description }} />
+                            <div dangerouslySetInnerHTML={{ __html: postDetail?.description }} style={{ padding: '1rem' }} />
                         </div>
                     </Col>
                 </Row>
                 {/* Product Card */}
                 <Row justify="center" style={{ padding: '20px' }}>
-                    <Col xs={24} md={20} lg={18} xl={16}>
+                    <Col xs={24} md={10} lg={10} xl={10} style={{marginRight:'1rem'}}>
                         <Card
                             title="Product"
-                            style={{ width: '100%', marginBottom: '20px' }}
+                            style={{ marginBottom: '20px' }}
                             bodyStyle={{ display: 'flex', alignItems: 'center' }} // Center align content inside the card body
                         >
                             <Image
                                 src={postDetail.product.urlImg}
                                 alt={postDetail.product.name}
-                                width={300}
-                                preview={false} 
+                                width={150}
+                                height={150}
+                                preview={false}
                                 style={{ marginRight: '20px' }}
                             />
                             <div style={{ marginLeft: '3rem' }}>
                                 <h2>{postDetail.product.name}</h2>
                                 <Link to={`/productDetailForAll/${postDetail.product.id}`}>
-                                    <Button type="primary">View Product Details</Button>
+                                    <Button type="primary" style={{ marginTop: '1rem' }}>View Product Details</Button>
+                                </Link>
+                            </div>
+                        </Card>
+                    </Col>
+                    <Col xs={24} md={10} lg={10} xl={10}>
+                        <Card
+                            title="Product"
+                            style={{ marginBottom: '20px' }}
+                            bodyStyle={{ display: 'flex', alignItems: 'center' }} 
+                        >
+                            <Image
+                                src={postDetail.product.urlImg}
+                                alt={postDetail.product.name}
+                                width={150}
+                                height={150}
+                                preview={false}
+                                style={{ marginRight: '20px' }}
+                            />
+                            <div style={{ marginLeft: '3rem' }}>
+                                <h2>{postDetail.product.name}</h2>
+                                <Link to={`/productDetailForAll/${postDetail.product.id}`}>
+                                    <Button type="primary" style={{ marginTop: '1rem' }}>View Product Details</Button>
                                 </Link>
                             </div>
                         </Card>
