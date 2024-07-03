@@ -55,16 +55,18 @@ export const userAPI = createApi({
     }),
     editUser: builder.mutation({
       query: (payload) => {
+        console.log(payload)
         const newBody = {
           address: payload.body.address,
-          // fullname: payload.name,
+          userName: payload.fullname,
           // email: payload.email,
           phoneNumber: payload.body.phoneNumber,
           dob: payload.body.DOB,
           // created_by: " string ",
           // modified_by: " string ",
-          // gender: payload.gender,
+          gender: payload.gender,
           // is_active: payload.Status,
+          imgUrl: payload.imgUrl,
         }
         return {
           method: "PUT",
@@ -138,7 +140,9 @@ export const userAPI = createApi({
       invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
     }),
     editProfile: builder.mutation({
+      
       query: (payload) => {
+
         return {
           method: "PUT",
           url: `users/` + payload.id,

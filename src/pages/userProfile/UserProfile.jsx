@@ -41,13 +41,14 @@ const UserProfile = () => {
         if (user) {
             form.setFieldsValue({
                 id: user.id,
-                fullname: user?.userName,
+                userName: user?.userName,
                 email: user?.email,
                 DOB: user?.dob ? dayjs(user.dob) : null,
-                gender: true,                                     // missing gender, mising avatar chua chinh uploadWidgets
+                gender: user?.gender,                                     // missing gender, mising avatar chua chinh uploadWidgets
                 phoneNumber: user?.phoneNumber,
                 address: user?.address,
                 password: user?.password
+
             });
         }
 
@@ -59,18 +60,27 @@ const UserProfile = () => {
 
     const setAvatar = (imageUrl) => {
         setNewAvatar(imageUrl);
+        form.setFieldsValue({ imgUrl: imageUrl[0] });
     };
 
     const updateUserProfile = async (values) => {
-        console.log(values)
-        const result = await editUser({
-            body: { ...values },
-            id: user.id
-        });
-        if (result.data.status === 200) {
-            message.success(result.data.message);
+        try {
+            const result = await editUser({
+                body: { ...values, imgUrl: newAvatar[0] },
+                id: user.id
+            });
+            message.success("updated user profile successfully ")
             setUpdateUser(false);
+
+            // if (result.data.status === 200) {
+            //     message.success(result.data.message);
+            //     setUpdateUser(false);
+            // }
+        } catch (error) {
+             message.error("updated user profile unsuccessfully ");
+
         }
+       
     };
     // const validateEmail = (rule, value, callback) => {
     //     if (!value) {
@@ -206,7 +216,7 @@ const UserProfile = () => {
                                         <Col span={12}>
                                             <div className='profile-information-content-input' >
                                                 <label id='fullname'>Full name</label>
-                                                <Form.Item name="fullname" rules={[
+                                                <Form.Item name="userName" rules={[
                                                     { required: true, message: 'Please input your full name!' },
                                                     {
                                                         pattern: validationPatterns.name.pattern,
@@ -233,7 +243,7 @@ const UserProfile = () => {
 
                                             <div className='profile-information-content-input' style={{ marginTop: '1rem' }}>
 
-                                                <Form.Item name="urlImg" label="Image">
+                                                <Form.Item name="imgUrl" label="Image">
                                                     <UploadWidget
                                                         uwConfig={{
                                                             multiple: true,
@@ -301,12 +311,12 @@ const UserProfile = () => {
                                             </div>
                                             <div className='profile-information-content-input' style={{ marginTop: '1rem' }} >
                                                 {/* <label id='gender'>Gender</label> */}
-                                                {/* <Form.Item name="gender" rules={[{ required: true, message: 'Please select your gender!' }]}>
+                                                <Form.Item name="gender" rules={[{ required: true, message: 'Please select your gender!' }]}>
                                                     <Radio.Group>
-                                                        <Radio value={true}>Male</Radio>
-                                                        <Radio value={false}>Female</Radio>
+                                                        <Radio value={"Male"}>Male</Radio>
+                                                        <Radio value={"Female"}>Female</Radio>
                                                     </Radio.Group>
-                                                </Form.Item> */}
+                                                </Form.Item>
                                             </div>
                                             <div className='profile-information-content-input' style={{ marginTop: '1rem' }} >
                                                 <label id='address'>Address</label>

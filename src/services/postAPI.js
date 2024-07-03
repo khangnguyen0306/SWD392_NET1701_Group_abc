@@ -4,7 +4,7 @@ import { selectTokens } from '../slices/auth.slice';
 
 export const postAPI = createApi({
     reducerPath: "postManagement",
-    tagTypes: ["PostList", "ExchangeList", "ReportList"],
+    tagTypes: ["PostList", "ExchangeList", "ReportList", "CommentList"],
     baseQuery: fetchBaseQuery({
         baseUrl: BE_API_LOCAL,
         prepareHeaders: (headers, { getState }) => {
@@ -81,7 +81,45 @@ export const postAPI = createApi({
                     ? result.map(({ id }) => ({ type: "PostList", id }))
                     : [{ type: "PostList", id: "LIST" }],
         }),
+        getPostComment: builder.query({
+            query: (postId) => ({
+                url: `comment/getcommentbypost/${postId}`, // Use template literal for security
+                method: "GET",
+            }),
+        }),
+        getCommentById: builder.query({
+            query: (payload) => ({
+                url: `/comment/getcommentbyid${payload}`, // Use template literal for security
+                method: "GET",
+            }),
+        }),
+        createComment: builder.mutation({
+            query: (payload) => {
+                return {
+                    method: "POST",
+                    url: `comment?postId=${payload.id}`,
+                    body: payload.body,
+                };
+            },
+            invalidatesTags: [{ type: "CommentList", id: "LIST" }],
+        }),
+        editComment: builder.mutation({
+            query: (payload) => {
+                return {
+                    method: "PUT",
+                    url: `comment/` + payload.id,
+                    body: payload.body,
+                };
+            },
+            invalidatesTags: (res, err, arg) => [{ type: "CommentList", id: arg.id }],
+        }),
+        deleteComment: builder.mutation({
+            query: (payload) => ({
+                method: 'DELETE',
+                url: `comment/` + payload,
 
+            }),
+        }),
         // getClassById: builder.query({
         //   query: (classId) => ({
         //     url: `viewclass/${classId}`, // Use template literal for security
@@ -212,7 +250,12 @@ export const {
     useCreateReportMutation,
     useGetReportQuery,
     useDeletePostStaffMutation,
-    useDeleteReportStaffMutation
+    useDeleteReportStaffMutation,
+    useGetPostCommentQuery,
+    useCreateCommentMutation,
+    useGetCommentByIdQuery,
+    useEditCommentMutation,
+    useDeleteCommentMutation
     // useGetAllCategoriesQuery,
     // useGetProductDetailQuery
     //   useDuplicateClassMutation,

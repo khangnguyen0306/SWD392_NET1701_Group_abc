@@ -65,7 +65,7 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
     return (
         <Modal
             title="Edit Post"
-            visible={visible}
+            open={visible}
             onOk={handleOk}
             onCancel={handleCancel}
             okText="Save"

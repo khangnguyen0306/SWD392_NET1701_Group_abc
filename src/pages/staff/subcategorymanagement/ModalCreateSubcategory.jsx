@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, Button, Spin } from 'antd';
 import { useGetAllCategoriesForCProductQuery } from '../../../services/productAPI';
 
 const ModalCreateSubcategory = ({ visible, onCreate, onCancel }) => {
   const [form] = Form.useForm();
-  const { data: categories, isLoading } = useGetAllCategoriesForCProductQuery();
-  
+  const { data: categories, isLoading, refetch } = useGetAllCategoriesForCProductQuery();
+
+
+  useEffect(() => {
+    if (visible && categories) {
+      refetch();
+    }
+  }, [visible, refetch])
+
   const handleOk = () => {
     form.validateFields()
       .then(values => {

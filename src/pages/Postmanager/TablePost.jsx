@@ -15,13 +15,17 @@ const TablePost = ({ postData, onEdit, onApprove }) => {
         },
         {
             title: 'Created By',
-            dataIndex: 'createdBy',
+            dataIndex: 'user',
+            render: (user) => <p>{user.userName}</p>,
             key: 'createdBy',
         },
         {
-            title: 'Date Created',
-            dataIndex: 'dateCreated',
-            key: 'dateCreated',
+            title: 'Date',
+            dataIndex: 'date',
+            key: 'date',
+            sorter: (a, b) => new Date(a.date) - new Date(b.date),
+            // sortOrder: sortedInfo.columnKey === 'date' && sortedInfo.order,
+            render: (date) => new Date(date).toLocaleDateString(),
         },
         {
             title: 'Action',

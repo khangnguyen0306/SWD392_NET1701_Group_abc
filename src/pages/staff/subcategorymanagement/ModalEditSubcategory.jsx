@@ -65,7 +65,7 @@ const ModalEditSubcategory = ({ visible, onEdit, onCancel, subcategoryId }) => {
                         <Spin />
                     ) : (
                         <Select placeholder="Select a category">
-                            {categories.map(category => (
+                            {categories?.map(category => (
                                 <Select.Option key={category.id} value={category.id}>
                                     {category.name}
                                 </Select.Option>
