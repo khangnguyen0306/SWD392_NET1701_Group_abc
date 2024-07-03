@@ -287,17 +287,32 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
         ];
 
         return (
-            <Table
-                columns={subcategoryColumns}
-                dataSource={category.subCategories}
-                rowKey="id"
-                pagination={false}
-            />
+            <>
+                <Button
+                    style={{ marginBottom: '1rem' }}
+                    onClick={handleCreateSC}
+                    icon={<PlusCircleOutlined style={{ paddingRight: '0.5rem', color: '#1E90FF', fontSize: '18px' }} />}>
+                    Add sub-Category
+                </Button>
+                <Table
+                    columns={subcategoryColumns}
+                    dataSource={category.subCategories}
+                    rowKey="id"
+                    pagination={false}
+                />
+            </>
         );
     };
 
     return (
         <>
+            <Button
+                style={{ marginBottom: '1rem' }}
+                onClick={handleCreateCategory}
+                icon={<PlusCircleOutlined
+                    style={{ paddingRight: '0.5rem', color: '#1E90FF', fontSize: '18px' }} />}>
+                Add Category
+            </Button>
             <Table
                 dataSource={categoryData}
                 columns={columns}

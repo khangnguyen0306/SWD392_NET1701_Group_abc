@@ -69,6 +69,7 @@ const DashboardManagement = () => {
 
     //handle edit , edit sucessful
     const handleEditUser = async (user) => {
+        console.table(user);
         try {
             await editUser({ id: userDataEdit.id, body: user });
             refetchUserData();

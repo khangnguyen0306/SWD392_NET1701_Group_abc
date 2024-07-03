@@ -11,7 +11,6 @@ import ReportModal from './ReportModal';
 
 const { confirm } = Modal;
 const { Search } = Input;
-
 const PostList = () => {
     const { data: postData, isLoading: isLoadingPost, refetch: refetchPostData } = useGetAllPostQuery();
     const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
@@ -34,7 +33,6 @@ const PostList = () => {
     const filteredPosts = sortedPosts.filter(post =>
         post.product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     const showDeleteConfirm = (postId) => {
         confirm({
             title: 'Are you sure you want to delete this post?',
@@ -58,7 +56,7 @@ const PostList = () => {
         });
     };
 
-    // Edit Modal
+    //Edit Modal
     const handleEdit = (post) => {
         setSelectedPost(post);
         setIsEditModalVisible(true);
@@ -72,7 +70,9 @@ const PostList = () => {
         setIsEditModalVisible(false);
     };
 
-    // Report modal
+    //Report modal
+
+
     const showModal = () => {
         setIsModalVisible(true);
     };
@@ -80,30 +80,40 @@ const PostList = () => {
     const handleClose = () => {
         setIsModalVisible(false);
     };
-
     const handleReport = (post) => {
         setPostDataForReport(post);
         showModal();
-        console.log(post);
+        console.log(post)
     };
 
     const onReport = async (post) => {
         try {
-            await report({
-                id: post.id,
-                body: post.body,
-            });
-            message.success('Report post successfully');
-            // refetchProductData();
-            handleClose();
-        } catch {
+            try {
+                await report({
+                    id: post.id,
+                    body: post.body
+                });
+                message.success('Report post successfully');
+                // refetchProductData();
+                handleClose();
+            } catch {
+                message.error('Failed to Report post');
+            }
+        } catch (error) {
             message.error('Failed to Report post');
         }
+    }
+
+    const truncateName = (name, maxChars) => {
+        if (name.length > maxChars) {
+            return name.slice(0, maxChars) + '...';
+        }
+        return name;
     };
 
     const convertStatus = {
         true: <Badge color={"#33ff00"} text={"Approved"} />,
-        false: <Badge color={"#ffc125"} text={"Not approved"} />,
+        false: <Badge color={"#ffc125"} text={"Not approved"} />
     };
 
     if (isLoadingPost) {
@@ -120,7 +130,13 @@ const PostList = () => {
                 placeholder="Search posts by product name"
                 enterButton
                 onSearch={(value) => setSearchTerm(value)}
-                style={{ marginBottom: '2rem' }}
+                style={{
+                    marginTop: '1rem',
+                    marginBottom: '2rem',
+                    height: '50px',
+                    fontSize: '18px',
+                    padding: '10px 16px'
+                }}
             />
             <List
                 itemLayout="vertical"
@@ -146,7 +162,7 @@ const PostList = () => {
                                         <Menu>
                                             {post?.user?.id === user?.id && (
                                                 <>
-                                                    <Menu.Item key="edit" onClick={() => handleEdit(post)}>
+                                                    <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
                                                         Edit
                                                     </Menu.Item>
                                                     <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
@@ -183,7 +199,7 @@ const PostList = () => {
                                     <Col xs={24} md={8}>
                                         <div style={{ marginLeft: '2rem', color: 'black', paddingBottom: '3rem' }}>
                                             <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
-                                            <div dangerouslySetInnerHTML={{ __html: post.description }} />
+                                            <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} />
                                             <Card
                                                 style={{ marginTop: '1rem', width: 'fit-content' }}
                                                 cover={

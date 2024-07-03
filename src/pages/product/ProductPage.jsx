@@ -50,12 +50,21 @@ const ProductPage = () => {
     const handleFilterChange = (type, value) => {
         setFilters({ ...filters, [type]: value });
     };
+    const refetchProductaData = async () => {
+        try {
+            await refetchProductData();
+            await refetchProductByIdData();
+            await refetchCategories();
+        } catch (error) {
+            message.warning("Login expired, please log in again.")
+            navigate('/login');
+        }
+    };
 
     useEffect(() => {
-        refetchProductData();
-        refetchProductByIdData();
-        refetchCategories()
-    }, [refetchProductData, refetchProductByIdData, refetchCategories]);
+        refetchProductaData();
+    }, [refetchProductData, refetchCategories]);
+
 
     const handleCategoryChange = (category, checked) => {
         const updatedCategories = checked

@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const { Option } = Select;
 
-const ModalAddProduct = ({ visible, onOk, onCancel,refetchProductData }) => {
+const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
     const [form] = Form.useForm();
     const { data: categories, isLoading: isLoadingCategories } = useGetAllCategoriesForCProductQuery();
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
@@ -17,7 +17,7 @@ const ModalAddProduct = ({ visible, onOk, onCancel,refetchProductData }) => {
 
     const [filteredSubcategories, setFilteredSubcategories] = useState([]);
     const [images, setImages] = useState([]);
-    const [addProduct]= useCreateProductMutation();
+    const [addProduct] = useCreateProductMutation();
     const [folder] = useState(uuidv4());
 
     useEffect(() => {
@@ -40,7 +40,9 @@ const ModalAddProduct = ({ visible, onOk, onCancel,refetchProductData }) => {
                 await addProduct({ ...values, urlImg: images[0] });
                 message.success('Product added successfully');
                 refetchProductData();
-                onOk(); // Close the modal on success
+                form.resetFields();
+                setImages(null);
+                onOk();
             } catch (error) {
                 message.error('Failed to add product');
             }
@@ -101,7 +103,7 @@ const ModalAddProduct = ({ visible, onOk, onCancel,refetchProductData }) => {
                     label="Description"
                     rules={[{ required: true, message: 'Please enter the description' }]}
                 >
-                      <Input />
+                    <Input />
                 </Form.Item>
                 {/* <Form.Item name="condition" label="Condition" rules={[{ required: true, message: 'Please enter the condition' }]}>
                     <Input min={1} max={100} suffix={"%"} />
@@ -133,15 +135,15 @@ const ModalAddProduct = ({ visible, onOk, onCancel,refetchProductData }) => {
                         setState={handleImageChange}
                     />
                     <div style={{ marginTop: '10px' }}>
-                        {images.map((image, index) => (
-                            <Image
-                                key={index}
-                                src={image}
-                                alt={`Uploaded Image ${index + 1}`}
-                                width={200}
-                                style={{ marginRight: '10px' }}
-                            />
-                        ))}
+
+                        <Image
+
+                            src={images ? images[0] : null}
+
+                            width={200}
+                            style={{ marginRight: '10px' }}
+                        />
+
                     </div>
                 </Form.Item>
                 {/* <Form.Item name="stockQuantity" label="Stock Quantity" rules={[{ required: true, message: 'Please enter the stock quantity' }]}>

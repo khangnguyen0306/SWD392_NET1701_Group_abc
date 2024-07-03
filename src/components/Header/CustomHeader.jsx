@@ -155,7 +155,7 @@ const CustomHeader = () => {
                         </p>
                         {user ? (
                             <Dropdown overlay={menu} trigger={['hover']}>
-                                <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
+                                <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" src={user.imgUrl} />
                             </Dropdown>
                         ) : (
                             <Dropdown overlay={menuNologin} trigger={['hover']}>

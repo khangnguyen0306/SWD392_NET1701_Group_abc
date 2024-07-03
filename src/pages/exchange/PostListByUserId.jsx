@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Tabs, Empty } from 'antd';
-import { useDeletePostMutation, useGetAllPostByUserQuery } from '../../services/postAPI';
-import { EllipsisOutlined, UserOutlined } from '@ant-design/icons';
+import { useDeletePostMutation, useGetAllPostByUserQuery, useGetAllPostQuery } from '../../services/postAPI';
+import { EllipsisOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
 import { useSelector } from 'react-redux';
@@ -12,6 +12,7 @@ const { confirm } = Modal;
 
 const PostListByUser = () => {
     const { data: postData, isLoading: isLoadingPost, refetch: refetchPostData } = useGetAllPostByUserQuery();
+    const { refetch } = useGetAllPostQuery();
     const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
@@ -19,7 +20,8 @@ const PostListByUser = () => {
 
     useEffect(() => {
         refetchPostData();
-    }, [refetchPostData]);
+        refetch();
+    }, [refetch, refetchPostData]);
 
     const showDeleteConfirm = (postId) => {
         confirm({
@@ -33,6 +35,7 @@ const PostListByUser = () => {
                     await deletePost(postId).unwrap();
                     message.success('Post deleted successfully');
                     refetchPostData();
+                    refetch();
                 } catch (error) {
                     console.log(error);
                     message.error('Failed to delete the post');
@@ -66,6 +69,12 @@ const PostListByUser = () => {
     const approvedPosts = postData?.filter(post => post.publicStatus === true)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
     const unapprovedPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
 
+    const truncateName = (name, maxChars) => {
+        if (name.length > maxChars) {
+            return name.slice(0, maxChars) + '...';
+        }
+        return name;
+    };
     if (isLoadingPost) {
         return (
             <List
@@ -82,9 +91,10 @@ const PostListByUser = () => {
     }
 
     if (!postData || postData.length === 0) {
-        return(
-        <div><Empty description="No posts available" /></div>
-    )}
+        return (
+            <div><Empty description="No posts available" /></div>
+        )
+    }
 
     return (
         <div style={{ paddingLeft: '240px' }}>
@@ -118,11 +128,11 @@ const PostListByUser = () => {
                                                 <Menu>
                                                     {post?.user?.id === user?.id && (
                                                         <>
-                                                            <Menu.Item key="edit" onClick={() => handleEdit(post)}>
-                                                                Chỉnh sửa
+                                                            <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
+                                                                Edit
                                                             </Menu.Item>
                                                             <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                                Xóa
+                                                                Delete
                                                             </Menu.Item>
                                                         </>
                                                     )}
@@ -133,7 +143,7 @@ const PostListByUser = () => {
                                             }
                                             trigger={['click']}
                                         >
-                                            <Button type="text" icon={<EllipsisOutlined />} size="small" />
+                                            <Button type="text" icon={<SettingOutlined />} size="small" />
                                         </Dropdown>
                                     }
                                 >
@@ -142,7 +152,7 @@ const PostListByUser = () => {
                                             <Col xs={24} md={15}>
                                                 <div style={{ marginLeft: '2rem', color: 'black', marginBottom: '2rem' }}>
                                                     <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
-                                                    <div dangerouslySetInnerHTML={{ __html: post.description }} />
+                                                    <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} />
                                                     <p style={{ marginTop: '1rem', position: 'absolute', bottom: '-20px', left: '10px' }} >
                                                         <Badge color={"#00FF00"} text={"Approved"} />
                                                     </p>
@@ -189,11 +199,11 @@ const PostListByUser = () => {
                                                 <Menu>
                                                     {post?.user?.id === user?.id && (
                                                         <>
-                                                            <Menu.Item key="edit" onClick={() => handleEdit(post)}>
-                                                                Chỉnh sửa
+                                                            <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
+                                                                Edit
                                                             </Menu.Item>
                                                             <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                                Xóa
+                                                                Delete
                                                             </Menu.Item>
                                                         </>
                                                     )}
@@ -204,7 +214,7 @@ const PostListByUser = () => {
                                             }
                                             trigger={['click']}
                                         >
-                                            <Button type="text" icon={<EllipsisOutlined />} size="small" />
+                                            <Button type="text" icon={<SettingOutlined />} size="small" />
                                         </Dropdown>
                                     }
                                 >

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Modal, Button, Image, Space, Table, Checkbox, message } from 'antd';
+import { Modal, Button, Image, Space, Table, Checkbox, message, Spin } from 'antd';
 import { loadCartFromLocalStorage, removeFromCart, updateCartQuantity, clearPaidItems } from '../../slices/product.slice';
 import { selectCurrentToken, selectCurrentUser } from '../../slices/auth.slice';
 import { Link, useLocation } from 'react-router-dom';
@@ -13,7 +13,7 @@ const CartModal = ({ visible, onClose }) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const token = useSelector(selectCurrentToken);
   const currentUser = useSelector(selectCurrentUser);
-
+  const [isLoadingPaypal, setIsLoadingPaypal] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const CartModal = ({ visible, onClose }) => {
       render: (_, item) => (
         <Space>
           <Image src={item.urlImg} width={50} />
-          <div>{truncateName(item.name,20)}</div>
+          <div>{truncateName(item.name, 20)}</div>
         </Space>
       ),
     },
@@ -119,10 +119,10 @@ const CartModal = ({ visible, onClose }) => {
   }));
   const truncateName = (name, maxChars) => {
     if (name.length > maxChars) {
-        return name.slice(0, maxChars) + '...';
+      return name.slice(0, maxChars) + '...';
     }
     return name;
-};
+  };
 
   return (
     <Modal
@@ -143,24 +143,24 @@ const CartModal = ({ visible, onClose }) => {
                   return actions.order.create({
                     purchase_units: [{
                       amount: {
-                        value: (totalAmount / 23000).toFixed(2), 
+                        value: (totalAmount / 23000).toFixed(2),
                         currency_code: 'USD'
                       },
                     }],
                   });
                 }}
                 onApprove={(data, actions) => {
-                  console.log(data);
                   return actions.order.capture().then((details) => {
                     onClose();
                     message.success('Transaction completed by ' + details.payer.name.given_name);
                     if (currentUser) {
                       dispatch(clearPaidItems({ userID: currentUser.id, itemIds: selectedItems }));
                     }
-                    
                   });
                 }}
+                onInit={() => setIsLoadingPaypal(false)}
               />
+              {isLoadingPaypal && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spin tip="Loading PayPal..." /></div>}
             </PayPalScriptProvider>
           ) : (
             <div className="check-login-payment" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
