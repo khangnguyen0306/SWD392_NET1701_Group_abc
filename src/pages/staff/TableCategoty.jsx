@@ -95,36 +95,41 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
         setCurrentCategoryId(null);
     };
 
+
+
+    //Delete Category
+
     const handleEditCategoryOk = async (value) => {
+        console.log('currentCategoryId:', currentCategoryId); // Debug log
         try {
             const updateSC = await updateCategory({ id: currentCategoryId, body: value });
             if (updateSC.error.originalStatus === 200) {
-                message.success("Edit sub-Category successfully!");
+                message.success("Edit Category successfully!");
                 closeModalEditcategory();
                 refetchDataCategory();
             } else {
-                message.error("Edit sub-Category unsuccessfully!");
+                message.error("Edit Category unsuccessfully!");
             }
         } catch (error) {
-            message.error("Edit sub-Category unsuccessfully !");
+            message.error("Edit Category unsuccessfully!");
         }
     };
-
-    //Delete Category
+    
     const handleDeleteCategory = async (value) => {
-        console.log(value);
+        console.log('value (categoryId):', value); // Debug log
         try {
             const deleteSC = await deleteCategory(value);
             if (deleteSC.error.originalStatus === 200) {
-                message.success("Delete sub-Category successfully!");
+                message.success("Delete Category successfully!");
                 refetchDataCategory();
             } else {
-                message.error("Delete sub-Category unsuccessfully!");
+                message.error("Delete Category unsuccessfully!");
             }
         } catch (error) {
-            message.error("Delete sub-Category unsuccessfully");
+            message.error("Delete Category unsuccessfully!");
         }
-    }
+    };
+    
 
     // Edit Sub-category
     const openModalEditSc = (subcategoryId) => {
@@ -214,7 +219,7 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
             </Menu.Item>
             <Menu.Item key="delete">
                 <Popconfirm
-                    title="Are you sure you want to delete this subcategory?"
+                    title="Are you sure you want to delete this category?"
                     onConfirm={() => handleDeleteCategory(record.id)}
                     okText="Yes"
                     cancelText="No"
@@ -227,7 +232,6 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
             </Menu.Item>
         </Menu>
     );
-
 
     const columns = [
         {
@@ -287,17 +291,23 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
         ];
 
         return (
-            <Table
-                columns={subcategoryColumns}
-                dataSource={category.subCategories}
-                rowKey="id"
-                pagination={false}
-            />
+            <>
+                <Button onClick={handleCreateSC}>Add SubCategory</Button>
+                <Table
+                    columns={subcategoryColumns}
+                    dataSource={category.subCategories}
+                    rowKey="id"
+                    pagination={false}
+                />
+            </>
         );
     };
 
+    console.log('categoryData', categoryData);
+
     return (
         <>
+            <Button onClick={handleCreateCategory}>Add Category</Button>
             <Table
                 dataSource={categoryData}
                 columns={columns}
@@ -316,7 +326,6 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
                 onEdit={handleEditSubCategoryOk}
                 onCancel={closeModalEditSc}
                 subcategoryId={currentSubcategoryId}
-
             />
             <ModalCreateCategory
                 visible={isModalCategoryVisible}

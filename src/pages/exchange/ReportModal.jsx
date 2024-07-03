@@ -14,11 +14,6 @@ const ReportModal = ({ visible, onClose, postData, onReport }) => {
         setDescription(value);
     };
 
-    const handleOk = () => {
-        console.log(description);
-        onClose();
-    };
-
     const truncateText = (text, wordLimit) => {
         const words = text?.split(' ');
         if (words?.length > wordLimit) {
@@ -38,11 +33,11 @@ const ReportModal = ({ visible, onClose, postData, onReport }) => {
         try {
             onReport({ id: postData.id, body: values.description });
             form.resetFields();
+            onClose();
         } catch (error) {
             console.log(error);
         }
     };
-
 
     const truncatedDescription = truncateText(postData.description, 50);
 
@@ -50,8 +45,8 @@ const ReportModal = ({ visible, onClose, postData, onReport }) => {
         <Modal
             title="Report"
             open={visible}
-            onOk={handleOk}
             onCancel={onClose}
+            footer={null} // Hide the default footer buttons
         >
             <Card
                 cover={<img alt="example" src={postData.imageUrl} />}

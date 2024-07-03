@@ -11,9 +11,7 @@ const { Option } = Select;
 const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
     const [form] = Form.useForm();
     const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
-    console.log(productData)
-    const { data: postDetail, refetch } = useGetPostDetailQuery(post);
-    console.log(postDetail)
+    const { data: postDetail, refetch } = useGetPostDetailQuery(post?.id);
     const [editPost, { isLoading: isEditing }] = useEditPostMutation();
     const [currentImageUrl, setCurrentImageUrl] = useState('');
     const [newImageUrl, setNewImageUrl] = useState([]);
@@ -38,12 +36,12 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
             const values = await form.validateFields();
             const imageUrlToUpdate = newImageUrl.length > 0 ? newImageUrl[0] : currentImageUrl;
 
-            const { data } = await editPost({
-                id: post,
+            const response = await editPost({
+                id: post?.id,
                 body: { ...values, imageUrl: imageUrlToUpdate }
-            });
+            }).unwrap();
 
-            if (data) {
+            if (response) {
                 message.success('Post updated successfully');
                 onOk();
                 refetch();
@@ -51,8 +49,8 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
             } else {
                 message.error('Failed to update post');
             }
-        } catch (errorInfo) {
-            console.log('Failed:', errorInfo);
+        } catch (error) {
+            console.error('Failed:', error);
             message.error('Failed to update post');
         }
     };
@@ -79,7 +77,7 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
                 initialValues={{
                     title: postDetail?.title,
                     description: postDetail?.description,
-                    productId: postDetail?.productId,
+                    productId: postDetail?.product?.id,
                 }}
             >
                 <Form.Item

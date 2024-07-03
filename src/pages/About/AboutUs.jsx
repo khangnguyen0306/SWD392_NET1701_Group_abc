@@ -5,7 +5,7 @@ import { faExchangeAlt, faDollarSign, faLeaf } from '@fortawesome/free-solid-svg
 import './AboutUs.css';
 import CustomHeader from "../../components/Header/CustomHeader";
 import CustomFooter from "../../components/Footer/CustomFooter";
-
+import { useNavigate } from 'react-router-dom';
 // Image imports
 import about from '../../assets/about/about.png';
 import about1 from '../../assets/about/about1.png';
@@ -22,6 +22,7 @@ const images = [
 
 const AboutUs = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,6 +30,10 @@ const AboutUs = () => {
     }, 5000); // 5-second interval
     return () => clearInterval(interval);
   }, []);
+
+  const handleJoinNowClick = () => {
+    navigate('/exchange');
+  };
 
   const currentImage = images[currentImageIndex];
 
@@ -90,9 +95,9 @@ const AboutUs = () => {
         </Row>
 
         <Row justify="center">
-          <Col>
-            <button className="join-now-button">JOIN NOW</button>
-          </Col>
+          <button className="join-now-button" onClick={handleJoinNowClick}>
+            JOIN NOW
+          </button>
         </Row>
       </div>
 

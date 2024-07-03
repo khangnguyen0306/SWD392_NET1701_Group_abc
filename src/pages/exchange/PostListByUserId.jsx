@@ -119,10 +119,10 @@ const PostListByUser = () => {
                                                     {post?.user?.id === user?.id && (
                                                         <>
                                                             <Menu.Item key="edit" onClick={() => handleEdit(post)}>
-                                                                Chỉnh sửa
+                                                                Edit
                                                             </Menu.Item>
                                                             <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                                Xóa
+                                                                Delete
                                                             </Menu.Item>
                                                         </>
                                                     )}
