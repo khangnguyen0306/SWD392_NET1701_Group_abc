@@ -30,7 +30,7 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
     }, [visible, postDetail, form]);
 
     const handleImageChange = (value) => {
-        setNewImageUrl(value); 
+        setNewImageUrl(value);
     };
 
     const handleOk = async () => {
@@ -64,6 +64,8 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
 
     return (
         <Modal
+            // style={{ width: '800px' }}
+            width={"80vw"}
             title="Edit Post"
             open={visible}
             onOk={handleOk}

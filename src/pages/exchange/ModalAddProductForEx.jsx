@@ -97,6 +97,8 @@ const AddProductPage = () => {
                         </Form.Item>
                         <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price' }]}>
                             <NumberFormatBase
+                                min={0}
+                                max={1000000000}
                                 customInput={Input}
                                 thousandSeparator=","
                                 prefix="₫"

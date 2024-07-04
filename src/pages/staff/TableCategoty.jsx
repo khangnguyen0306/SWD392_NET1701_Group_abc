@@ -191,7 +191,7 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
                 >
                     <p style={{ display: 'flex', alignItems: 'center' }}>
                         <DeleteOutlined style={{ paddingRight: '0.5rem', color: '#EE2C2C', fontSize: '18px' }} />
-                        <span>Delete Subcategory</span>
+                        <span>De-active Subcategory</span>
                     </p>
                 </Popconfirm>
             </Menu.Item>
@@ -221,7 +221,7 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
                 >
                     <p style={{ display: 'flex', alignItems: 'center' }}>
                         <DeleteOutlined style={{ paddingRight: '0.5rem', color: '#EE2C2C', fontSize: '18px' }} />
-                        <span>Delete Category</span>
+                        <span>De-active Category</span>
                     </p>
                 </Popconfirm>
             </Menu.Item>
@@ -237,12 +237,19 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
             sorter: (a, b) => a.id - b.id,
             sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
         },
+
         {
             title: 'Category',
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => (status ? <Tag color='green'>Active</Tag> : <Tag color='red'>Inactive</Tag>),
         },
         {
             title: 'Actions',

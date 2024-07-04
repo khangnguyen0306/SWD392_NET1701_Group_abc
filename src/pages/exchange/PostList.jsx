@@ -185,7 +185,7 @@ const PostList = () => {
                                 <Row gutter={[16, 16]}>
                                     <Col xs={24} md={10} style={{ marginRight: '5rem' }}>
                                         <p style={{ fontSize: '14px', color: 'GrayText', marginBottom: '30px' }}>
-                                            Posted on {format(new Date(post.date), 'MMMM dd, yyyy HH:mm')}
+                                            Posted on {format(new Date(post.date), 'MMMM dd, yyyy')}
                                         </p>
                                         <div style={{ textAlign: 'center' }}>
                                             <Image

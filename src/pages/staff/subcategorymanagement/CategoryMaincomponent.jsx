@@ -2,10 +2,10 @@ import React from 'react'
 import { useDeletePostStaffMutation, useDeleteReportStaffMutation, useGetAllPendingPostsQuery, useGetReportQuery } from '../../../services/postAPI'
 import { message } from 'antd';
 import TableCategories from '../TableCategoty';
-import { useGetAllCategoriesQuery } from '../../../services/productAPI';
+import { useGetAllCategoriesForStaffQuery, useGetAllCategoriesQuery } from '../../../services/productAPI';
 
 const CategoriesMainComponent = () => {
-    const { data: categoryData, isLoading, refetch: refetchDataCategory } = useGetAllCategoriesQuery();
+    const { data: categoryData, isLoading, refetch: refetchDataCategory } = useGetAllCategoriesForStaffQuery();
     console.log(categoryData);
     const { refetch: refetchPostData } = useGetAllPendingPostsQuery();
     const [deletePost] = useDeletePostStaffMutation();

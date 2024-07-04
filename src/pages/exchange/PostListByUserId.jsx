@@ -75,7 +75,7 @@ const PostListByUser = () => {
         }
         return name;
     };
-    if (isLoadingPost) {
+    if (isLoadingPost ) {
         return (
             <List
                 itemLayout="vertical"
@@ -207,9 +207,9 @@ const PostListByUser = () => {
                                                             </Menu.Item>
                                                         </>
                                                     )}
-                                                    <Menu.Item key="report" onClick={() => handleReport(post.id)}>
+                                                    {/* <Menu.Item key="report" onClick={() => handleReport(post.id)}>
                                                         Báo cáo
-                                                    </Menu.Item>
+                                                    </Menu.Item> */}
                                                 </Menu>
                                             }
                                             trigger={['click']}

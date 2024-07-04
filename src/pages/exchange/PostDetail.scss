@@ -1,0 +1,80 @@
+.custom-card {
+
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 4px rgba(33, 33, 33, 0.2), 0 3px 5px rgba(71, 70, 70, 0.19);
+
+    .ant-card-head {
+        // Styles for the card header
+        // padding: 12px 16px; // Example padding
+        background-color: #ebebeb; // Example background color
+
+        .ant-card-head-title {
+            // Styles for the title section of the header
+            //   font-size: 18px; // Example font size
+            //   color: #1890ff; // Example text color
+        }
+
+        .ant-card-head-extra {
+            // Styles for any extra content in the header (like buttons)
+            margin-right: 0; // Example margin
+            color: #f5222d; // Example text color for extra content
+        }
+    }
+
+    .ant-card-body {
+        // Styles for the card body
+        // padding: 16px; // Example padding
+        background-color: #f9f9f9; // Example background color
+
+        p {
+            // Styles for paragraphs inside the card body
+            font-size: 14px; // Example font size
+            color: #333; // Example text color
+        }
+
+        .ant-btn {
+            // Styles for buttons inside the card body
+            margin-top: 12px; // Example margin
+        }
+    }
+}
+
+.custom-card-fixed {
+
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 4px rgba(33, 33, 33, 0.2), 0 3px 5px rgba(71, 70, 70, 0.19);
+
+    .ant-card-head {
+        // Styles for the card header
+        // padding: 12px 16px; // Example padding
+        background-color: #ebebeb; // Example background color
+        .ant-card-head-title {
+            // Styles for the title section of the header
+            //   font-size: 18px; // Example font size
+            //   color: #1890ff; // Example text color
+        }
+
+        .ant-card-head-extra {
+            // Styles for any extra content in the header (like buttons)
+            margin-right: 0; // Example margin
+            color: #f5222d; // Example text color for extra content
+        }
+    }
+
+    .ant-card-body {
+        // Styles for the card body
+        // padding: 16px; // Example padding
+        background-color: #f9f9f9; // Example background color
+
+        p {
+            // Styles for paragraphs inside the card body
+            font-size: 14px; // Example font size
+            color: #333; // Example text color
+        }
+
+        .ant-btn {
+            // Styles for buttons inside the card body
+            margin-top: 12px; // Example margin
+        }
+    }
+}

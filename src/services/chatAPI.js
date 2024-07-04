@@ -1,41 +1,40 @@
-// chatAPI.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+// services/signalRService.js
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
-export const chatAPI = createApi({
-  reducerPath: 'chatAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: '/' }), 
-  endpoints: (builder) => ({
-    getChatOverviews: builder.query({
-      query: () => 'chat/getChatOverviews',
-      transformResponse: () => [
-        { id: 1, participant: 'John Doe', lastMessage: 'Hey, how are you?' },
-        { id: 2, participant: 'Jane Smith', lastMessage: 'Can we meet tomorrow?' },
-      ],
-    }),
-    getMessages: builder.query({
-      query: (chatId) => `chat/getMessages/${chatId}`,
-      transformResponse: (response, meta, arg) => {
-        const messages = {
-          1: [
-            { sender: 'John Doe', message: 'Hey, how are you?' },
-            { sender: 'You', message: 'I am good, thanks!' },
-          ],
-          2: [
-            { sender: 'Jane Smith', message: 'Can we meet tomorrow?' },
-            { sender: 'You', message: 'Sure, what time?' },
-          ],
-        };
-        return messages[arg];
-      },
-    }),
-    sendMessage: builder.mutation({
-      query: ({ chatId, message }) => ({
-        url: `chat/sendMessage`,
-        method: 'POST',
-        body: { chatId, message },
-      }),
-    }),
-  }),
-});
+class SignalRService {
+    constructor() {
+        this.connection = new HubConnectionBuilder()
+            .withUrl("YOUR_SIGNALR_HUB_URL")
+            .configureLogging(LogLevel.Information)
+            .build();
 
-export const { useGetChatOverviewsQuery, useGetMessagesQuery, useSendMessageMutation } = chatAPI;
+        this.connection.on("ReceiveMessage", (user, message) => {
+            console.log("Message received:", user, message);
+        });
+    }
+
+    async start() {
+        try {
+            await this.connection.start();
+            console.log("SignalR Connected.");
+        } catch (err) {
+            console.log("Error while establishing connection: ", err);
+            setTimeout(() => this.start(), 5000);
+        }
+    }
+
+    async sendMessage(user, message) {
+        try {
+            await this.connection.invoke("SendMessage", user, message);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    onMessage(callback) {
+        this.connection.on("ReceiveMessage", callback);
+    }
+}
+
+const signalRService = new SignalRService();
+export default signalRService;

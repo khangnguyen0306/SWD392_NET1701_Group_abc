@@ -94,7 +94,7 @@ const MyProducts = () => {
                                     cover={<Image src={product.urlImg} style={{ height: '300px', objectFit: 'cover' }} />}
                                 >
                                     <Link to={`/productDetailForAll/${product.id}`}>
-                                        <Card.Meta title={product.name} description={`Price: $${product.price}`} />
+                                        <Card.Meta title={product.name} description={`Price: ₫ ${product.price}`} />
                                     </Link>
                                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                                         <EditOutlined

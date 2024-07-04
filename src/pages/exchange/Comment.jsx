@@ -4,6 +4,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useForm } from 'antd/es/form/Form';
 import { useCreateCommentMutation } from '../../services/postAPI';
+import { SendOutlined } from '@ant-design/icons';
 
 const CommentForm = ({ refetch, postId }) => {
     const [form] = useForm();
@@ -31,8 +32,8 @@ const CommentForm = ({ refetch, postId }) => {
 
             </Form.Item>
             <Form.Item>
-                <Button type="primary" onClick={handleSubmit}>
-                    Submit
+                <Button type="primary" onClick={handleSubmit} icon={<SendOutlined />}>
+                    Send
                 </Button>
             </Form.Item>
         </Form>
