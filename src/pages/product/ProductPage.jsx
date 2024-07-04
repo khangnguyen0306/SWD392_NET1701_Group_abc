@@ -140,7 +140,7 @@ const ProductPage = () => {
     const handleDeleteProduct = (productId) => {
         confirm({
             title: 'Are you sure you want to delete this product?',
-            content: 'This action cannot be undone.',
+            content: 'Product and all Post have this product will delete. This action cannot be undone.',
             okText: 'Yes',
             okType: 'danger',
             cancelText: 'No',
@@ -187,206 +187,207 @@ const ProductPage = () => {
         setCurrentPage(page);
     };
 
-    if (isLoadingProduct && isLoadingCategories && isLoadingProductByUserId) {
+    if (isLoadingProduct || isLoadingCategories || isLoadingProductByUserId) {
         return <Skeleton active />;
-    }
+    } else {
 
-    return (
-        <>
-            <CustomHeader />
-            <Layout className="product-page">
-                <Sider width={300} className="filter-section">
-                    <h3><span style={{ marginRight: '0.7rem' }}><FilterOutlined /></span>Filter</h3>
-                    <div className="filter-group">
-                        <p className='title-filter'>Categories</p>
-                        {categoriesData?.map((category) => (
-                            <div key={category.id} className='filter-checkbox-layout'>
-                                <Checkbox
-                                    style={{ fontSize: '16px', fontWeight: '500' }}
-                                    checked={filters.categories.includes(category.id)}
-                                    onChange={(e) => handleCategoryChange(category, e.target.checked)}
-                                >
-                                    {category.name}
-                                </Checkbox>
-                                <div className="subcategories">
-                                    {category.subCategories?.map(sub => (
-                                        <Col key={sub.id}>
-                                            <Checkbox
-                                                className='subcategories-checkbox'
-                                                checked={filters.subcategories.includes(sub.id)}
-                                                onChange={(e) => handleSubcategoryChange(sub, e.target.checked)}
-                                            >
-                                                {sub.name}
-                                            </Checkbox>
-                                        </Col>
-                                    ))}
+        return (
+            <>
+                <CustomHeader />
+                <Layout className="product-page">
+                    <Sider width={300} className="filter-section">
+                        <h3><span style={{ marginRight: '0.7rem' }}><FilterOutlined /></span>Filter</h3>
+                        <div className="filter-group">
+                            <p className='title-filter'>Categories</p>
+                            {categoriesData?.map((category) => (
+                                <div key={category.id} className='filter-checkbox-layout'>
+                                    <Checkbox
+                                        style={{ fontSize: '16px', fontWeight: '500' }}
+                                        checked={filters.categories.includes(category.id)}
+                                        onChange={(e) => handleCategoryChange(category, e.target.checked)}
+                                    >
+                                        {category.name}
+                                    </Checkbox>
+                                    <div className="subcategories">
+                                        {category.subCategories?.map(sub => (
+                                            <Col key={sub.id}>
+                                                <Checkbox
+                                                    className='subcategories-checkbox'
+                                                    checked={filters.subcategories.includes(sub.id)}
+                                                    onChange={(e) => handleSubcategoryChange(sub, e.target.checked)}
+                                                >
+                                                    {sub.name}
+                                                </Checkbox>
+                                            </Col>
+                                        ))}
+                                    </div>
                                 </div>
+                            ))}
+                        </div>
+                        <div className="filter-group">
+                            <p className='title-filter'>Price</p>
+                            <label>From</label>
+                            <NumericFormat
+                                style={{ padding: '10px', marginBottom: '10px' }}
+                                thousandSeparator={true}
+                                prefix={'₫ '}
+                                placeholder="From"
+                                value={filters.priceRange[0]}
+                                onValueChange={(values) => {
+                                    const { floatValue } = values;
+                                    handleFilterChange('priceRange', [floatValue, filters.priceRange[1]]);
+                                }}
+                                customInput={Input}
+                            />
+                            <label className='label-price-input'>To</label>
+                            <NumericFormat
+                                style={{ padding: '10px' }}
+                                thousandSeparator={true}
+                                prefix={'₫ '}
+                                placeholder="To"
+                                value={filters.priceRange[1]}
+                                onValueChange={(values) => {
+                                    const { floatValue } = values;
+                                    handleFilterChange('priceRange', [filters.priceRange[0], floatValue]);
+                                }}
+                                customInput={Input}
+                            />
+                        </div>
+                        <div className="filter-group">
+                            <h4>Location</h4>
+                            <Select
+                                style={{ width: '100%' }}
+                                showSearch
+                                placeholder="Select Location"
+                                value={filters.location}
+                                onChange={(value) => handleFilterChange('location', value)}
+                                filterOption={(input, option) => (option?.children ?? '').toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                filterSort={(optionA, optionB) => optionA.children.localeCompare(optionB.children)}
+                            >
+                                {VietnameseProvinces.map((location) => (
+                                    <Option key={location} value={location}>{location}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <Button type="primary" onClick={resetFilters}>Reset Filters</Button>
+                    </Sider>
+                    <Content className="product-section">
+                        <div className="product-header">
+                            <Search
+                                placeholder="input search text"
+                                onSearch={(e) => setSearch(e)}
+                                enterButton
+                                className="search-input"
+                            />
+                            <div className="view-buttons">
+                                <Button icon={<AppstoreOutlined />} onClick={() => setView('grid')}>4 per row</Button>
+                                <Button icon={<BarsOutlined />} onClick={() => setView('list')}>1 per row</Button>
                             </div>
-                        ))}
-                    </div>
-                    <div className="filter-group">
-                        <p className='title-filter'>Price</p>
-                        <label>From</label>
-                        <NumericFormat
-                            style={{ padding: '10px', marginBottom: '10px' }}
-                            thousandSeparator={true}
-                            prefix={'₫ '}
-                            placeholder="From"
-                            value={filters.priceRange[0]}
-                            onValueChange={(values) => {
-                                const { floatValue } = values;
-                                handleFilterChange('priceRange', [floatValue, filters.priceRange[1]]);
-                            }}
-                            customInput={Input}
-                        />
-                        <label className='label-price-input'>To</label>
-                        <NumericFormat
-                            style={{ padding: '10px' }}
-                            thousandSeparator={true}
-                            prefix={'₫ '}
-                            placeholder="To"
-                            value={filters.priceRange[1]}
-                            onValueChange={(values) => {
-                                const { floatValue } = values;
-                                handleFilterChange('priceRange', [filters.priceRange[0], floatValue]);
-                            }}
-                            customInput={Input}
-                        />
-                    </div>
-                    <div className="filter-group">
-                        <h4>Location</h4>
-                        <Select
-                            style={{ width: '100%' }}
-                            showSearch
-                            placeholder="Select Location"
-                            value={filters.location}
-                            onChange={(value) => handleFilterChange('location', value)}
-                            filterOption={(input, option) => (option?.children ?? '').toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                            filterSort={(optionA, optionB) => optionA.children.localeCompare(optionB.children)}
-                        >
-                            {VietnameseProvinces.map((location) => (
-                                <Option key={location} value={location}>{location}</Option>
-                            ))}
-                        </Select>
-                    </div>
-                    <Button type="primary" onClick={resetFilters}>Reset Filters</Button>
-                </Sider>
-                <Content className="product-section">
-                    <div className="product-header">
-                        <Search
-                            placeholder="input search text"
-                            onSearch={(e) => setSearch(e)}
-                            enterButton
-                            className="search-input"
-                        />
-                        <div className="view-buttons">
-                            <Button icon={<AppstoreOutlined />} onClick={() => setView('grid')}>4 per row</Button>
-                            <Button icon={<BarsOutlined />} onClick={() => setView('list')}>1 per row</Button>
+                            <div className="toggle-buttons">
+                                <Button
+                                    className={!showUserProducts ? 'active' : ''}
+                                    onClick={() => setShowUserProducts(false)}
+
+                                >
+                                    All Products
+                                </Button>
+                                <Button
+                                    className={showUserProducts ? 'active' : ''}
+                                    onClick={() => setShowUserProducts(true)}
+                                >
+                                    My Products
+                                </Button>
+                            </div>
+                            {user ? (
+                                <Button
+                                    icon={<PlusCircleOutlined />}
+                                    size='large'
+                                    onClick={handleAddProduct}
+                                    type='primary' > Add product</Button>
+                            ) : (
+                                <Button
+                                    icon={<PlusCircleOutlined />}
+                                    size='large'
+                                    type='primary'
+                                    onClick={handleRedirect}
+                                >Add product</Button>
+                            )}
                         </div>
-                        <div className="toggle-buttons">
-                            <Button
-                                className={!showUserProducts ? 'active' : ''}
-                                onClick={() => setShowUserProducts(false)}
+                        <div className={`product-list ${view}`}>
+                            <Row gutter={[16, 16]}>
+                                {paginatedProducts?.map(product => (
+                                    <Col key={product?.id} span={view === 'grid' ? 6 : 24}>
 
-                            >
-                                All Products
-                            </Button>
-                            <Button
-                                className={showUserProducts ? 'active' : ''}
-                                onClick={() => setShowUserProducts(true)}
-                            >
-                                My Products
-                            </Button>
+                                        <Card className="card-product">
+                                            {user?.id === product?.userId ? (
+                                                <div className='dropdown-menu'>
+                                                    <Dropdown overlay={
+                                                        <Menu>
+                                                            <Menu.Item key="edit" icon={<EditOutlined style={{ color: '#EEC900' }} />} onClick={() => handleEditProduct(product.id)}>
+                                                                Edit
+                                                            </Menu.Item>
+                                                            <Menu.Item key="delete" icon={<DeleteOutlined style={{ color: '#EE2C2C' }} />} onClick={() => handleDeleteProduct(product.id)}>
+                                                                Delete
+                                                            </Menu.Item>
+                                                        </Menu>
+                                                    } trigger={['hover']}>
+                                                        <Button type="text" icon={<SettingOutlined style={{ fontSize: '20px' }} />} size="large" />
+                                                    </Dropdown>
+                                                </div>
+                                            ) : null}
+                                            <Link
+                                                to={`/productDetail/${product?.id}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                                style={{ color: 'black' }}
+                                            >
+
+                                                <Image
+                                                    src={product?.urlImg}
+                                                    className="product-image"
+                                                    preview={false}
+                                                />
+                                                <div className="card-content">
+                                                    <p className="card-product-name">{truncateName(product?.name, 20)}</p>
+                                                    <p className="card-product-price">
+                                                        Price: <span className="price-highlight"><span style={{ color: '#f05d40' }}>{product?.price}  ₫</span></span>
+                                                    </p>
+                                                    <p>Location: <span style={{ fontWeight: 'bold' }}>{product?.location}</span></p>
+                                                </div>
+                                            </Link>
+
+                                        </Card>
+
+                                    </Col>
+                                ))}
+                            </Row>
                         </div>
-                        {user ? (
-                            <Button
-                                icon={<PlusCircleOutlined />}
-                                size='large'
-                                onClick={handleAddProduct}
-                                type='primary' > Add product</Button>
-                        ) : (
-                            <Button
-                                icon={<PlusCircleOutlined />}
-                                size='large'
-                                type='primary'
-                                onClick={handleRedirect}
-                            >Add product</Button>
-                        )}
-                    </div>
-                    <div className={`product-list ${view}`}>
-                        <Row gutter={[16, 16]}>
-                            {paginatedProducts?.map(product => (
-                                <Col key={product?.id} span={view === 'grid' ? 6 : 24}>
-
-                                    <Card className="card-product">
-                                        {user?.id === product?.userId ? (
-                                            <div className='dropdown-menu'>
-                                                <Dropdown overlay={
-                                                    <Menu>
-                                                        <Menu.Item key="edit" icon={<EditOutlined style={{ color: '#EEC900' }} />} onClick={() => handleEditProduct(product.id)}>
-                                                            Edit
-                                                        </Menu.Item>
-                                                        <Menu.Item key="delete" icon={<DeleteOutlined style={{ color: '#EE2C2C' }} />} onClick={() => handleDeleteProduct(product.id)}>
-                                                            Delete
-                                                        </Menu.Item>
-                                                    </Menu>
-                                                } trigger={['hover']}>
-                                                    <Button type="text" icon={<SettingOutlined style={{ fontSize: '20px' }} />} size="large" />
-                                                </Dropdown>
-                                            </div>
-                                        ) : null}
-                                        <Link
-                                            to={`/productDetail/${product?.id}`}
-                                            onClick={(e) => e.stopPropagation()}
-                                            style={{ color: 'black' }}
-                                        >
-
-                                            <Image
-                                                src={product?.urlImg}
-                                                className="product-image"
-                                                preview={false}
-                                            />
-                                            <div className="card-content">
-                                                <p className="card-product-name">{truncateName(product?.name, 20)}</p>
-                                                <p className="card-product-price">
-                                                    Price: <span className="price-highlight"><span style={{ color: '#f05d40' }}>{product?.price}  ₫</span></span>
-                                                </p>
-                                                <p>Location: <span style={{ fontWeight: 'bold' }}>{product?.location}</span></p>
-                                            </div>
-                                        </Link>
-
-                                    </Card>
-
-                                </Col>
-                            ))}
-                        </Row>
-                    </div>
-                    <div className="pagination">
-                        <Pagination
-                            current={currentPage}
-                            pageSize={pageSize}
-                            total={filteredProducts?.length || 0}
-                            onChange={handlePageChange}
-                        />
-                    </div>
-                </Content>
-            </Layout>
-            <CustomFooter />
-            <AddProductModal
-                visible={isModalAddVisible}
-                onOk={handleModalAddOk}
-                onCancel={handleModalAddCancel}
-                refetchProductData={refetchProductData}
-            />
-            <ModalEditProduct
-                visible={isModalEditVisible}
-                onOk={handleModalEditOk}
-                onCancel={handleModalEditCancel}
-                productData={selectedProduct}
-                refetchProductData={refetchProductData}
-            />
-        </>
-    );
+                        <div className="pagination">
+                            <Pagination
+                                current={currentPage}
+                                pageSize={pageSize}
+                                total={filteredProducts?.length || 0}
+                                onChange={handlePageChange}
+                            />
+                        </div>
+                    </Content>
+                </Layout>
+                <CustomFooter />
+                <AddProductModal
+                    visible={isModalAddVisible}
+                    onOk={handleModalAddOk}
+                    onCancel={handleModalAddCancel}
+                    refetchProductData={refetchProductData}
+                />
+                <ModalEditProduct
+                    visible={isModalEditVisible}
+                    onOk={handleModalEditOk}
+                    onCancel={handleModalEditCancel}
+                    productData={selectedProduct}
+                    refetchProductData={refetchProductData}
+                />
+            </>
+        );
+    }
 };
 
 export default ProductPage;

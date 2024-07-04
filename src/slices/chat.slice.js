@@ -1,22 +1,17 @@
-// chatSlice.js
+// slices/chatSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const chatSlice = createSlice({
-  name: 'chat',
-  initialState: {
-    selectedChat: null,
-    chatOverviews: [],
-    messages: [],
-  },
-  reducers: {
-    setSelectedChat: (state, action) => {
-      state.selectedChat = action.payload;
+    name: 'chat',
+    initialState: {
+        messages: [],
     },
-    addMessage: (state, action) => {
-      state.messages.push(action.payload);
+    reducers: {
+        addMessage: (state, action) => {
+            state.messages.push(action.payload);
+        },
     },
-  },
 });
 
-export const { setSelectedChat, addMessage } = chatSlice.actions;
+export const { addMessage } = chatSlice.actions;
 export default chatSlice.reducer;

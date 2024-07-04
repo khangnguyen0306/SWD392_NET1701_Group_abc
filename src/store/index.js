@@ -10,7 +10,7 @@ import { postAPI } from "../services/postAPI";
 import postReducer from "../slices/post.slice";
 import { exchangeAPI } from "../services/exchangeAPI";
 import exchangeReducer from "../slices/exchange.slice";
-import { chatAPI } from "../services/chatAPI";
+// import { chatAPI } from "../services/chatAPI";
 import chatReducer from "../slices/chat.slice";
 
 import { combineReducers } from "redux";
@@ -45,7 +45,6 @@ export const store = configureStore({
     post: PostPerisReducer,
     [exchangeAPI.reducerPath]: exchangeAPI.reducer,
     exchange: ExchangePerisReducer,
-    [chatAPI.reducerPath]: chatAPI.reducer,
     chat: ChatPerisReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -56,7 +55,6 @@ export const store = configureStore({
       authApi.middleware,
       postAPI.middleware,
       exchangeAPI.middleware,
-      chatAPI.middleware
     ),
 });
 

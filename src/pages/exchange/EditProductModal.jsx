@@ -126,7 +126,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                     <Input />
                 </Form.Item>
                 <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price' }]}>
-                    <InputNumber />
+                    <InputNumber min={0} max={1000000000}/>
                 </Form.Item>
                 <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter the description' }]}>
                     <Input.TextArea />

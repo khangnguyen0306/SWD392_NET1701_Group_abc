@@ -69,7 +69,16 @@ export const productAPI = createApi({
       }),
     }),
     getAllCategories: builder.query({
-      query: () => `category/getallcategorywithsubcategory`,
+      query: () => `category/getallcategorywithsubcategoryforcreateproduct`,
+      // `providesTags` determines which 'tag' is attached to the
+      // cached data returned by the query.
+      providesTags: (result) =>
+        result
+          ? result.map(({ id }) => ({ type: "CategoriesList", id }))
+          : [{ type: "CategoriesList", id: "LIST" }],
+    }),
+    getAllCategoriesForStaff: builder.query({
+      query: () => `category/getallcategorywithsubcategoryforstaff`,
       // `providesTags` determines which 'tag' is attached to the
       // cached data returned by the query.
       providesTags: (result) =>
@@ -242,7 +251,9 @@ export const {
   useCreateCategoryMutation,
   useEditCategoryMutation,
   useGetCategoryByIdQuery,
-  useDeleteCategoryMutation
+  useDeleteCategoryMutation,
+  useGetAllCategoriesForStaffQuery
+
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,
   //   useGetClassByIdQuery,
