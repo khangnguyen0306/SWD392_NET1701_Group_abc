@@ -42,11 +42,13 @@ import CommentForm from './Comment';
 import ModalEditComment from './ModalEditComment';
 import "./PostDetail.scss"
 import EditPostModal from './ModalEdit';
+import ProductDisplay from './DisplayProduct';
 const { Content } = Layout;
 
 const PostDetail = () => {
     const { postId } = useParams();
     const { data: postDetail, isLoading, error, refetch: refetchPostDetail } = useGetPostDetailQuery(postId);
+    console.log(postDetail)
     const { data: commentData, isLoading: isLoadingCmt, refetch: refetchComments } = useGetPostCommentQuery(postId);
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -266,22 +268,12 @@ const PostDetail = () => {
                         style={{ marginBottom: '20px' }}
                         bodyStyle={{ display: 'flex', alignItems: 'center' }}
                     >
-                        <Image
-                            src={postDetail?.product.urlImg}
-                            alt={postDetail?.product.name}
-                            width={150}
-                            height={150}
-                            preview={false}
-                            style={{ marginRight: '20px' }}
+                        <ProductDisplay
+                        productId={postDetail.product.id}
                         />
-                        <div style={{ marginLeft: '3rem' }}>
-                            <h2>{postDetail?.product.name}</h2>
-                            <Link to={`/productDetailForAll/${postDetail?.product.id}`}>
-                                <Button type="primary" style={{ marginTop: '1rem' }}>View Product Details</Button>
-                            </Link>
-                        </div>
                     </Card>
                 </Col>
+                {/* comment */}
                 <Col xs={24} md={10} lg={10} xl={10}>
                     <Card
                         className='custom-card-fixed'
@@ -296,18 +288,17 @@ const PostDetail = () => {
                                     key={comment.id}
                                     hoverable
                                     style={{ marginBottom: '20px', width: '100%', height: 'fit-content' }}
-                                    bodyStyle={{ display: 'flex', alignItems: 'center',alignItems: 'center' }}
+                                    bodyStyle={{ display: 'flex', alignItems: 'center', alignItems: 'center' }}
                                 >
-                                    <Image
+                                    <Avatar
                                         src={comment.user?.imgUrl}
                                         alt={comment.user?.userName}
-                                        width={40}
-                                        height={40}
-                                        preview={false}
-                                        style={{ marginRight: '20px' }}
+                                        size={40}
+
+
                                     />
-                                    <div style={{ flex: 1, overflowWrap: 'break-word', marginLeft: '1rem', backgroundColor: '#f0f2f5', padding: '10px', borderRadius: '10px',boxShadow: '0 4px 8px rgba(0,0,0,0.1)'  }}>
-                                        <div dangerouslySetInnerHTML={{ __html: isExpanded ? comment.content : truncateName(comment.content, 50) }} style={{ width: '400px' }} />
+                                    <div style={{ flex: 1, overflowWrap: 'break-word', marginLeft: '1rem', backgroundColor: '#f0f2f5', padding: '10px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+                                        <div dangerouslySetInnerHTML={{ __html: isExpanded ? comment.content : truncateName(comment.content, 50) }} style={{ width: '350px' }} />
                                         {comment.content.length > 50 && (
                                             <Button type="link" onClick={() => toggleContent(comment.id)} icon={isExpanded ? <CaretUpOutlined /> : <CaretDownOutlined />}>
                                                 {isExpanded ? 'Collapse' : 'Read more'}
@@ -344,8 +335,11 @@ const PostDetail = () => {
                                 View more comments
                             </Button>
                         )}
+                        <div className="comment-form-container">
+                            <CommentForm refetch={refetchComments} postId={postId} />
+                        </div>
                     </Card>
-                    <CommentForm refetch={refetchComments} postId={postId} />
+
                 </Col>
             </Row>
             <Modal open={isModalVisible} footer={null} onCancel={handleModalCancel}>

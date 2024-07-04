@@ -143,64 +143,67 @@ const PostList = () => {
                 size="large"
                 dataSource={filteredPosts}
                 renderItem={post => (
-                    <List.Item key={post.id}>
+                    <List.Item key={post.id} style={{ display: 'flex', justifyContent: 'center' }}>
                         <Card
-                            title={
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    {post.user.imgUrl ? (
-                                        <Avatar src={post.user.imgUrl} size={'large'} />
-                                    ) : (
-                                        <Avatar icon={<UserOutlined />} />
-                                    )}
-                                    <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{post.user.userName}</p>
-                                </div>
-                            }
                             hoverable
-                            extra={
-                                <Dropdown
-                                    overlay={
-                                        <Menu>
-                                            {post?.user?.id === user?.id && (
-                                                <>
-                                                    <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
-                                                        Edit
-                                                    </Menu.Item>
-                                                    <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                        Delete
-                                                    </Menu.Item>
-                                                </>
-                                            )}
-                                            <Menu.Item key="report" onClick={() => handleReport(post)}>
-                                                Report
-                                            </Menu.Item>
-                                        </Menu>
-                                    }
-                                    trigger={['click']}
-                                >
-                                    <Button type='text' icon={<SettingOutlined />} size="large" />
-                                </Dropdown>
-                            }
+                            style={{ width: '60%' }}
                         >
-                            <Link to={`/postDetail/${post.id}`}>
-                                <Row gutter={[16, 16]}>
-                                    <Col xs={24} md={10} style={{ marginRight: '5rem' }}>
-                                        <p style={{ fontSize: '14px', color: 'GrayText', marginBottom: '30px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
+                                    <div style={{ marginRight: '1rem' }}>
+                                        {post.user.imgUrl ? (
+
+                                            <Avatar src={post.user.imgUrl} size={'large'} />
+
+                                        ) : (
+                                            <Avatar icon={<UserOutlined />} />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{post.user.userName}</p>
+                                        <p style={{ margin: '0' }}>
                                             Posted on {format(new Date(post.date), 'MMMM dd, yyyy')}
                                         </p>
-                                        <div style={{ textAlign: 'center' }}>
-                                            <Image
-                                                src={post?.imageUrl}
-                                                alt="post image"
-                                                style={{ maxWidth: '100%', height: '400px' }}
-                                                preview={false}
-                                            />
-                                        </div>
-                                    </Col>
-                                    <Col xs={24} md={8}>
-                                        <div style={{ marginLeft: '2rem', color: 'black', paddingBottom: '3rem' }}>
-                                            <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
-                                            <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} />
-                                            <Card
+                                        <p style={{ marginTop: '2rem', position: 'absolute', bottom: '0', left: '20px' }}>
+                                            {convertStatus[post.publicStatus]}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <Dropdown
+                                        overlay={
+                                            <Menu>
+                                                {post?.user?.id === user?.id && (
+                                                    <>
+                                                        <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
+                                                            Edit
+                                                        </Menu.Item>
+                                                        <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
+                                                            Delete
+                                                        </Menu.Item>
+                                                    </>
+                                                )}
+                                                <Menu.Item key="report" onClick={() => handleReport(post)}>
+                                                    Report
+                                                </Menu.Item>
+                                            </Menu>
+                                        }
+                                        trigger={['click']}
+                                    >
+                                        <Button type='text' icon={<SettingOutlined />} size="large" />
+                                    </Dropdown>
+
+                                </div>
+                            </div>
+                            <Link to={`/postDetail/${post.id}`}>
+                                <Row gutter={[16, 16]} >
+                                    <Col xs={24} md={24}>
+                                        <div style={{ marginLeft: '2rem', color: 'black' }}>
+                                            <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '2rem' }}>{post.title}</p>
+                                            <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} style={{ marginTop: '-2rem' }} />
+                                            <Button type='link'style={{marginLeft:'-0.8rem'}}>View all</Button>
+                                            {/* <Card
                                                 style={{ marginTop: '1rem', width: 'fit-content' }}
                                                 cover={
                                                     <Image
@@ -221,12 +224,22 @@ const PostList = () => {
                                                     title={post.product.name}
                                                     description={`Product ID: ${post.product.id}`}
                                                 />
-                                            </Card>
+                                            </Card> */}
                                         </div>
-                                        <p style={{ marginTop: '2rem', position: 'absolute', bottom: '0', left: '20px' }}>
-                                            {convertStatus[post.publicStatus]}
-                                        </p>
+
                                     </Col>
+                                    <Col xs={24} md={24} style={{ marginRight: '5rem' }}>
+
+                                        <div style={{ textAlign: 'center' }}>
+                                            <Image
+                                                src={post?.imageUrl}
+                                                alt="post image"
+                                                style={{ maxWidth: '100%', height: '400px' }}
+                                                preview={false}
+                                            />
+                                        </div>
+                                    </Col>
+
                                 </Row>
                             </Link>
                         </Card>

@@ -23,16 +23,19 @@ const CommentForm = ({ refetch, postId }) => {
     };
 
     return (
-        <Form layout="vertical" form={form}>
-            <Form.Item name="content" rules={[{ required: true, message: 'Please enter your comment.' }]}>
+        <Form layout="vertical" form={form} style={{ margin: '0', width: '100%' }} >
+            <Form.Item name="content" rules={[{ required: true, message: 'Please enter your comment.' }]} style={{ margin: '0' }}>
                 <ReactQuill
                     style={{ backgroundColor: '#fff' }}
                     placeholder="Enter your comment"
                 />
 
             </Form.Item>
-            <Form.Item>
-                <Button type="primary" onClick={handleSubmit} icon={<SendOutlined />}>
+            <Form.Item style={{ position: 'absolute', bottom: '-1rem', right: '20px' }}>
+
+                <Button type="primary"
+                    onClick={handleSubmit}
+                    icon={<SendOutlined />}>
                     Send
                 </Button>
             </Form.Item>

@@ -113,8 +113,12 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
     //Delete Category
     const handleDeleteCategory = async (value) => {
         console.log(value);
+        if (value.status == false) {
+            message.error("Category already deleted");
+            return;
+        };
         try {
-            const deleteSC = await deleteCategory(value);
+            const deleteSC = await deleteCategory(value.id);
             if (deleteSC.error.originalStatus === 200) {
                 message.success("Delete sub-Category successfully!");
                 refetchDataCategory();
@@ -154,9 +158,13 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
 
     //Delete sub-Category
     const handleDeleteSubCategory = async (value) => {
-        console.log(value);
+        if (value.status == false) {
+            message.error("Sub-category aldready De-active !");
+            return;
+        }
+
         try {
-            const deleteSC = await deleteSubcategory(value);
+            const deleteSC = await deleteSubcategory(value.id);
             if (deleteSC.error.originalStatus === 200) {
                 message.success("Delete sub-Category successfully!");
                 refetchDataCategory();
@@ -185,7 +193,7 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
             <Menu.Item key="delete">
                 <Popconfirm
                     title="Are you sure you want to delete this subcategory?"
-                    onConfirm={() => handleDeleteSubCategory(record.id)}
+                    onConfirm={() => handleDeleteSubCategory(record)}
                     okText="Yes"
                     cancelText="No"
                 >
@@ -215,7 +223,7 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
             <Menu.Item key="delete">
                 <Popconfirm
                     title="Are you sure you want to delete this subcategory?"
-                    onConfirm={() => handleDeleteCategory(record.id)}
+                    onConfirm={() => handleDeleteCategory(record)}
                     okText="Yes"
                     cancelText="No"
                 >
