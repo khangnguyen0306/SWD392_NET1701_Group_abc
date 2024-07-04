@@ -12,21 +12,47 @@ $blue-main-color: #5c98f2;
     span {
         color: $blue-main-color;
     }
+
+    @media (max-width: 768px) {
+        font-size: 24px;
+        padding-left: 2rem;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 20px;
+        padding-left: 1rem;
+    }
 }
 
 .Footer-container-content {
-
     .Footer-title-container {
         color: #fff;
         font-size: 27px;
         font-family: $font-title;
         font-weight: 300;
-       
+
+        @media (max-width: 768px) {
+            font-size: 24px;
+        }
+
+        @media (max-width: 480px) {
+            font-size: 20px;
+        }
     }
 
     .Footer-content-container {
         font-size: 16px;
         color: #9a9a9a;
         padding: 10px 0;
+
+        @media (max-width: 768px) {
+            font-size: 14px;
+            padding: 8px 0;
+        }
+
+        @media (max-width: 480px) {
+            font-size: 12px;
+            padding: 6px 0;
+        }
     }
 }

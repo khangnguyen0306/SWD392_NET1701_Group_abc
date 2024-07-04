@@ -81,6 +81,7 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
   //   onSubmit(updatedPosts);
   // };
 
+  const userAvatar = user?.imgUrl || 'https://via.placeholder.com/170';
   return (
     <>
       <CustomHeader />
@@ -88,10 +89,10 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
       <div className="exchange-page" style={{ marginTop: '10rem',minHeight:'80vh'}}>
         {user ? (
           <Card>
-            <div className="input-placeholder" onClick={openModal}>
-              <Avatar src="path_to_avatar_image" />
-              <Input placeholder="What do you want to sell or exchange?" readOnly />
-            </div>
+           <div className="input-placeholder" onClick={openModal}>
+            <Avatar src={userAvatar} />
+            <Input placeholder="What do you want to sell or exchange?" readOnly />
+        </div>
           </Card>
         ) : null}
 

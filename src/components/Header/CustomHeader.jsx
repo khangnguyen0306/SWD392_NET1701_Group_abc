@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom"; // Thay đổi từ Link sang NavLink
+import { NavLink, useNavigate, Link } from "react-router-dom"; // Added Link import
 import { Button, Layout, Menu, Drawer, Grid, Avatar, Badge, Dropdown, notification } from "antd";
-import "./CustomHeader.scss"; // Import SCSS file
+import "./CustomHeader.scss";
 import { MenuOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
-import SubMenu from "antd/es/menu/SubMenu";
 import CartModal from "../../pages/product/cartModal";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTotalProducts } from "../../slices/product.slice"; // Import selector
+import { selectTotalProducts } from "../../slices/product.slice";
 import { logOut, selectCurrentUser } from "../../slices/auth.slice";
 
 const { Header } = Layout;
@@ -21,11 +20,11 @@ const CustomHeader = () => {
     const totalProducts = useSelector(selectTotalProducts);
     const user = useSelector(selectCurrentUser);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const toggleCartModal = () => {
         setCartVisible(!cartVisible);
     };
-    const dispatch = useDispatch();
 
     const handleLogout = () => {
         dispatch(logOut());
@@ -33,7 +32,7 @@ const CustomHeader = () => {
             message: "Logout successfully",
             description: "See you again!",
         });
-        navigate("/login")
+        navigate("/login");
     };
 
     useEffect(() => {
@@ -48,27 +47,27 @@ const CustomHeader = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [prevScrollPos]);
 
-
     const menu = (
         <Menu>
             <Menu.Item key="profile">
-                <NavLink to="/user-profile" activeClassName="active">User Profile</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                <NavLink to="/user-profile">User Profile</NavLink>
             </Menu.Item>
             <Menu.Item key="history">
-                <NavLink to="/user-transaction-history" activeClassName="active">Transaction History</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                <NavLink to="/user-transaction-history">Transaction History</NavLink>
             </Menu.Item>
             <Menu.Item key="logout">
                 <Link onClick={handleLogout}>Log out</Link>
             </Menu.Item>
         </Menu>
     );
+
     const menuNologin = (
         <Menu>
             <Menu.Item key="login">
-                <NavLink to="/login" activeClassName="active">Login</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                <NavLink to="/login">Login</NavLink>
             </Menu.Item>
             <Menu.Item key="register">
-                <NavLink to="/register" activeClassName="active">Register</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                <NavLink to="/register">Register</NavLink>
             </Menu.Item>
         </Menu>
     );
@@ -78,13 +77,13 @@ const CustomHeader = () => {
             return (
                 <>
                     <Menu.Item key="dashboard">
-                        <NavLink to="/dashboard" activeClassName="active">Dashboard</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/dashboard">Dashboard</NavLink>
                     </Menu.Item>
                     <Menu.Item key="manage-products">
-                        <NavLink to="/manage-products" activeClassName="active">Manage Products</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-products">Manage Products</NavLink>
                     </Menu.Item>
                     <Menu.Item key="manage-posts">
-                        <NavLink to="/manage-posts" activeClassName="active">Manage Posts</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-posts">Manage Posts</NavLink>
                     </Menu.Item>
                 </>
             );
@@ -92,16 +91,16 @@ const CustomHeader = () => {
             return (
                 <>
                     <Menu.Item key="post-management">
-                        <NavLink to="/" activeClassName="active">Post</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/">Post</NavLink>
                     </Menu.Item>
                     <Menu.Item key="report-management">
-                        <NavLink to="/postmanager" activeClassName="active">Report</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/postmanager">Report</NavLink>
                     </Menu.Item>
                     <Menu.Item key="manage-Category">
-                        <NavLink to="/manage-categories" activeClassName="active"> Category </NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-categories">Category</NavLink>
                     </Menu.Item>
                     <Menu.Item key="manage-posts">
-                        <NavLink to="/manage-products" activeClassName="active">Product</NavLink> {/* Thay đổi từ Link sang NavLink */}
+                        <NavLink to="/manage-products">Product</NavLink>
                     </Menu.Item>
                 </>
             );
@@ -109,24 +108,22 @@ const CustomHeader = () => {
             return (
                 <>
                     <Menu.Item key="1">
-                        <NavLink exact to="/" activeClassName="active">Home</NavLink>
+                        <NavLink exact to="/">Home</NavLink>
                     </Menu.Item>
                     <Menu.Item key="4">
-                        <NavLink to="/about" activeClassName="active">About us</NavLink>
+                        <NavLink to="/about">About us</NavLink>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <NavLink to="/product" activeClassName="active"> Buy Product</NavLink>
+                        <NavLink to="/product">Buy Product</NavLink>
                     </Menu.Item>
                     <Menu.Item key="3">
-                        <NavLink to="/exchange" activeClassName="active">Exchange Product</NavLink>
+                        <NavLink to="/exchange">Exchange Product</NavLink>
                     </Menu.Item>
                     <Menu.Item key="5">
-                        <NavLink to="/activity" activeClassName="active">Activity</NavLink>
+                        <NavLink to="/activity">Activity</NavLink>
                     </Menu.Item>
-
-
                     <Menu.Item key="6">
-                        <NavLink to="/chat" activeClassName="active">Chat</NavLink>
+                        <NavLink to="/chat">Chat</NavLink>
                     </Menu.Item>
                 </>
             );
@@ -134,10 +131,10 @@ const CustomHeader = () => {
     };
 
     return (
-        <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: '1' }}>
-            <NavLink to={"/"}>
+        <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: 1 }}>
+            <NavLink to="/">
                 <div className="header-logo">
-                    <p><span style={{ color: 'black' }}>Exchange</span> <span >Web</span></p>
+                    <p><span style={{ color: 'black' }}>Exchange</span> <span>Web</span></p>
                 </div>
             </NavLink>
             {screens.md ? (
@@ -155,13 +152,18 @@ const CustomHeader = () => {
                         </p>
                         {user ? (
                             <Dropdown overlay={menu} trigger={['hover']}>
-                                <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
+                                <Avatar
+                                    src={user.imgUrl} // Use user's avatar URL
+                                    style={{ marginRight: '1rem', display: 'block' }}
+                                    size="large"
+                                    icon={<UserOutlined />}
+                                    alt="User Avatar"
+                                />
                             </Dropdown>
                         ) : (
                             <Dropdown overlay={menuNologin} trigger={['hover']}>
                                 <Avatar style={{ marginRight: '1rem', display: 'block' }} size="large" icon={<UserOutlined />} />
                             </Dropdown>
-
                         )}
                     </div>
                 </>
