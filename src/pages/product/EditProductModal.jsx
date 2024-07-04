@@ -85,6 +85,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
 
     return (
         <Modal
+            width={"60vw"}
             open={visible}
             title="Edit Product"
             onCancel={onCancel}

@@ -48,6 +48,7 @@
         // Styles for the card header
         // padding: 12px 16px; // Example padding
         background-color: #ebebeb; // Example background color
+
         .ant-card-head-title {
             // Styles for the title section of the header
             //   font-size: 18px; // Example font size
@@ -76,5 +77,14 @@
             // Styles for buttons inside the card body
             margin-top: 12px; // Example margin
         }
+    }
+
+    .comment-form-container {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
     }
 }
