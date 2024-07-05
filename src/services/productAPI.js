@@ -62,6 +62,15 @@ export const productAPI = createApi({
           ? result.map(({ id }) => ({ type: "ProductList", id }))
           : [{ type: "ProductList", id: "LIST" }],
     }),
+    getAllProductForExchangeStaff: builder.query({
+      query: () => `product/getallforexchange`,
+      // `providesTags` determines which 'tag' is attached to the
+      // cached data returned by the query.
+      providesTags: (result) =>
+        result
+          ? result.map(({ id }) => ({ type: "ProductList", id }))
+          : [{ type: "ProductList", id: "LIST" }],
+    }),
     getProductDetail: builder.query({
       query: (productId) => ({
         url: `product/getproductdetails/${productId}`, // Use template literal for security
@@ -252,7 +261,8 @@ export const {
   useEditCategoryMutation,
   useGetCategoryByIdQuery,
   useDeleteCategoryMutation,
-  useGetAllCategoriesForStaffQuery
+  useGetAllCategoriesForStaffQuery,
+  useGetAllProductForExchangeStaffQuery
 
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,

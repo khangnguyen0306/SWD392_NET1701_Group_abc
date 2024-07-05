@@ -188,11 +188,13 @@ const CustomHeader = () => {
             </Menu>
           </div>
           <div className="icon-header">
-            <p className="cart-icon" onClick={toggleCartModal}>
-              <Badge count={totalProducts}>
-                <ShoppingCartOutlined style={{ fontSize: "30px" }} />
-              </Badge>
-            </p>
+            {user.roleId == 3 || user.roleId == 1 ? null : (
+              <p className="cart-icon" onClick={toggleCartModal}>
+                <Badge count={totalProducts}>
+                  <ShoppingCartOutlined style={{ fontSize: "30px" }} />
+                </Badge>
+              </p>
+            )}
             {user ? (
               (user.roleId === 3 || user.roleId === 1) ? (
                 <Dropdown overlay={menuLoginForStaffAndAdmin} trigger={["hover"]}>

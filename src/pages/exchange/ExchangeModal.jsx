@@ -12,7 +12,7 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
     const [description, setDescription] = useState('');
     const [isLocked, setIsLocked] = useState(false);
     const [createExchange] = useCreateExchangeMutation();
-    const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
+    const { data: productData, isLoading: isLoadingProduct, refetch } = useGetAllProductForExchangeQuery();
 
 
 
@@ -21,10 +21,10 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
         try {
             const values = await form.validateFields();
 
-            if (!isLocked) {
-                console.log('Please lock the exchange before submitting.');
-                return;
-            }
+            // if (!isLocked) {
+            //     console.log('Please lock the exchange before submitting.');
+            //     return;
+            // }
 
             const formValues = {
                 productIds: selectedProductKeys,
@@ -33,6 +33,10 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
             };
             try {
                 const { exchange } = await createExchange(formValues);
+               
+                form.resetFields();
+                setSelectedProductKeys(null)
+                refetch();
                 message.success('Exchange created successfully');
             } catch (e) {
                 message.error("Error creating exchange");
@@ -54,9 +58,7 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
         setDescription(value);
     };
 
-    const handleLockChange = (checked) => {
-        setIsLocked(checked);
-    };
+
 
     const columns = [
         {
@@ -95,7 +97,7 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
                 <Button key="back" onClick={onClose}>
                     Cancel
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleOk} disabled={!isLocked}>
+                <Button key="submit" type="primary" onClick={handleOk} >
                     Submit
                 </Button>,
             ]}
@@ -129,9 +131,7 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
                     >
                         <ReactQuill value={description} onChange={handleDescriptionChange} />
                     </Form.Item>
-                    <Form.Item label="Lock Exchange">
-                        <Switch checked={isLocked} onChange={handleLockChange} />
-                    </Form.Item>
+
                 </Form>
             </Spin>
         </Modal>

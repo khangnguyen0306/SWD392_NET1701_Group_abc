@@ -205,17 +205,30 @@ const PostDetail = () => {
                                         borderRadius: '4px 4px 0 0'
                                     }}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            {postDetail?.user?.imgUrl ? (
-                                                <Avatar src={postDetail.user.imgUrl} size={'large'} />
-                                            ) : (
-                                                <Avatar icon={<UserOutlined />} />
-                                            )}
-                                            <hr />
+                                    <div >
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} s>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                {postDetail?.user?.imgUrl ? (
+                                                    <Avatar src={postDetail.user.imgUrl} size={'large'} />
+                                                ) : (
+                                                    <Avatar icon={<UserOutlined />} />
+                                                )}
+                                                <hr />
+                                                <p style={{marginLeft:'1rem'}}>{postDetail?.user?.userName}</p>
+                                            </div>
                                             <div>
-                                                <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
-                                                <p style={{ marginLeft: '2rem' }}>
+                                                {postDetail?.user.id !== user.id && user.roleId == 2 ? (
+                                                    <Button
+                                                        type='primary'
+                                                        onClick={handleExchangeButtonClick}
+                                                        icon={<SwapOutlined />}
+                                                    >
+                                                        Exchange
+                                                    </Button>
+                                                ) : null}
+                                            </div>
+                                            <div >
+                                                <p >
                                                     {postDetail?.isReported ? (
                                                         <Badge color={"#ff0000"} text={"Reported"} />
                                                     ) : postDetail?.publicStatus ? (
@@ -225,18 +238,9 @@ const PostDetail = () => {
                                                     )}
                                                 </p>
                                             </div>
+                                           
                                         </div>
-                                        <div>
-                                            {postDetail?.user.id !== user.id && user.roleId == 2 ? (
-                                                <Button
-                                                    type='primary'
-                                                    onClick={handleExchangeButtonClick}
-                                                    icon={<SwapOutlined />}
-                                                >
-                                                    Exchange
-                                                </Button>
-                                            ) : null}
-                                        </div>
+
                                     </div>
                                 </div>
                             }
@@ -302,10 +306,10 @@ const PostDetail = () => {
 
 
                                     />
-                                    <div style={{ flex: 1, overflowWrap: 'break-word', marginLeft: '1rem', backgroundColor: '#f0f2f5', padding: '10px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+                                    <div style={{ flex: 1, overflowWrap: 'break-word', marginLeft: '1rem', backgroundColor: '#f0f2f5', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
                                         <div dangerouslySetInnerHTML={{ __html: isExpanded ? comment.content : truncateName(comment.content, 50) }} style={{ width: '350px' }} />
                                         {comment.content.length > 50 && (
-                                            <Button type="link" onClick={() => toggleContent(comment.id)} icon={isExpanded ? <CaretUpOutlined /> : <CaretDownOutlined />}>
+                                            <Button type="text" style={{marginTop:'-0.7rem',marginLeft:'-0.5rem'}} onClick={() => toggleContent(comment.id)} icon={isExpanded ? <CaretUpOutlined /> : <CaretDownOutlined />}>
                                                 {isExpanded ? 'Collapse' : 'Read more'}
                                             </Button>
                                         )}

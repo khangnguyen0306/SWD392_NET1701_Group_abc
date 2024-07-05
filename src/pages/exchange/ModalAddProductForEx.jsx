@@ -95,15 +95,25 @@ const AddProductPage = () => {
                         <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter the product name' }]}>
                             <Input />
                         </Form.Item>
-                        <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price' }]}>
+                       <Form.Item name="price" label="Price" rules={[
+                            { required: true, message: 'Please enter the price' },
+                            {
+                                validator: async (_, value) => {
+                                    if (value && parseInt(value.replace(/\D/g, ''), 10) > 1000000000) {
+                                        throw new Error('Price cannot exceed 1,000,000,000');
+                                    }
+                                }
+                            }
+                        ]}>
                             <NumberFormatBase
+                                allowNegative={false}
                                 min={0}
                                 max={1000000000}
-                                customInput={Input}
                                 thousandSeparator=","
                                 prefix="₫"
                                 decimalScale={0}
                                 className="ant-input"
+                                customInput={Input}
                                 displayType="input"
                             />
                         </Form.Item>

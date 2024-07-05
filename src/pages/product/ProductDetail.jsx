@@ -126,10 +126,10 @@ const ProductDetail = () => {
             <Layout className="productdetail-layout">
                 <Row justify={'center'}>
                     <Col md={10} span={24} className='product-image'>
-                        <Image src={mainImage} style={{ width: '600px', height: '600px' }} />
+                        <Image src={mainImage} style={{ maxWidth: '800px', maxHeight: '800px' }} />
                         <Row gutter={[8, 8]} className="thumbnail-row" style={{ marginTop: '1rem' }}>
                             {ProductDetail?.imageURL?.slice(0, 4).map((image, index) => (
-                                <Col key={index} span={6}>
+                                <Col key={index} span={8}>
                                     <Image
                                         height={"130px"}
                                         width={"150px"}
