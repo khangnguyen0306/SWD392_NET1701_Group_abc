@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Empty, Input } from 'antd';
 import { useCreateReportMutation, useDeletePostMutation, useGetAllPostQuery } from '../../services/postAPI';
-import { EditOutlined, EllipsisOutlined, MoreOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { EditOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import ReportModal from './ReportModal';
 
 const { confirm } = Modal;
 const { Search } = Input;
+
 const PostList = () => {
     const { data: postData, isLoading: isLoadingPost, refetch: refetchPostData } = useGetAllPostQuery();
     const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
@@ -26,13 +27,12 @@ const PostList = () => {
         refetchPostData();
     }, [refetchPostData]);
 
-    // Ensure sorting creates a new array if needed
     const sortedPosts = postData ? [...postData].sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
 
-    // Filter posts based on search term
     const filteredPosts = sortedPosts.filter(post =>
         post.product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
     const showDeleteConfirm = (postId) => {
         confirm({
             title: 'Are you sure you want to delete this post?',
@@ -56,7 +56,6 @@ const PostList = () => {
         });
     };
 
-    //Edit Modal
     const handleEdit = (post) => {
         setSelectedPost(post);
         setIsEditModalVisible(true);
@@ -70,9 +69,6 @@ const PostList = () => {
         setIsEditModalVisible(false);
     };
 
-    //Report modal
-
-
     const showModal = () => {
         setIsModalVisible(true);
     };
@@ -80,29 +76,24 @@ const PostList = () => {
     const handleClose = () => {
         setIsModalVisible(false);
     };
+
     const handleReport = (post) => {
         setPostDataForReport(post);
         showModal();
-        console.log(post)
     };
 
     const onReport = async (post) => {
         try {
-            try {
-                await report({
-                    id: post.id,
-                    body: post.body
-                });
-                message.success('Report post successfully');
-                // refetchProductData();
-                handleClose();
-            } catch {
-                message.error('Failed to Report post');
-            }
+            await report({
+                id: post.id,
+                body: post.body
+            });
+            message.success('Report post successfully');
+            handleClose();
         } catch (error) {
-            message.error('Failed to Report post');
+            message.error('Failed to report post');
         }
-    }
+    };
 
     const truncateName = (name, maxChars) => {
         if (name.length > maxChars) {
@@ -113,7 +104,7 @@ const PostList = () => {
 
     const convertStatus = {
         true: <Badge color={"#33ff00"} text={"Approved"} />,
-        false: <Badge color={"#ffc125"} text={"Not approved"} />
+        false: <Badge color={"#ff0000"} text={"Not approved"} />
     };
 
     if (isLoadingPost) {
@@ -146,100 +137,63 @@ const PostList = () => {
                     <List.Item key={post.id} style={{ display: 'flex', justifyContent: 'center' }}>
                         <Card
                             hoverable
-                            style={{ width: '60%' }}
+                            style={{ width: '60%', marginBottom: '2rem' }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
-                                    <div style={{ marginRight: '1rem' }}>
-                                        {post.user.imgUrl ? (
-
-                                            <Avatar src={post.user.imgUrl} size={'large'} />
-
-                                        ) : (
-                                            <Avatar icon={<UserOutlined />} />
-                                        )}
-                                    </div>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <Avatar src={post.user.imgUrl} size={'large'} icon={<UserOutlined />} style={{ marginRight: '1rem' }} />
                                     <div>
                                         <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{post.user.userName}</p>
                                         <p style={{ margin: '0' }}>
                                             Posted on {format(new Date(post.date), 'MMMM dd, yyyy')}
                                         </p>
-                                        <p style={{ marginTop: '2rem', position: 'absolute', bottom: '0', left: '20px' }}>
+                                        <p style={{ marginTop: '1rem' }}>
                                             {convertStatus[post.publicStatus]}
                                         </p>
                                     </div>
                                 </div>
-
-                                <div>
-                                    <Dropdown
-                                        overlay={
-                                            <Menu>
-                                                {post?.user?.id === user?.id && (
-                                                    <>
-                                                        <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
-                                                            Edit
-                                                        </Menu.Item>
-                                                        <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
-                                                            Delete
-                                                        </Menu.Item>
-                                                    </>
-                                                )}
+                                <Dropdown
+                                    overlay={
+                                        <Menu>
+                                            {post?.user?.id === user?.id && (
+                                                <>
+                                                    <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
+                                                        Edit
+                                                    </Menu.Item>
+                                                    <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
+                                                        Delete
+                                                    </Menu.Item>
+                                                </>
+                                            )}
+                                            {post?.user?.id !== user?.id && (
                                                 <Menu.Item key="report" onClick={() => handleReport(post)}>
                                                     Report
                                                 </Menu.Item>
-                                            </Menu>
-                                        }
-                                        trigger={['click']}
-                                    >
-                                        <Button type='text' icon={<SettingOutlined />} size="large" />
-                                    </Dropdown>
-
-                                </div>
+                                            )}
+                                        </Menu>
+                                    }
+                                    trigger={['click']}
+                                >
+                                    <Button type='text' icon={<SettingOutlined />} size="large" />
+                                </Dropdown>
                             </div>
                             <Link to={`/postDetail/${post.id}`}>
-                                <Row gutter={[16, 16]} >
-                                    <Col xs={24} md={24}>
-                                        <div style={{ marginLeft: '2rem', color: 'black' }}>
-                                            <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '2rem' }}>{post.title}</p>
-                                            <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} style={{ marginTop: '-2rem' }} />
-                                            <Button type='link'style={{marginLeft:'-0.8rem'}}>View all</Button>
-                                            {/* <Card
-                                                style={{ marginTop: '1rem', width: 'fit-content' }}
-                                                cover={
-                                                    <Image
-                                                        alt={post.product.name}
-                                                        src={post.product.urlImg}
-                                                        preview={false}
-                                                        style={{
-                                                            height: '150px',
-                                                            width: '100%',
-                                                            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                                                            transition: 'transform 0.3s',
-                                                            transform: 'scale(1)',
-                                                        }}
-                                                    />
-                                                }
-                                            >
-                                                <Card.Meta
-                                                    title={post.product.name}
-                                                    description={`Product ID: ${post.product.id}`}
-                                                />
-                                            </Card> */}
-                                        </div>
-
-                                    </Col>
-                                    <Col xs={24} md={24} style={{ marginRight: '5rem' }}>
-
-                                        <div style={{ textAlign: 'center' }}>
-                                            <Image
-                                                src={post?.imageUrl}
-                                                alt="post image"
-                                                style={{ maxWidth: '100%', height: '400px' }}
-                                                preview={false}
-                                            />
+                                <Row gutter={[16, 16]}>
+                                    <Col xs={24} md={12}>
+                                        <div style={{ color: 'black' }}>
+                                            <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '1rem' }}>{post.title}</p>
+                                            <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} />
+                                            <Button type='link' style={{ padding: 0 }}>View all</Button>
                                         </div>
                                     </Col>
-
+                                    <Col xs={24} md={12}>
+                                        <Image
+                                            src={post?.imageUrl}
+                                            alt="post image"
+                                            style={{ maxWidth: '100%', height: 'auto' }}
+                                            preview={false}
+                                        />
+                                    </Col>
                                 </Row>
                             </Link>
                         </Card>
