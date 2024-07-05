@@ -18,37 +18,40 @@ const LoginForm = () => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
 
   const handleSubmit = async (values) => {
-    try {
-        const result = await loginUser({ email: values.email, password: values.password });
-        console.log(result);
-        if (result.data.data.user && result.data.data.token) {
-            dispatch(setUser(result.data.data.user));
-            dispatch(setToken(result.data.data.token));
-            localStorage.setItem("token", result.data.data.token);
+    // try {
+    const result = await loginUser({ email: values.email, password: values.password });
+    console.log(result);
+    if (result.data) {
+      dispatch(setUser(result.data.data.user));
+      dispatch(setToken(result.data.data.token));
+      localStorage.setItem("token", result.data.data.token);
 
-            notification.success({
-                message: "Login successfully",
-                description: (
-                    <div>
-                        Welcome {result.data.data.user.userName} <SmileOutlined />
-                    </div>
-                ),
-            });
-
-            const from = location.state?.from || "/";
-            navigate(from);
-        } else {
-            notification.error({
-                message: "Login error",
-                description: "Invalid email or password. Try again!",
-            });
-            form.resetFields();
-        }
-    } catch (error) {
-        console.log("Login error:", error);
-        message.error("Username or Password incorrect");
+      notification.success({
+        message: "Login successfully",
+        description: (
+          <div>
+            Welcome {result.data.data.user.userName} <SmileOutlined />
+          </div>
+        ),
+      });
+      const from = location.state?.from || "/";
+      navigate(from);
+    } else {
+      if (result.error) {
+        message.error(result.error.data.message)
+        return
+      }
+      notification.error({
+        message: "Login error",
+        description: "Invalid email or password. Try again!",
+      });
+      form.resetFields();
     }
-};
+    // } catch (error) {
+    //     console.log("Login error:", error);
+    //     message.error("Username or Password incorrect");
+    // }
+  };
 
   return (
     <div className="form-container">
@@ -61,7 +64,7 @@ const LoginForm = () => {
           </>
         )}
         <Form.Item
-        
+
           style={{ marginBottom: '2rem' }}
           name="email"
           rules={[{ required: true, message: "Please input your Email" }]}

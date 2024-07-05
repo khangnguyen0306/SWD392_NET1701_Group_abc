@@ -47,23 +47,24 @@ const ProductPage = () => {
         dispatch(loadCartFromLocalStorage());
     }, [dispatch]);
 
-    const handleFilterChange = (type, value) => {
-        setFilters({ ...filters, [type]: value });
-    };
-    const refetchProductaData = async () => {
-        try {
-            await refetchProductData();
-            await refetchProductByIdData();
-            await refetchCategories();
-        } catch (error) {
-            message.warning("Login expired, please log in again.")
-            navigate('/login');
-        }
-    };
 
     useEffect(() => {
         refetchProductaData();
     }, [refetchProductData, refetchCategories]);
+    
+    const handleFilterChange = (type, value) => {
+        setFilters({ ...filters, [type]: value });
+    };
+
+   
+
+    const refetchProductaData = async () => {
+        await refetchProductData();
+        await refetchProductByIdData();
+        await refetchCategories();
+    };
+
+ 
 
 
     const handleCategoryChange = (category, checked) => {
