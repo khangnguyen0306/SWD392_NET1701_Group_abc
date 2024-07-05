@@ -47,26 +47,27 @@ export const userAPI = createApi({
       query: (body) => {
         return {
           method: "POST",
-          url: `users`,
+          url: `auth/admin-create-account`,
           body: body,
         }
       },
       invalidatesTags: [{ type: " UserList ", id: " LIST " }],
     }),
+
     editUser: builder.mutation({
       query: (payload) => {
         console.log(payload)
         const newBody = {
           address: payload.body.address,
-          userName: payload.fullname,
+          userName: payload.body.fullname,
           // email: payload.email,
           phoneNumber: payload.body.phoneNumber,
-          dob: payload.body.DOB,
+          dob: payload.body.dob,
           // created_by: " string ",
           // modified_by: " string ",
-          gender: payload.gender,
+          gender: payload.body.gender,
           // is_active: payload.Status,
-          imgUrl: payload.imgUrl,
+          imgUrl: payload.body.imgUrl,
         }
         return {
           method: "PUT",
@@ -187,7 +188,8 @@ export const {
   useEditUserMutation,
   useDeleteUserMutation,
   useBanUserMutation,
-  useUnBanUserMutation
+  useUnBanUserMutation,
+  
   // useGetAllProductQuery,
   // useGetAllCategoriesQuery,
   // useGetProductDetailQuery
