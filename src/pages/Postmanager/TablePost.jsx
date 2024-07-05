@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Button, Space } from 'antd';
+import { Link } from 'react-router-dom';
 
 const TablePost = ({ postData, onEdit, onApprove }) => {
     const columns = [
@@ -24,7 +25,6 @@ const TablePost = ({ postData, onEdit, onApprove }) => {
             dataIndex: 'date',
             key: 'date',
             sorter: (a, b) => new Date(a.date) - new Date(b.date),
-            // sortOrder: sortedInfo.columnKey === 'date' && sortedInfo.order,
             render: (date) => new Date(date).toLocaleDateString(),
         },
         {
@@ -34,6 +34,9 @@ const TablePost = ({ postData, onEdit, onApprove }) => {
                 <Space>
                     <Button onClick={() => onEdit(record)}>Edit</Button>
                     <Button type="primary" onClick={() => onApprove(record.id)}>Approve</Button>
+                    <Link to={`/postDetail/${record.id}`}>
+                        <Button type="primary" style={{ color: '#fff', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>View</Button>
+                    </Link>
                 </Space>
             ),
         },

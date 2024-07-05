@@ -213,14 +213,18 @@ const PostDetail = () => {
                                                 <Avatar icon={<UserOutlined />} />
                                             )}
                                             <hr />
-                                            <div style={{ display: 'flex' }}>
-                                                <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
-                                                <p style={{ marginLeft: '2rem' }}>{postDetail?.publicStatus ? (
-                                                    <Badge color={"#33ff00"} text={"Approved"} />
-                                                ) : (
-                                                    <Badge color={"#ffc125"} text={"Not approved"} />
-                                                )}</p>
-                                            </div>
+                                            <div>
+            <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
+            <p style={{ marginLeft: '2rem' }}>
+                {postDetail?.isReported ? (
+                    <Badge color={"#ff0000"} text={"Reported"} />
+                ) : postDetail?.publicStatus ? (
+                    <Badge color={"#33ff00"} text={"Approved"} />
+                ) : (
+                    <Badge color={"#ff0000"} text={"Not approved"} />
+                )}
+            </p>
+        </div>
                                         </div>
                                         <div>
                                             {postDetail?.user.id !== user.id ? (

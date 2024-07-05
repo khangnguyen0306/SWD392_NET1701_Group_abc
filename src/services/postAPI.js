@@ -228,11 +228,19 @@ export const postAPI = createApi({
         }),
         deleteReportStaff: builder.mutation({
             query: (payload) => ({
-                method: 'PUT',
+                method: 'DELETE',
                 url: `report/deletereport/${payload}`,
 
             }),
         }),
+        approveReport: builder.mutation({
+            query: (payload) => ({
+                method: 'PUT',
+                url: `report/acceptreport/${payload}`,
+
+            }),
+        }),
+
 
     }),
 });
@@ -255,7 +263,8 @@ export const {
     useCreateCommentMutation,
     useGetCommentByIdQuery,
     useEditCommentMutation,
-    useDeleteCommentMutation
+    useDeleteCommentMutation,
+    useApproveReportMutation
     // useGetAllCategoriesQuery,
     // useGetProductDetailQuery
     //   useDuplicateClassMutation,

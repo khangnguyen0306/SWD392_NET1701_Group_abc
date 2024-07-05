@@ -67,7 +67,8 @@ const PostListByUser = () => {
 
     // Phân loại bài đăng đã được duyệt và chưa được duyệt
     const approvedPosts = postData?.filter(post => post.publicStatus === true)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-    const unapprovedPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
+    const unapprovedPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged && !post.isReported )?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
+    const reportPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged && post.isReported )?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
 
     const truncateName = (name, maxChars) => {
         if (name.length > maxChars) {
@@ -241,6 +242,76 @@ const PostListByUser = () => {
                         )}
                     />
                 </TabPane>
+                <TabPane tab={<span style={{ fontSize: '14px' }}>Reported</span>} key="3">
+                    <List
+                        itemLayout="vertical"
+                        size="large"
+                        dataSource={reportPosts}
+                        renderItem={post => (
+                            <List.Item key={post.id}>
+                                <Card
+                                    style={{ marginLeft: '-200px', position: 'relative' }}
+                                    title={
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            {post.user.imgUrl ? (
+                                                <Avatar src={post.user.imgUrl} size={'large'} />
+                                            ) : (
+                                                <Avatar icon={<UserOutlined />} />
+                                            )}
+                                            <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{post.user.userName}</p>
+                                        </div>
+                                    }
+                                    loading={isLoadingPost}
+                                    hoverable
+                                    extra={
+                                        <Dropdown
+                                            overlay={
+                                                <Menu>
+                                                    {post?.user?.id === user?.id && (
+                                                        <>
+                                                            <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
+                                                                Edit
+                                                            </Menu.Item>
+                                                            <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
+                                                                Delete
+                                                            </Menu.Item>
+                                                        </>
+                                                    )}
+                                                    {/* <Menu.Item key="report" onClick={() => handleReport(post.id)}>
+                                                        Báo cáo
+                                                    </Menu.Item> */}
+                                                </Menu>
+                                            }
+                                            trigger={['click']}
+                                        >
+                                            <Button type="text" icon={<SettingOutlined />} size="small" />
+                                        </Dropdown>
+                                    }
+                                >
+                                    <Link to={`/postDetail/${post.id}`}>
+                                        <Row gutter={[16, 16]}>
+                                            <Col xs={24} md={15}>
+                                                <div style={{ marginLeft: '2rem', color: 'black', marginBottom: '2rem' }}>
+                                                    <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{post.title}</p>
+                                                    <div dangerouslySetInnerHTML={{ __html: post.description }} />
+                                                    <p style={{ marginTop: '1rem', position: 'absolute', bottom: '-20px', left: '10px' }} >
+                                                        <Badge color={"#ff0000"} text={"Reported"} />
+                                                    </p>
+                                                </div>
+                                            </Col>
+                                            <Col xs={24} md={6}>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </Link>
+                                </Card>
+                            </List.Item>
+                        )}
+                    />
+                </TabPane>
+                
             </Tabs>
 
             <EditPostModal

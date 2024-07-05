@@ -59,10 +59,11 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
             const values = await form.validateFields();
             const imageUrlToUpdate = newImageUrl.length > 0 ? newImageUrl[0] : currentImageUrl;
             try {
-                await updateProduct({
+                const update = await updateProduct({
                     id: productData,
                     body: { ...values, urlImg: imageUrlToUpdate }
                 });
+                console.log(update);
                 message.success('Product updated successfully');
                 form.resetFields();
                 setNewImageUrl(null);
