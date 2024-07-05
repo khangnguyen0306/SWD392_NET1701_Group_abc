@@ -9,7 +9,7 @@ const { Option } = Select;
 const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }) => {
     const [form] = Form.useForm();
     const { data: categories, isLoading: isLoadingCategories } = useGetAllCategoriesForCProductQuery();
-    const { data: productDetail, isLoading: isLoadingProductDetail } = useGetProductDetailQuery(productData, { skip: !productData });
+    const { data: productDetail, isLoading: isLoadingProductDetail, refetch } = useGetProductDetailQuery(productData, { skip: !productData });
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const { data: subcategories, isLoading: isLoadingSubcategories } = useGetAllSubCategoriesQuery(selectedCategoryId, {
         skip: !selectedCategoryId,
@@ -25,7 +25,9 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
     }, [productDetail]);
 
     useEffect(() => {
+        
         if (visible && productDetail) {
+            refetch();
             setFilteredSubcategories(subcategories || []);
             form.setFieldsValue({
                 categoryId: productDetail?.categoryId,
