@@ -48,7 +48,7 @@ const UserProfile = () => {
                 phoneNumber: user?.phoneNumber,
                 address: user?.address,
                 password: user?.password
-
+                
             });
         }
 
@@ -66,22 +66,19 @@ const UserProfile = () => {
     const updateUserProfile = async (values) => {
         try {
             const result = await editUser({
-                body: { ...values, imgUrl: newAvatar[0] },
-                id: user.id
+                body: {
+                    ...values,
+                    imgUrl: newAvatar.length > 0 ? newAvatar[0] : user.imgUrl, // Sử dụng ảnh mới nếu có, ngược lại giữ nguyên ảnh cũ
+                },
+                id: user.id,
             });
-            message.success("updated user profile successfully ")
+            message.success("Updated user profile successfully");
             setUpdateUser(false);
-
-            // if (result.data.status === 200) {
-            //     message.success(result.data.message);
-            //     setUpdateUser(false);
-            // }
         } catch (error) {
-             message.error("updated user profile unsuccessfully ");
-
+            message.error("Failed to update user profile");
         }
-       
     };
+    
     // const validateEmail = (rule, value, callback) => {
     //     if (!value) {
     //         callback('Please input your email!');

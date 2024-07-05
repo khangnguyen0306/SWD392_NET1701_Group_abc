@@ -214,20 +214,20 @@ const PostDetail = () => {
                                             )}
                                             <hr />
                                             <div>
-            <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
-            <p style={{ marginLeft: '2rem' }}>
-                {postDetail?.isReported ? (
-                    <Badge color={"#ff0000"} text={"Reported"} />
-                ) : postDetail?.publicStatus ? (
-                    <Badge color={"#33ff00"} text={"Approved"} />
-                ) : (
-                    <Badge color={"#ff0000"} text={"Not approved"} />
-                )}
-            </p>
-        </div>
+                                                <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
+                                                <p style={{ marginLeft: '2rem' }}>
+                                                    {postDetail?.isReported ? (
+                                                        <Badge color={"#ff0000"} text={"Reported"} />
+                                                    ) : postDetail?.publicStatus ? (
+                                                        <Badge color={"#33ff00"} text={"Approved"} />
+                                                    ) : (
+                                                        <Badge color={"#ff0000"} text={"Not approved"} />
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
                                         <div>
-                                            {postDetail?.user.id !== user.id ? (
+                                            {postDetail?.user.id !== user.id && user.roleId == 2 ? (
                                                 <Button
                                                     type='primary'
                                                     onClick={handleExchangeButtonClick}

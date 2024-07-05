@@ -64,6 +64,18 @@ const CustomHeader = () => {
       </Menu.Item>
     </Menu>
   );
+  const menuLoginForStaffAndAdmin = (
+    <Menu>
+      <Menu.Item key="profile">
+        <NavLink to="/user-profile" activeClassName="active">
+          User Profile
+        </NavLink>
+      </Menu.Item>
+      <Menu.Item key="logout">
+        <span onClick={handleLogout}>Log out</span>
+      </Menu.Item>
+    </Menu>
+  );
 
   const menuNologin = (
     <Menu>
@@ -92,11 +104,6 @@ const CustomHeader = () => {
           <Menu.Item key="/manage-products">
             <NavLink to="/manage-products" activeClassName="active">
               Manage Products
-            </NavLink>
-          </Menu.Item>
-          <Menu.Item key="/manage-posts">
-            <NavLink to="/manage-posts" activeClassName="active">
-              Manage Posts
             </NavLink>
           </Menu.Item>
         </>
@@ -187,9 +194,15 @@ const CustomHeader = () => {
               </Badge>
             </p>
             {user ? (
-              <Dropdown overlay={menu} trigger={["hover"]}>
-                <Avatar style={{ marginRight: "1rem", display: "block" }} size="large" src={user.imgUrl} />
-              </Dropdown>
+              (user.roleId === 3 || user.roleId === 1) ? (
+                <Dropdown overlay={menuLoginForStaffAndAdmin} trigger={["hover"]}>
+                  <Avatar style={{ marginRight: "1rem", display: "block" }} size="large" src={user.imgUrl} />
+                </Dropdown>
+              ) : (
+                <Dropdown overlay={menu} trigger={["hover"]}>
+                  <Avatar style={{ marginRight: "1rem", display: "block" }} size="large" src={user.imgUrl} />
+                </Dropdown>
+              )
             ) : (
               <Dropdown overlay={menuNologin} trigger={["hover"]}>
                 <Avatar style={{ marginRight: "1rem", display: "block" }} size="large" icon={<UserOutlined />} />
