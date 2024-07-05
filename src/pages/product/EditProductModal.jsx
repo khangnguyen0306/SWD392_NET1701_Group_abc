@@ -3,37 +3,32 @@ import { Modal, Form, Input, Select, Button, message, InputNumber, Image, Skelet
 import { VietnameseProvinces } from '../../utils/utils';
 import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { useEditProductMutation, useGetAllCategoriesForCProductQuery, useGetAllSubCategoriesQuery, useGetProductDetailQuery } from '../../services/productAPI';
-// import PostDetail from '../exchange/PostDetail';
 
 const { Option } = Select;
 
 const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }) => {
-    console.log(productData)
     const [form] = Form.useForm();
     const { data: categories, isLoading: isLoadingCategories } = useGetAllCategoriesForCProductQuery();
-    const { data: productDetail, isLoading: isLoadingProductDetail } = useGetProductDetailQuery(productData);
-    // const { data: subcategories, isLoading: isLoadingSubcategories } = useGetAllSubCategoriesQuery(productDetail?.categoryId);
-
+    const { data: productDetail, isLoading: isLoadingProductDetail, refetch } = useGetProductDetailQuery(productData, { skip: !productData });
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const { data: subcategories, isLoading: isLoadingSubcategories } = useGetAllSubCategoriesQuery(selectedCategoryId, {
         skip: !selectedCategoryId,
     });
-
     const [filteredSubcategories, setFilteredSubcategories] = useState([]);
     const [currentImageUrl, setCurrentImageUrl] = useState('');
     const [newImageUrl, setNewImageUrl] = useState([]);
 
     useEffect(() => {
-        if (visible && productDetail) {
-            setFilteredSubcategories(subcategories || []);
+        if (productDetail) {
+            setSelectedCategoryId(productDetail.categoryId);
         }
-    }, [visible,subcategories]);
-
-
-    const [updateProduct] = useEditProductMutation();
+    }, [productDetail]);
 
     useEffect(() => {
-        if (visible,productDetail)
+        
+        if (visible && productDetail) {
+            refetch();
+            setFilteredSubcategories(subcategories || []);
             form.setFieldsValue({
                 categoryId: productDetail?.categoryId,
                 subcategoryId: productDetail?.subcategoryId,
@@ -42,12 +37,15 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                 description: productDetail?.description,
                 location: productDetail?.location,
             });
-        setCurrentImageUrl(productDetail?.urlImg || '');
-    }, [visible, productDetail, productData, form]);
+            setCurrentImageUrl(productDetail?.urlImg || '');
+        }
+    }, [visible, productDetail, subcategories, form]);
+
+    const [updateProduct] = useEditProductMutation();
 
     const handleCategoryChange = (categoryId) => {
         setSelectedCategoryId(categoryId);
-        form.setFieldsValue({ subcategoryId: undefined }); // Reset subcategory when category changes
+        form.setFieldsValue({ subcategoryId: undefined });
     };
 
     const handleImageChange = (value) => {
@@ -66,15 +64,13 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                 console.log(update);
                 message.success('Product updated successfully');
                 form.resetFields();
-                setNewImageUrl(null);
+                setNewImageUrl([]);
                 refetchProductData();
                 onCancel();
             } catch {
-                message.error('Failed to update Product');
+                message.error('Failed to update product');
             }
-        }
-
-        catch (error) {
+        } catch (error) {
             message.error('Failed to update product');
             console.error('Validate Failed:', error);
         }
@@ -118,7 +114,6 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                         loading={isLoadingSubcategories}
                         placeholder="Select Subcategory"
                         disabled={!filteredSubcategories.length}
-
                     >
                         {filteredSubcategories.map(subcategory => (
                             <Option key={subcategory.id} value={subcategory.id}>
@@ -153,17 +148,15 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                     </Select>
                 </Form.Item>
                 <Form.Item name="urlImg" label="Image">
-                    <div>
-                        <UploadWidget
-                            uwConfig={{
-                                multiple: true,
-                                cloudName: "dnnvrqoiu",
-                                uploadPreset: "estate",
-                            }}
-                            folder={productDetail?.urlImg ? productDetail.urlImg.split('/')[1] : `products/${productDetail?.folder}`}
-                            setState={handleImageChange}
-                        />
-                    </div>
+                    <UploadWidget
+                        uwConfig={{
+                            multiple: true,
+                            cloudName: "dnnvrqoiu",
+                            uploadPreset: "estate",
+                        }}
+                        folder={productDetail?.urlImg ? productDetail.urlImg.split('/')[1] : `products/${productDetail?.folder}`}
+                        setState={handleImageChange}
+                    />
                     {newImageUrl?.length > 0 ? (
                         <img
                             src={newImageUrl[0]}

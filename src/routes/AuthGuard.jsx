@@ -7,7 +7,7 @@ const AuthGuard = ({ allowedRoles, children }) => {
 
   const token = useSelector(selectCurrentToken);
   const user = useSelector(selectCurrentUser);
-  console.log(user)        //
+  console.log(user)        
   const location = useLocation();
 
 

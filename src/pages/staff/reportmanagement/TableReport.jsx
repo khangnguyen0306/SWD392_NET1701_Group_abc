@@ -2,32 +2,32 @@ import React, { useState } from 'react';
 import { Table, Menu, Popconfirm, Dropdown, Button, message } from 'antd';
 import { InfoCircleOutlined, DeleteOutlined, MoreOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { useDeleteReportStaffMutation, useApproveReportMutation } from '../../../services/postAPI'; // Adjust the import path as needed
+import { useDeleteReportStaffMutation, useApproveReportMutation } from '../../../services/postAPI';
 
-const ReportTable = ({ reportData, refetchReports }) => {
+const ReportTable = ({ reportData, refetchReports, refetchPosts }) => {
     const [sortedInfo, setSortedInfo] = useState({});
     const [deleteReportStaff] = useDeleteReportStaffMutation();
     const [approveReport] = useApproveReportMutation();
 
-    const handleDelete = async (postId) => {
+    const handleDelete = async (reportId, postId) => {
         try {
-            const reportsToDelete = reportData.filter(report => report.postId === postId);
-            await Promise.all(reportsToDelete.map(report => deleteReportStaff(report.id).unwrap()));
-            message.success('Reports removed from list successfully');
-            refetchReports(); // Refetch data to update the list after deletion
+            await deleteReportStaff(reportId).unwrap();
+            message.success('Report removed from list successfully');
+            refetchReports();
+            refetchPosts();
         } catch (error) {
-            message.error('Failed to remove reports from list');
+            message.error('Failed to remove report from list');
         }
     };
 
-    const handleApprove = async (postId) => {
+    const handleApprove = async (reportId, postId) => {
         try {
-            const reportsToApprove = reportData.filter(report => report.postId === postId);
-            await Promise.all(reportsToApprove.map(report => approveReport(report.id).unwrap()));
-            message.success('Reports approved successfully');
-            refetchReports(); // Refetch data to update the list after approval
+            await approveReport(reportId).unwrap();
+            message.success('Report approved successfully');
+            refetchReports();
+            refetchPosts();
         } catch (error) {
-            message.error('Failed to approve reports');
+            message.error('Failed to approve report');
         }
     };
 
@@ -43,8 +43,8 @@ const ReportTable = ({ reportData, refetchReports }) => {
             </Menu.Item>
             <Menu.Item key="approve">
                 <Popconfirm
-                    title="Are you sure you want to approve all reports for this post?"
-                    onConfirm={() => handleApprove(record.postId)}
+                    title="Are you sure you want to approve this report?"
+                    onConfirm={() => handleApprove(record.id, record.postId)}
                     okText="Yes"
                     cancelText="No"
                 >
@@ -56,14 +56,14 @@ const ReportTable = ({ reportData, refetchReports }) => {
             </Menu.Item>
             <Menu.Item key="disapprove">
                 <Popconfirm
-                    title="Are you sure you want to disapprove all reports for this post?"
-                    onConfirm={() => handleDelete(record.postId)}
+                    title="Are you sure you want to disapprove this report?"
+                    onConfirm={() => handleDelete(record.id, record.postId)}
                     okText="Yes"
                     cancelText="No"
                 >
                     <p style={{ display: 'flex', alignItems: 'center' }}>
                         <DeleteOutlined style={{ paddingRight: '0.5rem', color: '#EE2C2C', fontSize: '18px' }} />
-                       Disapprove
+                        Disapprove
                     </p>
                 </Popconfirm>
             </Menu.Item>
@@ -144,12 +144,7 @@ const ReportTable = ({ reportData, refetchReports }) => {
     };
 
     return (
-        <div
-            style={{
-                flex: 1,
-                overflow: "auto",
-            }}
-        >
+        <div style={{ flex: 1, overflow: "auto" }}>
             <Table
                 dataSource={reportData}
                 columns={columns}
