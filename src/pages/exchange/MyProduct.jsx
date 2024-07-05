@@ -19,13 +19,7 @@ const MyProducts = () => {
         refetch();
     }, [refetch]);
 
-    if (isLoadingProduct) {
-        return <div>Loading...</div>;
-    }
-
-    if (isError) {
-        return <div>Error fetching data</div>;
-    }
+  
 
     // Function to handle opening edit modal
     const handleEditProduct = (id) => {
@@ -71,7 +65,14 @@ const MyProducts = () => {
     // Calculate the products to be displayed on the current page
     const startIndex = (currentPage - 1) * pageSize;
     const currentProducts = productData?.slice(startIndex, startIndex + pageSize);
+    
+    if (isLoadingProduct) {
+        return <div>Loading...</div>;
+    }
 
+    if (isError) {
+        return <div>Error fetching data</div>;
+    }
     return (
         <div style={{ padding: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
