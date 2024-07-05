@@ -1,6 +1,7 @@
-# Hotel Booking Website
 
-Welcome to our Hotel Booking Website project! This application is designed to provide users with a seamless experience in searching, booking, and managing hotel reservations. Built with modern technologies, it offers a responsive and user-friendly interface.
+# Exchange Web Application
+
+Welcome to our Exchange Web Application project! This application is designed to provide users with a seamless experience in searching, booking, and managing exchanges. Built with modern technologies, it offers a responsive and user-friendly interface.
 
 ## Table of Contents
 - [Team Members](#team-members)
@@ -19,7 +20,7 @@ Meet the talented individuals behind this project:
 - **Nguyễn Cao Duy Thuấn**
 
 ## Technologies Used
-This project leverages a variety of technologies to deliver a robust hotel booking experience:
+This project leverages a variety of technologies to deliver a robust exchange experience:
 - **Frontend**:
   - ![ReactJS](https://img.icons8.com/color/48/000000/react-native.png) ReactJS
   - ![Redux](https://img.icons8.com/color/48/000000/redux.png) Redux
@@ -27,15 +28,15 @@ This project leverages a variety of technologies to deliver a robust hotel booki
   - ![SCSS](https://img.icons8.com/color/48/000000/sass.png) SCSS
 
 - **Backend**:
-  - ![Spring Boot](https://img.icons8.com/color/48/000000/spring-logo.png) Spring Boot
+  - ![.NET](https://img.icons8.com/color/48/000000/net-framework.png) .NET
 
 ## Features
-Our hotel booking website offers the following features:
+Our exchange web application offers the following features:
 - **User Authentication**: Allow users to sign up, log in, and log out.
-- **Hotel Search**: Users can search for hotels based on location, date, and other criteria.
-- **Hotel Listing**: Display a list of available hotels based on the search criteria.
-- **Hotel Details**: Show detailed information about each hotel, including amenities, room types, and prices.
-- **Booking**: Enable users to make reservations for selected hotels.
+- **Item Search**: Users can search for items based on various criteria.
+- **Item Listing**: Display a list of available items based on the search criteria.
+- **Item Details**: Show detailed information about each item, including description, condition, and availability.
+- **Exchange Booking**: Enable users to make reservations for selected items.
 - **Booking Management**: Allow users to view and manage their bookings.
 - **Responsive Design**: Ensure the website is accessible and usable on various devices, including desktops, tablets, and smartphones.
 
@@ -46,8 +47,8 @@ Ready to explore our project? Follow these simple steps to get started:
 3. Install dependencies: `npm install`
 4. Start the frontend server: `npm run dev`
 5. Navigate to the backend directory: `cd backend`
-6. Install dependencies: `mvn install`
-7. Start the backend server: `mvn spring-boot:run`
+6. Install dependencies: `dotnet restore`
+7. Start the backend server: `dotnet run`
 
 ## Contribution
 We welcome contributions from the community! Here's how you can get involved:
@@ -60,4 +61,3 @@ We welcome contributions from the community! Here's how you can get involved:
 ## License
 This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute it according to your needs.
 
-Have fun exploring our Hotel Booking Website!
