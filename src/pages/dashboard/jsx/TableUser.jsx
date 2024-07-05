@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Table, Tag, Menu, Popconfirm, Dropdown, Button } from 'antd';
-import { CloseSquareOutlined, DeleteOutlined, EditOutlined, ManOutlined, MoreOutlined, UserSwitchOutlined, WomanOutlined } from '@ant-design/icons';
+import { Table, Tag, Menu, Popconfirm, Dropdown, Button, Modal } from 'antd';
+import { CloseSquareOutlined, DeleteOutlined, EditOutlined, ManOutlined, MoreOutlined, UserAddOutlined, UserSwitchOutlined, WomanOutlined } from '@ant-design/icons';
+import ReactQuill from 'react-quill';
+import TextArea from 'antd/es/input/TextArea';
 
 
 
@@ -13,9 +15,33 @@ import { CloseSquareOutlined, DeleteOutlined, EditOutlined, ManOutlined, MoreOut
 // };
 
 
-const TableUser = ({ userData, onEdit, onDelete, onBan }) => {
+const TableUser = ({ userData, onEdit, onDelete, onBan, onUnBan }) => {
     const [sortedInfo, setSortedInfo] = useState({});
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [description, setDescription] = useState('');
+    const [currentRecord, setCurrentRecord] = useState(null);
 
+    const showModal = (record) => {
+        setIsModalVisible(true);
+        setCurrentRecord(record)
+    };
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleEditorChange = (value) => {
+        setDescription(value);
+    };
+    const handleOk = () => {
+        // Call your onBan function with description
+        onBan(currentRecord, description);
+        setCurrentRecord(null);
+        setDescription(null);
+        setIsModalVisible(false);
+
+        // Optionally, you can reset description state here
+
+    };
 
     //   const permissionMenu = (record) => (
     //     <Menu
@@ -46,17 +72,24 @@ const TableUser = ({ userData, onEdit, onDelete, onBan }) => {
                     <p className='submenu-usertable-dropdown' ><span><UserSwitchOutlined /></span> <span>Change Role</span></p>
                 </Dropdown>
             </Menu.Item> */}
-            <Menu.Item key="de-ActiveUSer" className='submenu-usertable' onClick={() => onBan(record.id)}>
+            <Menu.Item key="de-ActiveUSer" className='submenu-usertable' onClick={() => showModal(record)}>
                 <p >
                     <span style={{ color: "#FFD700", paddingRight: ' 10px' }}>
                         <CloseSquareOutlined /></span>
                     <span>Ban user</span>
                 </p>
             </Menu.Item>
+            <Menu.Item key="ActiveUSer" className='submenu-usertable' onClick={() => onUnBan(record)}>
+                <p >
+                    <span style={{ color: "#44c386", paddingRight: ' 10px' }}>
+                        <UserAddOutlined /></span>
+                    <span>Active User</span>
+                </p>
+            </Menu.Item>
             <Menu.Item key="delete">
                 <Popconfirm
                     title="Are you sure you want to delete this user?"
-                    onConfirm={() => onDelete(record.id)}
+                    onConfirm={() => onDelete(record)}
                     okText="Yes"
                     cancelText="No"
                 >
@@ -159,6 +192,19 @@ const TableUser = ({ userData, onEdit, onDelete, onBan }) => {
                     pageSize: 10,
                 }}
             />
+            <Modal
+                title="Confirm Ban User"
+                open={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+            >
+                <p>Enter ban description:</p>
+                <TextArea
+                    rows={4}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
+            </Modal>
         </div>
     );
 };

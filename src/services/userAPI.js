@@ -128,19 +128,30 @@ export const userAPI = createApi({
     // }),
 
     BanUser: builder.mutation({
-
+    
       query: (payload) => {
-        const status = false;
+        const reason = payload.reason;
         return {
           method: "PUT",
-          url: `users/` + payload,
-          body: { status: status },
+          url: `bannedaccount/banuser/${payload.id}?reason=${reason}`,
+
+        };
+      },
+      invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
+    }),
+    UnBanUser: builder.mutation({
+    
+      query: (payload) => {
+        return {
+          method: "PUT",
+          url: `bannedaccount/unbanuser/${payload}`,
+
         };
       },
       invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
     }),
     editProfile: builder.mutation({
-      
+
       query: (payload) => {
 
         return {
@@ -175,7 +186,8 @@ export const {
   useAddUserMutation,
   useEditUserMutation,
   useDeleteUserMutation,
-  useBanUserMutation
+  useBanUserMutation,
+  useUnBanUserMutation
   // useGetAllProductQuery,
   // useGetAllCategoriesQuery,
   // useGetProductDetailQuery

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAddUserMutation, useBanUserMutation, useDeleteUserMutation, useEditUserMutation, useGetAllUserQuery } from '../../../services/userAPI';
+import { useAddUserMutation, useBanUserMutation, useDeleteUserMutation, useEditUserMutation, useGetAllUserQuery, useUnBanUserMutation } from '../../../services/userAPI';
 import TableUser from './TableUser';
 import { Button, Form, Layout, message } from 'antd';
 import AddUserModal from './AddUserModal';
@@ -16,6 +16,7 @@ const DashboardManagement = () => {
     const [editUser] = useEditUserMutation();
     const [deleteUser] = useDeleteUserMutation();
     const [BanUser] = useBanUserMutation();
+    const [UnBanUser] = useUnBanUserMutation();
 
 
     //  show/off Modal
@@ -82,8 +83,9 @@ const DashboardManagement = () => {
 
     //HandleDelete
     const handleDeleteUser = async (user) => {
+
         try {
-            const { deleteU } = await deleteUser(user);    // no return value
+            const { deleteU } = await deleteUser(user.id);    // no return value
             refetchUserData();
             const messageEdit = "User Delete successfully!";
             handleEditOk(messageEdit);
@@ -92,14 +94,35 @@ const DashboardManagement = () => {
             console.log(error);
         }
     };
-    const handleBanUser = async (user) => {
+
+    const handleBanUser = async (record, description) => {
+        if (record.status == false) {
+            message.error("User already banned");
+            return;
+        }
         try {
-            await BanUser(user);  //no return value
+            await BanUser({ id: record.id, reason: description });
             refetchUserData();
             const messageReturn = "User Banned successfully!";
             handleEditOk(messageReturn);
         } catch (error) {
             message.error("User Banned unsuccessfully!");
+            console.log(error);
+        }
+    };
+    const handleUnBanUser = async (payload) => {
+        console.log(payload);
+        if (payload.status == true) {
+            message.error("User still active!");
+            return;
+        }
+        try {
+            await UnBanUser(payload.id);
+            refetchUserData();
+            const messageReturn = "User Active successfully!";
+            handleEditOk(messageReturn);
+        } catch (error) {
+            message.error("User Active unsuccessfully!");
             console.log(error);
         }
     };
@@ -125,9 +148,10 @@ const DashboardManagement = () => {
     }
     const TableUserProps = {
         userData: userData,
-        onEdit :showEditModal,
+        onEdit: showEditModal,
         onDelete: handleDeleteUser,
-        onBan: handleBanUser
+        onBan: handleBanUser,
+        onUnBan:handleUnBanUser
     }
 
 
@@ -136,7 +160,7 @@ const DashboardManagement = () => {
             <div style={{ display: "flex", justifyContent: 'end', marginTop: '6.5rem' }}>
                 <Button onClick={showModal}>Add User</Button>
             </div>
-            <TableUser {...TableUserProps}/>
+            <TableUser {...TableUserProps} />
             <AddUserModal {...addModalProps} />
             <EditUserModal {...editModalProps} />
         </Layout>

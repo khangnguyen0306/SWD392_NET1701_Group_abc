@@ -43,6 +43,7 @@ import ModalEditComment from './ModalEditComment';
 import "./PostDetail.scss"
 import EditPostModal from './ModalEdit';
 import ProductDisplay from './DisplayProduct';
+import ProductDetail from '../product/ProductDetail';
 const { Content } = Layout;
 
 const PostDetail = () => {
@@ -143,7 +144,7 @@ const PostDetail = () => {
         return name;
     };
 
-    if (isLoading || isLoadingCmt) {
+    if (isLoading || isLoadingCmt || !ProductDetail) {
         return (
             <Card style={{ width: '100%', marginTop: 16 }}>
                 <Skeleton active />
@@ -273,7 +274,7 @@ const PostDetail = () => {
                         bodyStyle={{ display: 'flex', alignItems: 'center' }}
                     >
                         <ProductDisplay
-                        productId={postDetail.product.id}
+                            productId={postDetail?.product.id}
                         />
                     </Card>
                 </Col>

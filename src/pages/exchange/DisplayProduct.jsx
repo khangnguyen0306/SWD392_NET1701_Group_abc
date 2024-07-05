@@ -2,9 +2,6 @@
 
 import React, { useEffect } from 'react';
 import { Card, Image, Button, Row, Col, Typography } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useGetPostDetailQuery } from '../../services/postAPI';
-import { useNavigate } from 'react-router-dom';
 import { useGetProductDetailQuery } from '../../services/productAPI';
 
 const { Title, Paragraph } = Typography;
