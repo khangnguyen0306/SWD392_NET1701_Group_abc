@@ -304,9 +304,10 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
         return (
             <>
                 <Button
+                    type='primary'
                     style={{ marginBottom: '1rem' }}
                     onClick={handleCreateSC}
-                    icon={<PlusCircleOutlined style={{ paddingRight: '0.5rem', color: '#1E90FF', fontSize: '18px' }} />}>
+                    icon={<PlusCircleOutlined style={{ paddingRight: '0.5rem', fontSize: '18px' }} />}>
                     Add sub-Category
                 </Button>
                 <Table
@@ -322,10 +323,11 @@ const TableCategories = ({ categoryData, onDeleteCategory, refetchDataCategory }
     return (
         <>
             <Button
+            type='primary'
                 style={{ marginBottom: '1rem' }}
                 onClick={handleCreateCategory}
                 icon={<PlusCircleOutlined
-                    style={{ paddingRight: '0.5rem', color: '#1E90FF', fontSize: '18px' }} />}>
+                    style={{ paddingRight: '0.5rem', fontSize: '18px' }} />}>
                 Add Category
             </Button>
             <Table

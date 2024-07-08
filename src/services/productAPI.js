@@ -7,7 +7,7 @@ import { selectTokens } from "../slices/auth.slice";
 export const productAPI = createApi({
   reducerPath: "productManagement",
   // Tag types are used for caching and invalidation.
-  tagTypes: ["ProductList,CategoriesList,ProductExchangeList", "SubcategoryList", "CategoryList"],
+  tagTypes: ["ProductList,CategoriesList,ProductExchangeList", "SubcategoryList", "CategoryList", "Payment"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
@@ -192,6 +192,20 @@ export const productAPI = createApi({
       invalidatesTags: [{ type: "SubcategoryList", id: "LIST" }],
     }),
 
+    createPayment: builder.mutation({
+      query: (body) => {
+        const { orderDetails, totalPrice, tokenId, PayerID } = body;
+        const newBody = { orderDetails, totalPrice };
+        console.log(newBody);
+        return {
+          method: "POST",
+          url: `payments/execute?token=${tokenId}&PayerID=${PayerID}`,
+          body: newBody,
+        };
+      },
+      invalidatesTags: [{ type: "Payment", id: "LIST" }],
+    }),
+
     editSubcategory: builder.mutation({
       query: (payload) => {
         return {
@@ -262,7 +276,8 @@ export const {
   useGetCategoryByIdQuery,
   useDeleteCategoryMutation,
   useGetAllCategoriesForStaffQuery,
-  useGetAllProductForExchangeStaffQuery
+  useGetAllProductForExchangeStaffQuery,
+  useCreatePaymentMutation
 
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,

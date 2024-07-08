@@ -12,6 +12,7 @@ import CustomHeader from "../../../components/Header/CustomHeader";
 import CustomFooter from "../../../components/Footer/CustomFooter";
 import PostManagement from "../../Postmanager/PostManagement";
 import DashboardManagement from "./DashboardManagement";
+import { useState } from "react";
 function Dashboard() {
 
   const { data: productData, isLoadingProduct } = useGetAllProductQuery();
@@ -32,7 +33,17 @@ function Dashboard() {
     return name;
   };
 
-  console.log(user)
+  const [position, setPosition] = useState(null);
+
+  const savePosition = () => {
+    if (position) {
+      // Save the position to local storage or send it to your server
+      // localStorage.setItem('selectedPosition', JSON.stringify(position));
+      console.log('Position saved:', position);
+    } else {
+      console.log('No position selected');
+    }
+  };
   if (isLoadingProduct) {
     return <Spin tip="Loading products..." />;
   }
@@ -120,7 +131,7 @@ function Dashboard() {
             <Card style={{ width: '100%', marginTop: '4rem' }}>
               <div className="why-choose-us">
                 <p>Why Choose Us</p>
-                <p>6 reasons to Choose us</p>
+                <p style={{ fontFamily: 'DM Serif Display' }}>6 reasons to Choose us</p>
               </div>
               <Row gutter={[16, 16]} justify="center" style={{ width: '100%' }}>
                 <Col span={24} md={8} className="left-col-container" >
@@ -192,6 +203,9 @@ function Dashboard() {
 
 
                 </Col>
+              </Row>
+              <Row>
+
               </Row>
             </Card>
           </Row>

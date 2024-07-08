@@ -60,7 +60,7 @@ const CustomHeader = () => {
         </NavLink>
       </Menu.Item>
       <Menu.Item key="logout">
-        <span onClick={handleLogout}>Log out</span>
+        <p onClick={handleLogout}>Log out</p>
       </Menu.Item>
     </Menu>
   );
@@ -175,8 +175,8 @@ const CustomHeader = () => {
     <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: "1" }}>
       <NavLink to={"/"}>
         <div className="header-logo">
-          <p>
-            <span style={{ color: "black" }}>Exchange</span> <span>Web</span>
+          <p >
+            <span style={{ color: "black", fontFamily: 'DM Serif Display' }}>Exchange</span> <span style={{ fontFamily: 'DM Serif Display' }}>Web</span>
           </p>
         </div>
       </NavLink>
@@ -188,7 +188,7 @@ const CustomHeader = () => {
             </Menu>
           </div>
           <div className="icon-header">
-            {user.roleId == 3 || user.roleId == 1 ? null : (
+            {user?.roleId == 3 || user?.roleId == 1 ? null : (
               <p className="cart-icon" onClick={toggleCartModal}>
                 <Badge count={totalProducts}>
                   <ShoppingCartOutlined style={{ fontSize: "30px" }} />
@@ -196,7 +196,7 @@ const CustomHeader = () => {
               </p>
             )}
             {user ? (
-              (user.roleId === 3 || user.roleId === 1) ? (
+              (user?.roleId === 3 || user?.roleId === 1) ? (
                 <Dropdown overlay={menuLoginForStaffAndAdmin} trigger={["hover"]}>
                   <Avatar style={{ marginRight: "1rem", display: "block" }} size="large" src={user.imgUrl} />
                 </Dropdown>

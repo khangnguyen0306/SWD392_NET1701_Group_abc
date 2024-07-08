@@ -4,12 +4,13 @@ import { useGetAllCategoriesForCProductQuery, useGetSubCategoryByIdQuery } from 
 
 const ModalEditSubcategory = ({ visible, onEdit, onCancel, subcategoryId }) => {
     const [form] = Form.useForm();
-    const { data: categories, isLoading: categoriesLoading } = useGetAllCategoriesForCProductQuery();
+    const { data: categories, isLoading: categoriesLoading, refetch: refetchC } = useGetAllCategoriesForCProductQuery();
     const { data: subcategoryDetail, isLoading: subcategoryLoading, error, refetch } = useGetSubCategoryByIdQuery(subcategoryId);
     console.log(subcategoryDetail)
 
     useEffect(() => {
         refetch();
+        refetchC();
         if (visible && subcategoryDetail) {
             form.setFieldsValue({
                 categoryId: subcategoryDetail.categoryId,
@@ -17,7 +18,7 @@ const ModalEditSubcategory = ({ visible, onEdit, onCancel, subcategoryId }) => {
                 description: subcategoryDetail.description,
             });
         }
-    }, [visible, subcategoryDetail, form, refetch]);
+    }, [visible, subcategoryDetail, form, refetch, refetchC]);
 
 
 

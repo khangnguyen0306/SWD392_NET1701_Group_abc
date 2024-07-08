@@ -43,6 +43,13 @@ export const userAPI = createApi({
       }),
     }),
 
+    getUserProfileForOther: builder.query({
+      query: (userId) => ({
+        url: `users/getuserprofile/${userId}`,
+        method: "GET",
+      }),
+    }),
+
     addUser: builder.mutation({
       query: (body) => {
         return {
@@ -129,7 +136,7 @@ export const userAPI = createApi({
     // }),
 
     BanUser: builder.mutation({
-    
+
       query: (payload) => {
         const reason = payload.reason;
         return {
@@ -141,7 +148,7 @@ export const userAPI = createApi({
       invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
     }),
     UnBanUser: builder.mutation({
-    
+
       query: (payload) => {
         return {
           method: "PUT",
@@ -189,7 +196,7 @@ export const {
   useDeleteUserMutation,
   useBanUserMutation,
   useUnBanUserMutation,
-  
+  useGetUserProfileForOtherQuery
   // useGetAllProductQuery,
   // useGetAllCategoriesQuery,
   // useGetProductDetailQuery

@@ -161,7 +161,8 @@ const PostListByUser = () => {
                                             </Col>
                                             <Col xs={24} md={6}>
                                                 <div style={{ textAlign: 'center' }}>
-                                                    <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    
+                                                    <Image src={post?.imageUrl} style={{ maxWidth: '100%', height: '100%' }} preview={false} />
                                                 </div>
                                             </Col>
                                         </Row>
@@ -232,7 +233,7 @@ const PostListByUser = () => {
                                             </Col>
                                             <Col xs={24} md={6}>
                                                 <div style={{ textAlign: 'center' }}>
-                                                    <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    <Image src={post?.imageUrl}  style={{ maxWidth: '100%', height: '100%' }} preview={false} />
                                                 </div>
                                             </Col>
                                         </Row>
