@@ -6,7 +6,7 @@ import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { v4 as uuidv4 } from 'uuid';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { NumberFormatBase } from 'react-number-format';
+import { NumberFormatBase, NumericFormat } from 'react-number-format';
 const { Option } = Select;
 
 const AddProductPage = () => {
@@ -23,7 +23,7 @@ const AddProductPage = () => {
     const [addProduct] = useCreateProductForExchangeMutation()
     const [folder] = useState(uuidv4());
     const navigate = useNavigate();
-
+    const [price, setPrice] = useState(0);
     useEffect(() => {
         setFilteredSubcategories(subcategories || []);
     }, [subcategories]);
@@ -44,7 +44,7 @@ const AddProductPage = () => {
         try {
             const values = await form.validateFields();
             try {
-                await addProduct({ ...values, urlImg: images[0] });
+                await addProduct({ ...values, urlImg: images[0], price });
                 message.success('Product added successfully');
                 refetch();
                 navigate(-1)
@@ -95,7 +95,7 @@ const AddProductPage = () => {
                         <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter the product name' }]}>
                             <Input />
                         </Form.Item>
-                       <Form.Item name="price" label="Price" rules={[
+                        <Form.Item name="price" label="Price" rules={[
                             { required: true, message: 'Please enter the price' },
                             {
                                 validator: async (_, value) => {
@@ -105,16 +105,18 @@ const AddProductPage = () => {
                                 }
                             }
                         ]}>
-                            <NumberFormatBase
-                                allowNegative={false}
-                                min={0}
-                                max={1000000000}
-                                thousandSeparator=","
-                                prefix="₫"
-                                decimalScale={0}
-                                className="ant-input"
-                                customInput={Input}
-                                displayType="input"
+                            <NumericFormat
+                                style={{ padding: '10px', marginBottom: '10px' }}
+                                thousandSeparator={true}
+                                prefix={'₫ '}
+                                onValueChange={(values) => {
+                                    const { floatValue } = values;
+                                    setPrice(floatValue);
+                                }}
+                                isAllowed={(values) => {
+                                    const { floatValue } = values;
+                                    return floatValue >= 0 && floatValue <= 100000000;
+                                }}
                             />
                         </Form.Item>
                         <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter the description' }]}>

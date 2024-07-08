@@ -3,6 +3,7 @@ import { Modal, Form, Input, Select, Button, message, InputNumber, Image, Skelet
 import { VietnameseProvinces } from '../../utils/utils';
 import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { useEditProductMutation, useGetAllCategoriesForCProductQuery, useGetAllSubCategoriesQuery, useGetProductDetailQuery } from '../../services/productAPI';
+import { NumericFormat } from 'react-number-format';
 
 const { Option } = Select;
 
@@ -14,7 +15,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
     const { data: subcategories, isLoading: isLoadingSubcategories, refetch: refetchSubcategories } = useGetAllSubCategoriesQuery(selectedCategoryId, { skip: !selectedCategoryId });
     const [currentImageUrl, setCurrentImageUrl] = useState('');
     const [newImageUrl, setNewImageUrl] = useState([]);
-
+    const [price, setPrice] = useState(0);
     useEffect(() => {
         if (productDetail) {
             setSelectedCategoryId(productDetail.categoryId);
@@ -60,7 +61,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
             try {
                 const update = await updateProduct({
                     id: productData,
-                    body: { ...values, urlImg: imageUrlToUpdate }
+                    body: { ...values, urlImg: imageUrlToUpdate,price}
                 });
                 console.log(update);
                 message.success('Product updated successfully');
@@ -129,7 +130,19 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                     <Input />
                 </Form.Item>
                 <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price' }]}>
-                    <InputNumber suffix="₫" style={{ width: "100%" }} />
+                    <NumericFormat
+                        style={{ padding: '10px', marginBottom: '10px' }}
+                        thousandSeparator={true}
+                        prefix={'₫ '}
+                        onValueChange={(values) => {
+                            const { floatValue } = values;
+                            setPrice(floatValue);
+                        }}
+                        isAllowed={(values) => {
+                            const { floatValue } = values;
+                            return floatValue >= 0 && floatValue <= 100000000;
+                        }}
+                    />
                 </Form.Item>
                 <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter the description' }]}>
                     <Input.TextArea />

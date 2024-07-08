@@ -20,7 +20,12 @@ const ProductDetailPage = () => {
         refetch();
     }, [refetch])
 
-
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+        }).format(price);
+    };
     if (isLoading) {
         return <Skeleton active />;
     }
@@ -30,7 +35,7 @@ const ProductDetailPage = () => {
     }
 
     if (!productData) {
-        return <Empty description="No posts available" />; 
+        return <Empty description="No posts available" />;
     }
 
     return (
@@ -70,7 +75,7 @@ const ProductDetailPage = () => {
                                         title={productData.name}
                                         description={
                                             <>
-                                                <p><strong>Price:</strong> {productData.price} VND</p>
+                                                <p><strong>Price:</strong> {formatPrice(productData.price)} </p>
                                                 <p><strong>Category:</strong> {productData.categoryName}</p>
                                                 <p><strong>Subcategory:</strong> {productData.subcategoryName}</p>
                                                 <p><strong>Location:</strong> {productData.location}</p>

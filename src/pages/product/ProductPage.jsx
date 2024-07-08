@@ -37,7 +37,7 @@ const ProductPage = () => {
     const [filters, setFilters] = useState({
         categories: [],
         subcategories: [],
-        priceRange: [1000, 100000000],
+        priceRange: [1, 100000000],
         condition: [],
         location: null,
     });
@@ -85,7 +85,7 @@ const ProductPage = () => {
         setFilters({
             categories: [],
             subcategories: [],
-            priceRange: [1000, 100000000],
+            priceRange: [1, 100000000],
             location: null,
         });
         setSearch('');
@@ -187,6 +187,12 @@ const ProductPage = () => {
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+        }).format(price);
+    };
 
     if (isLoadingProduct || isLoadingCategories || isLoadingProductByUserId) {
         return <Skeleton active />;
@@ -234,6 +240,10 @@ const ProductPage = () => {
                                 prefix={'₫ '}
                                 placeholder="From"
                                 value={filters.priceRange[0]}
+                                isAllowed={(values) => {
+                                    const { floatValue } = values;
+                                    return floatValue >= 0 && floatValue <= 100000000;
+                                }}
                                 onValueChange={(values) => {
                                     const { floatValue } = values;
                                     handleFilterChange('priceRange', [floatValue, filters.priceRange[1]]);
@@ -350,7 +360,7 @@ const ProductPage = () => {
                                                 <div className="card-content">
                                                     <p className="card-product-name">{truncateName(product?.name, 20)}</p>
                                                     <p className="card-product-price">
-                                                        Price: <span className="price-highlight"><span style={{ color: '#f05d40' }}>{product?.price}  ₫</span></span>
+                                                        Price: <span className="price-highlight"><span style={{ color: '#f05d40' }}>{formatPrice(product?.price)}</span></span>
                                                     </p>
                                                     <p>Location: <span style={{ fontWeight: 'bold' }}>{product?.location}</span></p>
                                                 </div>
