@@ -248,7 +248,7 @@ const PostDetail = () => {
                             }
                         >
                             <div className='product-detail-description' style={{padding:' 0 10px'}}>
-
+                               
                                 <p style={{ fontSize: '2rem', fontWeight: 'bold', padding: '1rem' }}>{postDetail?.title}</p>
                                 <div style={{ padding: '1rem' }}>
                                     {isDescriptionExpanded ? (

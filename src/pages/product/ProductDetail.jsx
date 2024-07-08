@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useGetAllProductQuery, useGetProductDetailQuery } from '../../services/productAPI';
 import CustomFooter from '../../components/Footer/CustomFooter';
 import CustomHeader from '../../components/Header/CustomHeader';
-import { Button, Card, Col, Image, InputNumber, Layout, Modal, Row, Space, Spin, Tag, message } from 'antd';
+import { Avatar, Button, Card, Col, Image, InputNumber, Layout, Modal, Row, Space, Spin, Tag, message } from 'antd';
 import "./ProductDetail.scss"
 import { addToCart, loadCartFromLocalStorage, updateCartQuantity } from '../../slices/product.slice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -154,8 +154,15 @@ const ProductDetail = () => {
                         )}
                     </Col>
                     <Col md={8} span={24}>
-                        <div className='product-detail-description'>
-                            <p style={{ width: '200px' }} className="productTitle">{ProductDetail?.name}</p>
+
+                        <div className='product-detail-description' >
+                            <Link to={`/user-profile/${ProductDetail?.userId}`}>
+                                <div style={{ display: 'flex', alignItems: 'center', fontWeight: 'bold', margin: "5rem 0 2rem 0", width: 'fit-content' }}>
+                                    <Avatar src={ProductDetail?.userImgUrl} style={{ marginRight: '1rem' }} />
+                                    <p>{ProductDetail?.userName}</p>
+                                </div>
+                            </Link>
+                            <p style={{ width: '80%' }} className="productTitle">{ProductDetail?.name}</p>
                             <p className="productQuantity"> <Tag color="success">
                                 <b>Stock: </b> <span style={{ color: 'red' }}>{1}</span></Tag></p>
                             <p className="productCategory">{ProductDetail?.category} | {ProductDetail?.subcategoryName}</p>
@@ -214,7 +221,7 @@ const ProductDetail = () => {
                                         <Image
                                             alt={relatedProduct.name}
                                             src={relatedProduct.urlImg}
-                                            style={{ height: '200px' }}
+                                            style={{ height: '300px' }}
                                             preview={false}
                                         />}
                                 >

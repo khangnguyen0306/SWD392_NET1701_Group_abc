@@ -5,7 +5,7 @@ import { loadCartFromLocalStorage, removeFromCart, updateCartQuantity, clearPaid
 import { selectCurrentToken, selectCurrentUser } from '../../slices/auth.slice';
 import { Link, useLocation } from 'react-router-dom';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
-import { useCreateCategoryMutation, useCreatePaymentMutation } from '../../services/productAPI';
+import { useCreateCategoryMutation, useCreatePaymentMutation, useGetAllProductQuery } from '../../services/productAPI';
 
 
 const CartModal = ({ visible, onClose }) => {
@@ -17,8 +17,9 @@ const CartModal = ({ visible, onClose }) => {
   const [isLoadingPaypal, setIsLoadingPaypal] = useState(true);
   const location = useLocation();
   const [payment] = useCreatePaymentMutation();
-
+  const { refetch: refetchProductData } = useGetAllProductQuery();
   useEffect(() => {
+    refetchProductData();
     if (visible && currentUser) {
       dispatch(loadCartFromLocalStorage({ userID: currentUser.id }));
     }
@@ -87,6 +88,7 @@ const CartModal = ({ visible, onClose }) => {
     } catch (e) {
       if (e.originalStatus === 200) {
         message.success('Payment completed successfully.');
+        refetchProductData();
         dispatch(clearPaidItems({ userID: currentUser.id, itemIds: selectedItems }));
         onClose();
       } else {
