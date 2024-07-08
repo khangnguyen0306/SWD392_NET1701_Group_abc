@@ -55,7 +55,7 @@ const CustomHeader = () => {
         </NavLink>
       </Menu.Item>
       <Menu.Item key="history">
-        <NavLink to="/user-transaction-history" activeClassName="active">
+        <NavLink to="/transactionHistory" activeClassName="active">
           Transaction History
         </NavLink>
       </Menu.Item>

@@ -8,7 +8,7 @@ import { selectTokens } from "../slices/auth.slice";
 export const userAPI = createApi({
   reducerPath: "userManagement",
   // Tag types are used for caching and invalidation.
-  tagTypes: ["UserList"],
+  tagTypes: ["UserList","TransactionList"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
@@ -84,15 +84,15 @@ export const userAPI = createApi({
       },
       invalidatesTags: (res, err, arg) => [{ type: " UserList ", id: arg.id }],
     }),
-    // getAllCategories: builder.query({
-    //     query: () => `categories`,
-    //     // `providesTags` determines which 'tag' is attached to the
-    //     // cached data returned by the query.
-    //     providesTags: (result) =>
-    //         result
-    //             ? result.map(({ id }) => ({ type: "CategoriesList", id }))
-    //             : [{ type: "CategoriesList", id: "LIST" }],
-    // }),
+    getAllTransaction: builder.query({
+        query: () => `order/getallorder`,
+        // `providesTags` determines which 'tag' is attached to the
+        // cached data returned by the query.
+        providesTags: (result) =>
+            result
+                ? result.map(({ id }) => ({ type: "TransactionList", id }))
+                : [{ type: "TransactionList", id: "LIST" }],
+    }),
 
     // getClassById: builder.query({
     //   query: (classId) => ({
@@ -196,7 +196,8 @@ export const {
   useDeleteUserMutation,
   useBanUserMutation,
   useUnBanUserMutation,
-  useGetUserProfileForOtherQuery
+  useGetUserProfileForOtherQuery,
+  useGetAllTransactionQuery
   // useGetAllProductQuery,
   // useGetAllCategoriesQuery,
   // useGetProductDetailQuery
