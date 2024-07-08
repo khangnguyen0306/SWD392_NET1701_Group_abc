@@ -113,8 +113,14 @@ const ProductDetail = () => {
         // Điều hướng đến trang đăng nhập, truyền state là đường dẫn hiện tại
         navigate('/login', { state: { from: location.pathname } });
     };
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+        }).format(price);
+    };
 
-    if (isLoadingProduct && isLoadingAllProducts) {
+    if (isLoadingProduct || isLoadingAllProducts) {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Spin size="large" />
         </div>
@@ -153,7 +159,7 @@ const ProductDetail = () => {
                             <p className="productQuantity"> <Tag color="success">
                                 <b>Stock: </b> <span style={{ color: 'red' }}>{1}</span></Tag></p>
                             <p className="productCategory">{ProductDetail?.category} | {ProductDetail?.subcategoryName}</p>
-                            <p className="productPrice"> ₫ {ProductDetail?.price}</p>
+                            <p className="productPrice"> {formatPrice(ProductDetail?.price)}</p>
                             <p className="productDescription" dangerouslySetInnerHTML={{ __html: ProductDetail?.description }} />
 
                             <div className="addToCart-btn">
@@ -183,7 +189,7 @@ const ProductDetail = () => {
                                 ) : (
                                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '3rem' }}>
                                         <p>You must login to Buy product</p>
-                                        <Button type='primary' style={{marginLeft:'1rem'}} onClick={handleLogin}>Login</Button>
+                                        <Button type='primary' style={{ marginLeft: '1rem' }} onClick={handleLogin}>Login</Button>
                                     </div>
                                 )
                                 }
@@ -201,8 +207,8 @@ const ProductDetail = () => {
                         <Col key={relatedProduct.id} xs={24} sm={12} md={6} lg={4}>
                             <Link to={`/productDetail/${relatedProduct.id}`}>
                                 <Card
-                                className='card-product'
-                                style={{boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'}}
+                                    className='card-product'
+                                    style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
                                     hoverable
                                     cover={
                                         <Image
@@ -215,7 +221,7 @@ const ProductDetail = () => {
                                     <Card.Meta title={<span style={{ color: '#5c98f2' }}>{truncateName(relatedProduct.name, 20)}</span>} description={
                                         <div>
                                             <p style={{ marginBottom: '0.5rem' }}>{truncateName(relatedProduct.description, 20)}</p>
-                                            <p style={{ color: '#f05d40', paddingBottom: '0.7rem', fontWeight: 'bold' }}>₫ {relatedProduct.price}</p>
+                                            <p style={{ color: '#f05d40', paddingBottom: '0.7rem', fontWeight: 'bold' }}>{formatPrice(relatedProduct.price)}</p>
                                         </div>
                                     } />
                                 </Card>

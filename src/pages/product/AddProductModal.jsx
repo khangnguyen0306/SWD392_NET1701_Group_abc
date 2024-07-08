@@ -4,6 +4,7 @@ import { useCreateProductMutation, useGetAllCategoriesForCProductQuery, useGetAl
 import { VietnameseProvinces } from '../../utils/utils';
 import UploadWidget from '../../components/uploadWidget/uploadWidget';
 import { v4 as uuidv4 } from 'uuid';
+import { NumericFormat } from 'react-number-format';
 
 const { Option } = Select;
 
@@ -19,7 +20,7 @@ const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
     const [images, setImages] = useState([]);
     const [addProduct] = useCreateProductMutation();
     const [folder] = useState(uuidv4());
-
+    const [price, setPrice] = useState(0);
     useEffect(() => {
         setFilteredSubcategories(subcategories || []);
     }, [subcategories]);
@@ -37,7 +38,7 @@ const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
         try {
             const values = await form.validateFields();
             try {
-                await addProduct({ ...values, urlImg: images[0] });
+                await addProduct({ ...values, urlImg: images[0], price });
                 message.success('Product added successfully');
                 refetchProductData();
                 form.resetFields();
@@ -96,7 +97,20 @@ const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
                     <Input />
                 </Form.Item>
                 <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price' }]}>
-                    <Input type="number" />
+                    <NumericFormat
+                        style={{ padding: '10px', marginBottom: '10px' }}
+                        thousandSeparator={true}
+                        inputMode="numeric"
+                        onValueChange={(values) => {
+                            const { floatValue } = values;
+                            setPrice(floatValue);
+                        }}
+                        prefix={'₫ '}
+                        isAllowed={(values) => {
+                            const { floatValue } = values;
+                            return floatValue >= 0 && floatValue <= 100000000;
+                        }}
+                    />
                 </Form.Item>
                 <Form.Item
                     name="description"

@@ -19,7 +19,7 @@ const MyProducts = () => {
         refetch();
     }, [refetch]);
 
-  
+
 
     // Function to handle opening edit modal
     const handleEditProduct = (id) => {
@@ -45,7 +45,7 @@ const MyProducts = () => {
                     await deleteProduct(productId).unwrap();
                     // const message = "Product deleted successfully !";
                     // message.success(message);
-            
+
                 } catch (error) {
                     console.log(error);
                     if (error.originalStatus === 200) {
@@ -65,7 +65,12 @@ const MyProducts = () => {
     // Calculate the products to be displayed on the current page
     const startIndex = (currentPage - 1) * pageSize;
     const currentProducts = productData?.slice(startIndex, startIndex + pageSize);
-    
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+        }).format(price);
+    };
     if (isLoadingProduct) {
         return <div>Loading...</div>;
     }
@@ -95,13 +100,15 @@ const MyProducts = () => {
                                     cover={<Image src={product.urlImg} style={{ height: '300px', objectFit: 'cover' }} />}
                                 >
                                     <Link to={`/productDetailForAll/${product.id}`}>
-                                        <Card.Meta title={product.name} description={`Price: ₫ ${product.price}`} />
+                                        <Card.Meta title={product.name} description={
+                                            <span style={{ color: '#f05d40', paddingBottom: '0.7rem', fontWeight: 'bold' }}>
+                                                {formatPrice(product.price)}</span>} />
                                     </Link>
                                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                                         <EditOutlined
                                             key="edit"
                                             onClick={(e) => { e.stopPropagation(); handleEditProduct(product.id); }}
-                                            style={{ fontSize: '20px', color: '#0066FF', marginRight: '1rem', cursor: 'pointer' }}
+                                            style={{ fontSize: '20px', color: 'goldenrod', marginRight: '1rem', cursor: 'pointer' }}
                                         />
                                         <DeleteOutlined
                                             key="delete"
