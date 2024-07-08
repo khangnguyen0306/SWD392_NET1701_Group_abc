@@ -11,10 +11,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
     const { data: categories, isLoading: isLoadingCategories } = useGetAllCategoriesForCProductQuery();
     const { data: productDetail, isLoading: isLoadingProductDetail, refetch } = useGetProductDetailQuery(productData, { skip: !productData });
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-    const { data: subcategories, isLoading: isLoadingSubcategories } = useGetAllSubCategoriesQuery(selectedCategoryId, {
-        skip: !selectedCategoryId,
-    });
-    const [filteredSubcategories, setFilteredSubcategories] = useState([]);
+    const { data: subcategories, isLoading: isLoadingSubcategories, refetch: refetchSubcategories } = useGetAllSubCategoriesQuery(selectedCategoryId, { skip: !selectedCategoryId });
     const [currentImageUrl, setCurrentImageUrl] = useState('');
     const [newImageUrl, setNewImageUrl] = useState([]);
 
@@ -23,12 +20,16 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
             setSelectedCategoryId(productDetail.categoryId);
         }
     }, [productDetail]);
+    useEffect(() => {
+        if (selectedCategoryId) {
+            refetchSubcategories();
+        }
+    }, [selectedCategoryId, refetchSubcategories]);
+
 
     useEffect(() => {
-        
         if (visible && productDetail) {
             refetch();
-            setFilteredSubcategories(subcategories || []);
             form.setFieldsValue({
                 categoryId: productDetail?.categoryId,
                 subcategoryId: productDetail?.subcategoryId,
@@ -39,7 +40,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
             });
             setCurrentImageUrl(productDetail?.urlImg || '');
         }
-    }, [visible, productDetail, subcategories, form]);
+    }, [visible, productDetail, form, refetch]);
 
     const [updateProduct] = useEditProductMutation();
 
@@ -101,6 +102,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                         loading={isLoadingCategories}
                         onChange={handleCategoryChange}
                         placeholder="Select Category"
+                        value={selectedCategoryId}
                     >
                         {categories?.map(category => (
                             <Option key={category.id} value={category.id}>
@@ -113,20 +115,21 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                     <Select
                         loading={isLoadingSubcategories}
                         placeholder="Select Subcategory"
-                        disabled={!filteredSubcategories.length}
+                        value={form.getFieldValue('subcategoryId')}
                     >
-                        {filteredSubcategories.map(subcategory => (
+                        {subcategories?.map(subcategory => (
                             <Option key={subcategory.id} value={subcategory.id}>
                                 {subcategory.name}
                             </Option>
                         ))}
                     </Select>
                 </Form.Item>
+
                 <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter the product name' }]}>
                     <Input />
                 </Form.Item>
                 <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price' }]}>
-                    <InputNumber />
+                    <InputNumber suffix="₫" style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter the description' }]}>
                     <Input.TextArea />
@@ -158,17 +161,21 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                         setState={handleImageChange}
                     />
                     {newImageUrl?.length > 0 ? (
-                        <img
-                            src={newImageUrl[0]}
-                            alt="Uploaded Image"
-                            style={{ width: '300px', height: '300px', marginTop: '10px' }}
-                        />
+                        <div>
+                            <img
+                                src={newImageUrl[0]}
+                                alt="Uploaded Image"
+                                style={{ width: '300px', height: '300px', marginTop: '10px' }}
+                            />
+                        </div>
                     ) : currentImageUrl ? (
-                        <img
-                            src={currentImageUrl}
-                            alt="Current Image"
-                            style={{ width: '300px', height: '300px', marginTop: '10px' }}
-                        />
+                        <div>
+                            <img
+                                src={currentImageUrl}
+                                alt="Current Image"
+                                style={{ width: '300px', height: '300px', marginTop: '10px' }}
+                            />
+                        </div>
                     ) : null}
                 </Form.Item>
             </Form>

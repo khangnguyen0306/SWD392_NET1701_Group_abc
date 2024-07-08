@@ -32,7 +32,7 @@ const TablePost = ({ postData, onEdit, onApprove }) => {
             key: 'action',
             render: (text, record) => (
                 <Space>
-                    <Button onClick={() => onEdit(record)}>Edit</Button>
+                    {/* <Button onClick={() => onEdit(record)}>Edit</Button> */}
                     <Button type="primary" onClick={() => onApprove(record.id)}>Approve</Button>
                     <Link to={`/postDetail/${record.id}`}>
                         <Button type="primary" style={{ color: '#fff', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>View</Button>

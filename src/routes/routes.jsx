@@ -6,6 +6,7 @@ const Login = Loadable({ loader: () => import("../pages/login/Login") });
 const Register = Loadable({ loader: () => import("../pages/register/Register") });
 const Home = Loadable({ loader: () => import("../pages/home/Home") });
 const UserProfile = Loadable({ loader: () => import("../pages/userProfile/UserProfile") });
+const UserProfileForOther = Loadable({ loader: () => import("../pages/userProfile/UserProfileForOther") });
 const ProductPage = Loadable({ loader: () => import("../pages/product/ProductPage") });
 const ProductDetail = Loadable({ loader: () => import("../pages/product/ProductDetail") });
 const ForgotPassword = Loadable({ loader: () => import("../pages/login/ForgotPassword") });
@@ -23,9 +24,6 @@ const Category = Loadable({ loader: () => import("../pages/staff/subcategorymana
 const ProductManagement = Loadable({ loader: () => import("../pages/productManagement/MainComponent") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
-});
-const Admin = Loadable({
-  loader: () => import("../pages/admin/Admin"),
 });
 export const router = createBrowserRouter([
   {
@@ -85,6 +83,10 @@ export const router = createBrowserRouter([
           {
             path: "user-profile",
             element: UserProfile,
+          },
+          {
+            path: "user-profile/:userId",
+            element: UserProfileForOther,
           },
           {
             path: "dashboard",

@@ -1,5 +1,5 @@
 $font-content: 'DM Sans', sans-serif;
-$font-title: 'DM Serif Display', sans-serif;
+$font-title: 'DM Serif Display';
 $blue-main-color: #5c98f2;
 
 #header {
@@ -30,7 +30,8 @@ $blue-main-color: #5c98f2;
   .header-logo {
     font-size: 27px;
     padding-left: 3rem;
-    font-family: $font-title;
+    // font-family: $font-title;
+    font-weight: bold;
   }
 
   .icon-header {

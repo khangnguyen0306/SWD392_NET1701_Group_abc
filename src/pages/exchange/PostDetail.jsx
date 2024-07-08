@@ -206,16 +206,18 @@ const PostDetail = () => {
                                     }}
                                 >
                                     <div >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} s>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                {postDetail?.user?.imgUrl ? (
-                                                    <Avatar src={postDetail.user.imgUrl} size={'large'} />
-                                                ) : (
-                                                    <Avatar icon={<UserOutlined />} />
-                                                )}
-                                                <hr />
-                                                <p style={{marginLeft:'1rem'}}>{postDetail?.user?.userName}</p>
-                                            </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
+                                            <Link to={`/user-profile/${postDetail?.user.id}`}>
+                                                <div style={{ display: 'flex', alignItems: 'center', color: 'black' }}>
+                                                    {postDetail?.user?.imgUrl ? (
+                                                        <Avatar src={postDetail.user.imgUrl} size={'large'} alt='Profile'/>
+                                                    ) : (
+                                                        <Avatar icon={<UserOutlined />} />
+                                                    )}
+                                                    <hr />
+                                                    <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
+                                                </div>
+                                            </Link>
                                             <div>
                                                 {postDetail?.user.id !== user.id && user.roleId == 2 ? (
                                                     <Button
@@ -238,14 +240,14 @@ const PostDetail = () => {
                                                     )}
                                                 </p>
                                             </div>
-                                           
+
                                         </div>
 
                                     </div>
                                 </div>
                             }
                         >
-                            <div className='product-detail-description'>
+                            <div className='product-detail-description' style={{padding:' 0 10px'}}>
 
                                 <p style={{ fontSize: '2rem', fontWeight: 'bold', padding: '1rem' }}>{postDetail?.title}</p>
                                 <div style={{ padding: '1rem' }}>
@@ -299,17 +301,17 @@ const PostDetail = () => {
                                     style={{ marginBottom: '20px', width: '100%', height: 'fit-content' }}
                                     bodyStyle={{ display: 'flex', alignItems: 'center', alignItems: 'center' }}
                                 >
-                                    <Avatar
-                                        src={comment.user?.imgUrl}
-                                        alt={comment.user?.userName}
-                                        size={40}
-
-
-                                    />
+                                    <Link to={`/user-profile/${comment.user.id}`}>
+                                        <Avatar
+                                            src={comment.user?.imgUrl}
+                                            alt={comment.user?.userName}
+                                            size={40}
+                                        />
+                                    </Link>
                                     <div style={{ flex: 1, overflowWrap: 'break-word', marginLeft: '1rem', backgroundColor: '#f0f2f5', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
                                         <div dangerouslySetInnerHTML={{ __html: isExpanded ? comment.content : truncateName(comment.content, 50) }} style={{ width: '350px' }} />
                                         {comment.content.length > 50 && (
-                                            <Button type="text" style={{marginTop:'-0.7rem',marginLeft:'-0.5rem'}} onClick={() => toggleContent(comment.id)} icon={isExpanded ? <CaretUpOutlined /> : <CaretDownOutlined />}>
+                                            <Button type="text" style={{ marginTop: '-0.7rem', marginLeft: '-0.5rem' }} onClick={() => toggleContent(comment.id)} icon={isExpanded ? <CaretUpOutlined /> : <CaretDownOutlined />}>
                                                 {isExpanded ? 'Collapse' : 'Read more'}
                                             </Button>
                                         )}
@@ -323,10 +325,10 @@ const PostDetail = () => {
                                         <Dropdown
                                             overlay={
                                                 <Menu>
-                                                    <Menu.Item key="edit" icon={<EditOutlined />} onClick={(() => openModalEditComment(comment.id))} >
+                                                    <Menu.Item key="edit" icon={<EditOutlined style={{color:'gold'}}/>} onClick={(() => openModalEditComment(comment.id))} >
                                                         Edit
                                                     </Menu.Item>
-                                                    <Menu.Item key="delete" icon={<DeleteOutlined />} onClick={(() => handleDeleteComment(comment.id))} >
+                                                    <Menu.Item key="delete" icon={<DeleteOutlined  style={{color:'red'}}/>} onClick={(() => handleDeleteComment(comment.id))} >
                                                         Delete
                                                     </Menu.Item>
                                                 </Menu>

@@ -5,6 +5,7 @@ import { loadCartFromLocalStorage, removeFromCart, updateCartQuantity, clearPaid
 import { selectCurrentToken, selectCurrentUser } from '../../slices/auth.slice';
 import { Link, useLocation } from 'react-router-dom';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { useCreateCategoryMutation, useCreatePaymentMutation } from '../../services/productAPI';
 
 
 const CartModal = ({ visible, onClose }) => {
@@ -15,6 +16,7 @@ const CartModal = ({ visible, onClose }) => {
   const currentUser = useSelector(selectCurrentUser);
   const [isLoadingPaypal, setIsLoadingPaypal] = useState(true);
   const location = useLocation();
+  const [payment] = useCreatePaymentMutation();
 
   useEffect(() => {
     if (visible && currentUser) {
@@ -61,6 +63,39 @@ const CartModal = ({ visible, onClose }) => {
     const item = cartItems.find(item => item.id === itemId);
     return total + (item ? item.price * item.quantity : 0);
   }, 0);
+
+  const createOrderDetails = () => {
+    return selectedItems.map(itemId => {
+      const item = cartItems.find(item => item.id === itemId);
+      return {
+        productId: item.id,
+        price: item.price
+      };
+    });
+  };
+
+  const handlePayment = async (tokenId, PayerID) => {
+    if (!token) {
+      message.error('Please login to make a payment.');
+      return;
+    }
+    try {
+      const orderDetails = createOrderDetails();
+      const totalPrice = totalAmount;
+      const payload = { orderDetails, totalPrice, tokenId, PayerID };
+      await payment(payload).unwrap();
+    } catch (e) {
+      if (e.originalStatus === 200) {
+        message.success('Payment completed successfully.');
+        dispatch(clearPaidItems({ userID: currentUser.id, itemIds: selectedItems }));
+        onClose();
+      } else {
+        message.error('Payment failed. Please try again.');
+      }
+
+
+    }
+  }
 
   const columns = [
     {
@@ -137,7 +172,7 @@ const CartModal = ({ visible, onClose }) => {
         <div style={{ padding: '1rem' }}>Total Amount: {totalAmount.toFixed(2)} ₫</div>
         {totalAmount > 0 ? (
           token ? (
-            <PayPalScriptProvider options={{ "client-id": "AZJbL2P3zXWiJVR6L9VSCruzggReYNwEQDtMpJCZYQfp3QWNgwacrqPzraLRL1zgP9x_KnJQ3-ruBri9" }}>
+            <PayPalScriptProvider options={{ "client-id": "AXPhuLgh67BUl4HScRLeU8ymduMbIPPK9LngTXT1YVqpWAloWQfMSNEQAOypkP4aHjyx9g4kQ9Jqwoxi" }}>
               <PayPalButtons
                 createOrder={(data, actions) => {
                   return actions.order.create({
@@ -151,11 +186,11 @@ const CartModal = ({ visible, onClose }) => {
                 }}
                 onApprove={(data, actions) => {
                   return actions.order.capture().then((details) => {
-                    onClose();
-                    message.success('Transaction completed by ' + details.payer.name.given_name);
-                    if (currentUser) {
-                      dispatch(clearPaidItems({ userID: currentUser.id, itemIds: selectedItems }));
-                    }
+                    console.log(details)
+                    const PayerID = details.payer.payer_id;
+                    const tokenId = details.id;
+                    console.log(PayerID, tokenId)
+                    handlePayment(tokenId, PayerID);
                   });
                 }}
                 onInit={() => setIsLoadingPaypal(false)}

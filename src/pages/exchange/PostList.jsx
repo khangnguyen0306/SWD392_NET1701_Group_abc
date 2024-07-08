@@ -140,18 +140,18 @@ const PostList = () => {
                             style={{ width: '60%', marginBottom: '2rem' }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <Avatar src={post.user.imgUrl} size={'large'} icon={<UserOutlined />} style={{ marginRight: '1rem' }} />
-                                    <div>
-                                        <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{post.user.userName}</p>
-                                        <p style={{ margin: '0' }}>
-                                            Posted on {format(new Date(post.date), 'MMMM dd, yyyy')}
-                                        </p>
-                                        <p style={{ marginTop: '1rem' }}>
-                                            {convertStatus[post.publicStatus]}
-                                        </p>
+                                <Link to={`/user-profile/${post.user.id}`}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <Avatar src={post.user.imgUrl} size={'large'} icon={<UserOutlined />} style={{ marginRight: '1rem' }} />
+                                        <div>
+                                            <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{post.user.userName}</p>
+                                            <p style={{ margin: '0',color:'black' }}>
+                                                Posted on {format(new Date(post.date), 'MMMM dd, yyyy')}
+                                            </p>
+
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                                 <Dropdown
                                     overlay={
                                         <Menu>
@@ -177,10 +177,13 @@ const PostList = () => {
                                     <Button type='text' icon={<SettingOutlined />} size="large" />
                                 </Dropdown>
                             </div>
+                            <p style={{ marginTop: '1rem' }}>
+                                {convertStatus[post.publicStatus]}
+                            </p>
                             <Link to={`/postDetail/${post.id}`}>
                                 <Row gutter={[16, 16]}>
                                     <Col xs={24} md={12}>
-                                        <div style={{ color: 'black' }}>
+                                        <div style={{ color: 'black',marginLeft:'3rem' }}>
                                             <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '1rem' }}>{post.title}</p>
                                             <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} />
                                             <Button type='link' style={{ padding: 0 }}>View all</Button>
@@ -189,7 +192,6 @@ const PostList = () => {
                                     <Col xs={24} md={12}>
                                         <Image
                                             src={post?.imageUrl}
-                                            alt="post image"
                                             style={{ maxWidth: '100%', height: 'auto' }}
                                             preview={false}
                                         />
