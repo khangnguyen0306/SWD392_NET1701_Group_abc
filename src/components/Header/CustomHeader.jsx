@@ -7,6 +7,7 @@ import CartModal from "../../pages/product/cartModal";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTotalProducts } from "../../slices/product.slice";
 import { logOut, selectCurrentUser } from "../../slices/auth.slice";
+import { useGetUserProfileForOtherQuery } from "../../services/userAPI";
 
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
@@ -22,7 +23,7 @@ const CustomHeader = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const { data, isLoading, refetch } = useGetUserProfileForOtherQuery(user?.id)
   const toggleCartModal = () => {
     setCartVisible(!cartVisible);
   };
@@ -198,11 +199,11 @@ const CustomHeader = () => {
             {user ? (
               (user?.roleId === 3 || user?.roleId === 1) ? (
                 <Dropdown overlay={menuLoginForStaffAndAdmin} trigger={["hover"]}>
-                  <Avatar style={{ marginRight: "1rem", display: "block" }} size="large" src={user.imgUrl} />
+                  <Avatar style={{ marginRight: "1rem", display: "block", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)"  }} size="large" src={data?.imgUrl} />
                 </Dropdown>
               ) : (
                 <Dropdown overlay={menu} trigger={["hover"]}>
-                  <Avatar style={{ marginRight: "1rem", display: "block" }} size="large" src={user.imgUrl} />
+                  <Avatar style={{ marginRight: "1rem", display: "block", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)"  }} size="large" src={data?.imgUrl} />
                 </Dropdown>
               )
             ) : (
