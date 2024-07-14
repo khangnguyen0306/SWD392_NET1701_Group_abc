@@ -8,7 +8,7 @@ import { selectTokens } from "../slices/auth.slice";
 export const userAPI = createApi({
   reducerPath: "userManagement",
   // Tag types are used for caching and invalidation.
-  tagTypes: ["UserList","TransactionList"],
+  tagTypes: ["UserList", "TransactionList"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
@@ -52,10 +52,23 @@ export const userAPI = createApi({
 
     addUser: builder.mutation({
       query: (body) => {
+        const newBody = {
+          address: body.address,
+          username: body.userName,
+          email: body.email,
+          phoneNumber: body.phoneNumber,
+          dob: body.dob,
+          // created_by: " string ",
+          // modified_by: " string ",
+          roleId: body.roleId,
+          gender: body.gender,
+          status: body.status,
+          imgUrl: "https://static.vecteezy.com/system/resources/previews/024/983/914/original/simple-user-default-icon-free-png.png",
+        }
         return {
           method: "POST",
           url: `auth/admin-create-account`,
-          body: body,
+          body: newBody,
         }
       },
       invalidatesTags: [{ type: " UserList ", id: " LIST " }],
@@ -85,13 +98,13 @@ export const userAPI = createApi({
       invalidatesTags: (res, err, arg) => [{ type: " UserList ", id: arg.id }],
     }),
     getAllTransaction: builder.query({
-        query: () => `order/getallorder`,
-        // `providesTags` determines which 'tag' is attached to the
-        // cached data returned by the query.
-        providesTags: (result) =>
-            result
-                ? result.map(({ id }) => ({ type: "TransactionList", id }))
-                : [{ type: "TransactionList", id: "LIST" }],
+      query: () => `order/getallorder`,
+      // `providesTags` determines which 'tag' is attached to the
+      // cached data returned by the query.
+      providesTags: (result) =>
+        result
+          ? result.map(({ id }) => ({ type: "TransactionList", id }))
+          : [{ type: "TransactionList", id: "LIST" }],
     }),
 
     // getClassById: builder.query({

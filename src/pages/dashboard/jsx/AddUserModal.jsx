@@ -32,8 +32,8 @@ const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
                 >
                     <Select>
                         <Option value="1">Administrator</Option>
-                        <Option value="2">User</Option>
-                        <Option value="3">Staff</Option>
+                        <Option value="3">User</Option>
+                        <Option value="2">Staff</Option>
                     </Select>
                 </Form.Item>
 
@@ -84,7 +84,7 @@ const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
                     <Input />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                     label="Password"
                     name="password"
                     rules={[
@@ -122,7 +122,7 @@ const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
                         placeholder="Re-type password"
                         iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                     />
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                     label="Phone Number"

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Image, Space, Table, Checkbox, message, Spin } from 'antd';
 import { loadCartFromLocalStorage, removeFromCart, updateCartQuantity, clearPaidItems } from '../../slices/product.slice';
 import { selectCurrentToken, selectCurrentUser } from '../../slices/auth.slice';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useCreateCategoryMutation, useCreatePaymentMutation, useGetAllProductQuery } from '../../services/productAPI';
 
@@ -18,6 +18,7 @@ const CartModal = ({ visible, onClose }) => {
   const location = useLocation();
   const [payment] = useCreatePaymentMutation();
   const { refetch: refetchProductData } = useGetAllProductQuery();
+  const navigate = useNavigate();
   useEffect(() => {
     refetchProductData();
     if (visible && currentUser) {
@@ -90,6 +91,7 @@ const CartModal = ({ visible, onClose }) => {
         message.success('Payment completed successfully.');
         refetchProductData();
         dispatch(clearPaidItems({ userID: currentUser.id, itemIds: selectedItems }));
+        navigate('/product')
         onClose();
       } else {
         message.error('Payment failed. Please try again.');

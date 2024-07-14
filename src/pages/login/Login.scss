@@ -70,4 +70,19 @@
             box-shadow: 0 15px 16.83px 0.17px rgba(0, 0, 0, .05);
         }
     }
+    .register-btn {
+        margin-top: 2rem;
+        background-color: #45cf29;
+        border: none;
+        padding: 0.7rem 2rem;
+        border-radius: 6px;
+        color: white;
+        box-shadow: 0 15px 16.83px 0.17px rgba(0, 0, 0, .05);
+        cursor: pointer;
+
+        &:hover {
+            background-color: #348bdb;
+            box-shadow: 0 15px 16.83px 0.17px rgba(0, 0, 0, .05);
+        }
+    }
 }

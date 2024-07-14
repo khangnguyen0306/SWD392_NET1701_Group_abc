@@ -67,8 +67,8 @@ const PostListByUser = () => {
 
     // Phân loại bài đăng đã được duyệt và chưa được duyệt
     const approvedPosts = postData?.filter(post => post.publicStatus === true)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-    const unapprovedPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged && !post.isReported )?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-    const reportPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged && post.isReported )?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
+    const unapprovedPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged && !post.isReported)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
+    const reportPosts = postData?.filter(post => post.publicStatus === false && !post.isExchanged && post.isReported)?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
 
     const truncateName = (name, maxChars) => {
         if (name.length > maxChars) {
@@ -76,7 +76,7 @@ const PostListByUser = () => {
         }
         return name;
     };
-    if (isLoadingPost ) {
+    if (isLoadingPost) {
         return (
             <List
                 itemLayout="vertical"
@@ -161,8 +161,9 @@ const PostListByUser = () => {
                                             </Col>
                                             <Col xs={24} md={6}>
                                                 <div style={{ textAlign: 'center' }}>
-                                                    
-                                                    <Image src={post?.imageUrl} style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    {post?.imageUrl ? (
+                                                        <Image src={post?.imageUrl} style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    ) : null}
                                                 </div>
                                             </Col>
                                         </Row>
@@ -233,7 +234,9 @@ const PostListByUser = () => {
                                             </Col>
                                             <Col xs={24} md={6}>
                                                 <div style={{ textAlign: 'center' }}>
-                                                    <Image src={post?.imageUrl}  style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    {post?.imageUrl ? (
+                                                        <Image src={post?.imageUrl} style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    ) : null}
                                                 </div>
                                             </Col>
                                         </Row>
@@ -302,7 +305,9 @@ const PostListByUser = () => {
                                             </Col>
                                             <Col xs={24} md={6}>
                                                 <div style={{ textAlign: 'center' }}>
-                                                    <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    {post?.imageUrl ? (
+                                                        <Image src={post?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
+                                                    ) : null}
                                                 </div>
                                             </Col>
                                         </Row>
@@ -312,7 +317,7 @@ const PostListByUser = () => {
                         )}
                     />
                 </TabPane>
-                
+
             </Tabs>
 
             <EditPostModal
