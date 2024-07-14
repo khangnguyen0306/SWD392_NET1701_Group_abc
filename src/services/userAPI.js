@@ -1,36 +1,25 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// import { USER_API } from "../config";
 import { BE_API_LOCAL } from "../config";
 import { selectTokens } from "../slices/auth.slice";
-// import { selectToken } from "../slices/auth.slice";
 
-// Define a service using a base URL and expected endpoints
 export const userAPI = createApi({
   reducerPath: "userManagement",
-  // Tag types are used for caching and invalidation.
   tagTypes: ["UserList", "TransactionList"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
     prepareHeaders: (headers, { getState }) => {
-      const token = selectTokens(getState()); // Retrieve token from Redux state using selectToken selector
+      const token = selectTokens(getState()); 
       if (token) {
         headers.append("Authorization", `Bearer ${token}`);
       }
       headers.append("Content-Type", "application/json");
       return headers;
     },
-
   }),
-  // baseQuery: fetchBaseQuery({ baseUrl: CLASS_API_URL }),
   endpoints: (builder) => ({
-    // Supply generics for the return type (in this case `FlowerApiResponse`)
-    // and the expected query argument. If there is no argument, use `void`
-    // for the argument type instead.
     getAllUser: builder.query({
       query: () => `users`,
-      // `providesTags` determines which 'tag' is attached to the
-      // cached data returned by the query.
       providesTags: (result) =>
         result
           ? result.map(({ id }) => ({ type: "UserList", id }))
@@ -38,18 +27,16 @@ export const userAPI = createApi({
     }),
     getUserProfile: builder.query({
       query: (userId) => ({
-        url: `user/${userId}`, // Use template literal for security
+        url: `user/${userId}`, 
         method: "GET",
       }),
     }),
-
     getUserProfileForOther: builder.query({
       query: (userId) => ({
         url: `users/getuserprofile/${userId}`,
         method: "GET",
       }),
     }),
-
     addUser: builder.mutation({
       query: (body) => {
         const newBody = {
@@ -58,8 +45,6 @@ export const userAPI = createApi({
           email: body.email,
           phoneNumber: body.phoneNumber,
           dob: body.dob,
-          // created_by: " string ",
-          // modified_by: " string ",
           roleId: body.roleId,
           gender: body.gender,
           status: body.status,
@@ -71,22 +56,16 @@ export const userAPI = createApi({
           body: newBody,
         }
       },
-      invalidatesTags: [{ type: " UserList ", id: " LIST " }],
+      invalidatesTags: [{ type: "UserList", id: "LIST" }],
     }),
-
     editUser: builder.mutation({
       query: (payload) => {
-        console.log(payload)
         const newBody = {
           address: payload.body.address,
           userName: payload.body.fullname,
-          // email: payload.email,
           phoneNumber: payload.body.phoneNumber,
           dob: payload.body.dob,
-          // created_by: " string ",
-          // modified_by: " string ",
           gender: payload.body.gender,
-          // is_active: payload.Status,
           imgUrl: payload.body.imgUrl,
         }
         return {
@@ -95,86 +74,10 @@ export const userAPI = createApi({
           body: newBody,
         };
       },
-      invalidatesTags: (res, err, arg) => [{ type: " UserList ", id: arg.id }],
-    }),
-    getAllTransaction: builder.query({
-      query: () => `order/getallorder`,
-      // `providesTags` determines which 'tag' is attached to the
-      // cached data returned by the query.
-      providesTags: (result) =>
-        result
-          ? result.map(({ id }) => ({ type: "TransactionList", id }))
-          : [{ type: "TransactionList", id: "LIST" }],
-    }),
-
-    // getClassById: builder.query({
-    //   query: (classId) => ({
-    //     url: `viewclass/${classId}`, // Use template literal for security
-    //     method: "GET",
-    //   }),
-    //   providesTags: (result) => {
-    //     if (Array.isArray(result)) {
-    //       // Handle array case (multiple classes)
-    //       return result.map(({ id }) => ({ type: "ClassList", id }));
-    //     } else if (result && result.id) {
-    //       // Handle object case (single class)
-    //       return [{ type: "ClassList", id: result.id }];
-    //     } else {
-    //       // Handle no data case (optional)
-    //       return [];
-    //     }
-    //   },
-    // }),
-
-    // duplicateClass: builder.mutation({
-    //   query: (body) => {
-    //     return {
-    //       method: "POST",
-    //       url: `viewclass`,
-    //       body,
-    //     };
-    //   },
-    //   invalidatesTags: [{ type: "ClassList", id: "LIST" }],
-    // }),
-
-    // createClass: builder.mutation({
-    //   query: (body) => {
-    //     return {
-    //       method: "POST",
-    //       url: `class/create`,
-    //       body,
-    //     };
-    //   },
-    //   invalidatesTags: [{ type: "ClassList", id: "LIST" }],
-    // }),
-
-    BanUser: builder.mutation({
-
-      query: (payload) => {
-        const reason = payload.reason;
-        return {
-          method: "PUT",
-          url: `bannedaccount/banuser/${payload.id}?reason=${reason}`,
-
-        };
-      },
-      invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
-    }),
-    UnBanUser: builder.mutation({
-
-      query: (payload) => {
-        return {
-          method: "PUT",
-          url: `bannedaccount/unbanuser/${payload}`,
-
-        };
-      },
       invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
     }),
     editProfile: builder.mutation({
-
       query: (payload) => {
-
         return {
           method: "PUT",
           url: `users/` + payload.id,
@@ -182,6 +85,15 @@ export const userAPI = createApi({
         };
       },
       invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
+    }),
+    updatePassword: builder.mutation({
+      query: ({ id, password }) => {
+        const params = new URLSearchParams({ id, password }).toString();
+        return {
+          url: `users/updatepassword?${params}`,
+          method: "PUT",
+        };
+      },
     }),
     deleteUser: builder.mutation({
       query: (payload) => {
@@ -194,12 +106,35 @@ export const userAPI = createApi({
         { type: "UserList", id: "LIST" },
       ],
     }),
+    getAllTransaction: builder.query({
+      query: () => `order/getallorder`,
+      providesTags: (result) =>
+        result
+          ? result.map(({ id }) => ({ type: "TransactionList", id }))
+          : [{ type: "TransactionList", id: "LIST" }],
+    }),
+    BanUser: builder.mutation({
+      query: (payload) => {
+        const reason = payload.reason;
+        return {
+          method: "PUT",
+          url: `bannedaccount/banuser/${payload.id}?reason=${reason}`,
+        };
+      },
+      invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
+    }),
+    UnBanUser: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "PUT",
+          url: `bannedaccount/unbanuser/${payload}`,
+        };
+      },
+      invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
+    }),
   }),
 });
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
-// Hooks are auto-generated by RTK-Query
 export const {
   useGetAllUserQuery,
   useGetUserProfileQuery,
@@ -210,9 +145,6 @@ export const {
   useBanUserMutation,
   useUnBanUserMutation,
   useGetUserProfileForOtherQuery,
-  useGetAllTransactionQuery
-  // useGetAllProductQuery,
-  // useGetAllCategoriesQuery,
-  // useGetProductDetailQuery
-
+  useGetAllTransactionQuery,
+  useUpdatePasswordMutation
 } = userAPI;

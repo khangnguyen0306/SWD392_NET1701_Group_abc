@@ -1,18 +1,15 @@
 $color-main-text: #8898aa;
 $color-title-text: #676b7f;
 
-
 .main-layout-userProfile-page {
-
-    margin-top: 10rem;                               // change it in outlet layout
+    margin-top: 10rem; // Change it in outlet layout
     height: 100vh;
+
     .profile-information-title {
         display: flex;
         align-items: center;
         justify-content: space-between;
-
     }
-
 
     .profile-information-content {
         .profile-information-content-subtitle {
@@ -44,15 +41,53 @@ $color-title-text: #676b7f;
                     margin-top: 8px;
                     color: $color-main-text;
                 }
+
+                .ant-input-password {
+                    height: 45px;
+                    border: 1px solid #e2e7ed;
+                    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+                    padding: 10px;
+                    margin-top: 8px;
+                    color: $color-main-text;
+
+                    .ant-input {
+                        height: 45px;
+                    }
+                }
+
+                .ant-checkbox-wrapper {
+                    margin-top: 8px;
+                    color: $color-title-text;
+                }
+
+                .ant-btn {
+                    margin-top: 10px;
+                    background-color: $color-title-text;
+                    border-color: $color-title-text;
+                    color: #fff;
+
+                    &:hover {
+                        background-color: darken($color-title-text, 10%);
+                        border-color: darken($color-title-text, 10%);
+                    }
+                }
             }
         }
     }
 
     .profile-card-user {
+        text-align: center;
+
         .profile-card-user-name {
             font-size: 18px;
             font-weight: 500;
             margin: 10px 10px 0 0;
+        }
+
+        img {
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
         }
     }
 }

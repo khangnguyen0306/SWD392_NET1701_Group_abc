@@ -1,10 +1,24 @@
 import React from 'react';
-import { Form, Input, Checkbox } from 'antd';
+import { Form, Input, Checkbox, Button, message } from 'antd';
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 import { validationPatterns } from '../../utils/utils';
-
+import { useUpdatePasswordMutation } from '../../services/userAPI';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../slices/auth.slice';
 
 const ChangePassword = ({ form, isUpdatePassword, setIsUpdatePassword }) => {
+    const user = useSelector(selectCurrentUser);
+    const [updatePassword] = useUpdatePasswordMutation();
+
+    const handleSubmit = async (values) => {
+        try {
+            await updatePassword({ id: user.id, password: values.password }).unwrap();
+            message.success("Password updated successfully");
+        } catch (error) {
+            message.error("Failed to update password");
+        }
+    };
+
     return (
         <>
             <div className='profile-information-content-input' style={{ marginTop: '1rem' }}>
@@ -12,7 +26,11 @@ const ChangePassword = ({ form, isUpdatePassword, setIsUpdatePassword }) => {
             </div>
 
             {isUpdatePassword && (
-                <>
+                <Form
+                    form={form}
+                    name="changePassword"
+                    onFinish={handleSubmit}
+                >
                     <div className='profile-information-content-input' style={{ marginTop: '1rem' }}>
                         <label id='newPassword'>New Password</label>
                         <Form.Item
@@ -20,6 +38,7 @@ const ChangePassword = ({ form, isUpdatePassword, setIsUpdatePassword }) => {
                             name="password"
                             rules={[
                                 {
+                                    required: true,
                                     pattern: validationPatterns.password.pattern,
                                     message: validationPatterns.password.message
                                 }
@@ -34,7 +53,13 @@ const ChangePassword = ({ form, isUpdatePassword, setIsUpdatePassword }) => {
                         <label id='retypePassword'>Retype Password</label>
                         <Form.Item
                             name="retypePassword"
+                            dependencies={['password']}
+                            hasFeedback
                             rules={[
+                                {
+                                    required: true,
+                                    message: 'Please retype the password!',
+                                },
                                 ({ getFieldValue }) => ({
                                     validator(_, value) {
                                         if (!value || getFieldValue('password') === value) {
@@ -51,7 +76,12 @@ const ChangePassword = ({ form, isUpdatePassword, setIsUpdatePassword }) => {
                             />
                         </Form.Item>
                     </div>
-                </>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Update Password
+                        </Button>
+                    </Form.Item>
+                </Form>
             )}
         </>
     );
