@@ -87,14 +87,15 @@ export const userAPI = createApi({
       invalidatesTags: (res, err, arg) => [{ type: "UserList", id: arg.id }],
     }),
     updatePassword: builder.mutation({
-      query: ({ id, password }) => {
-        const params = new URLSearchParams({ id, password }).toString();
-        return {
-          url: `users/updatepassword?${params}`,
-          method: "PUT",
-        };
+      query: ({ userId, newPassword, oldPassword }) => {
+          return {
+              url: `users/updatepassword`,
+              method: "PUT",
+              body: { userId, newPassword, oldPassword },
+          };
       },
-    }),
+  }),
+  
     deleteUser: builder.mutation({
       query: (payload) => {
         return {
