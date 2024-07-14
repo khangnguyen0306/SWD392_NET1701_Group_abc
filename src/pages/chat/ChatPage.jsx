@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import signalRService from '../../services/chatAPI'; 
-
+import * as signalR from '@microsoft/signalr';
 
 const Chat = () => {
     const messages = useSelector((state) => state.chat.messages);
@@ -51,7 +51,7 @@ const Chat = () => {
     };
 
     return (
-        <div className="chat-container">
+        <div className="chat-container" style = {{marginTop:'100px'}}>
             <div className="chat-messages">
                 {messages.map((msg, index) => (
                     <div key={index} className="chat-message">
