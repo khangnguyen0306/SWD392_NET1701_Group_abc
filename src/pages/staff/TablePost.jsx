@@ -102,7 +102,7 @@ const TableUser = ({ userData, onEdit }) => {
             title: 'User Type',
             dataIndex: 'roleId',
             key: 'UserType',
-            sorter: (a, b) => a.roleId - b.roleId,
+            sorter: (a, b) => a?.roleId - b?.roleId,
             sortOrder: sortedInfo.columnKey === 'UserType' && sortedInfo.order,
             render: (UserType) => {
                 const userRoleTag = roleUser[UserType] || roleUser['No Access'];

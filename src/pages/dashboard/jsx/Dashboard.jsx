@@ -212,7 +212,7 @@ function Dashboard() {
         </>
 
       ) : (
-        user.roleId == 3 ? (
+        user?.roleId == 3 ? (
           <PostManagement />
         ) : (
           <DashboardManagement />

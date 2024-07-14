@@ -220,7 +220,7 @@ const PostDetail = () => {
                                                 </div>
                                             </Link>
                                             <div>
-                                                {postDetail?.user.id !== user.id && user.roleId == 2 ? (
+                                                {postDetail?.user.id !== user?.id && user?.roleId == 2 ? (
                                                     <Button
                                                         type='primary'
                                                         onClick={handleExchangeButtonClick}
