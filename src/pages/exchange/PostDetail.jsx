@@ -49,7 +49,6 @@ const { Content } = Layout;
 const PostDetail = () => {
     const { postId } = useParams();
     const { data: postDetail, isLoading, error, refetch: refetchPostDetail } = useGetPostDetailQuery(postId);
-    console.log(postDetail)
     const { data: commentData, isLoading: isLoadingCmt, refetch: refetchComments } = useGetPostCommentQuery(postId);
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -144,7 +143,7 @@ const PostDetail = () => {
         return name;
     };
 
-    if (isLoading || isLoadingCmt || !ProductDetail) {
+    if (isLoading || isLoadingCmt ) {
         return (
             <Card style={{ width: '100%', marginTop: 16 }}>
                 <Skeleton active />
@@ -164,36 +163,38 @@ const PostDetail = () => {
             </Button>
             <Card>
                 <Row justify={'center'} style={{ padding: '20px', marginTop: '7rem' }}>
-                    <Col md={10} span={24} className='product-image'>
-                        <Image
-                            src={postDetail?.imageUrl}
-                            alt="Product Image"
-                        />
-                        <Row gutter={[8, 8]} className="thumbnail-row" style={{ marginTop: '1rem' }}>
-                            {postDetail?.imageURL?.slice(0, 4).map((image, index) => (
-                                <Col key={index} span={6}>
-                                    <Image
-                                        style={{
-                                            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-                                            marginRight: '10px',
-                                            cursor: 'pointer'
-                                        }}
-                                        height={"130px"}
-                                        width={"150px"}
-                                        src={image}
-                                        className="thumbnail"
-                                        preview={false}
-                                        onClick={() => handleThumbnailClick(image)}
-                                    />
-                                </Col>
-                            ))}
-                        </Row>
-                        {postDetail?.imageURL?.length > 4 && (
-                            <Button type="link" onClick={showModal} className='view-all-image-btn'>
-                                View all images
-                            </Button>
-                        )}
-                    </Col>
+                    {postDetail?.imageUrl ? (
+                        <Col md={10} span={24} className='product-image'>
+                            <Image
+                                src={postDetail?.imageUrl}
+                                alt="Product Image"
+                            />
+                            <Row gutter={[8, 8]} className="thumbnail-row" style={{ marginTop: '1rem' }}>
+                                {postDetail?.imageURL?.slice(0, 4).map((image, index) => (
+                                    <Col key={index} span={6}>
+                                        <Image
+                                            style={{
+                                                boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                                                marginRight: '10px',
+                                                cursor: 'pointer'
+                                            }}
+                                            height={"130px"}
+                                            width={"150px"}
+                                            src={image}
+                                            className="thumbnail"
+                                            preview={false}
+                                            onClick={() => handleThumbnailClick(image)}
+                                        />
+                                    </Col>
+                                ))}
+                            </Row>
+                            {postDetail?.imageURL?.length > 4 && (
+                                <Button type="link" onClick={showModal} className='view-all-image-btn'>
+                                    View all images
+                                </Button>
+                            )}
+                        </Col>
+                    ) : null}
                     <Col md={11} span={24} style={{ marginLeft: '3rem' }}>
                         <Card
                             className='custom-card'
@@ -210,16 +211,16 @@ const PostDetail = () => {
                                             <Link to={`/user-profile/${postDetail?.user.id}`}>
                                                 <div style={{ display: 'flex', alignItems: 'center', color: 'black' }}>
                                                     {postDetail?.user?.imgUrl ? (
-                                                        <Avatar src={postDetail.user.imgUrl} size={'large'} alt='Profile'/>
+                                                        <Avatar src={postDetail.user.imgUrl} size={'large'} alt='Profile' />
                                                     ) : (
                                                         <Avatar icon={<UserOutlined />} />
                                                     )}
-                                                    <hr />
+                                           
                                                     <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
                                                 </div>
                                             </Link>
                                             <div>
-                                                {postDetail?.user.id !== user.id && user.roleId == 2 ? (
+                                                {postDetail?.user.id !== user?.id && user?.roleId == 2 ? (
                                                     <Button
                                                         type='primary'
                                                         onClick={handleExchangeButtonClick}
@@ -247,8 +248,8 @@ const PostDetail = () => {
                                 </div>
                             }
                         >
-                            <div className='product-detail-description' style={{padding:' 0 10px'}}>
-                               
+                            <div className='product-detail-description' style={{ padding: ' 0 10px' }}>
+
                                 <p style={{ fontSize: '2rem', fontWeight: 'bold', padding: '1rem' }}>{postDetail?.title}</p>
                                 <div style={{ padding: '1rem' }}>
                                     {isDescriptionExpanded ? (
@@ -325,10 +326,10 @@ const PostDetail = () => {
                                         <Dropdown
                                             overlay={
                                                 <Menu>
-                                                    <Menu.Item key="edit" icon={<EditOutlined style={{color:'gold'}}/>} onClick={(() => openModalEditComment(comment.id))} >
+                                                    <Menu.Item key="edit" icon={<EditOutlined style={{ color: 'gold' }} />} onClick={(() => openModalEditComment(comment.id))} >
                                                         Edit
                                                     </Menu.Item>
-                                                    <Menu.Item key="delete" icon={<DeleteOutlined  style={{color:'red'}}/>} onClick={(() => handleDeleteComment(comment.id))} >
+                                                    <Menu.Item key="delete" icon={<DeleteOutlined style={{ color: 'red' }} />} onClick={(() => handleDeleteComment(comment.id))} >
                                                         Delete
                                                     </Menu.Item>
                                                 </Menu>

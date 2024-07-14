@@ -83,14 +83,17 @@ const LoginForm = () => {
           />
         </Form.Item>
         <Form.Item>
-          <Button
+          <p style={{ marginTop: '1rem' }}><Link style={{ fontSize: '16px' }} to={"/forgot-password"} > Forgot password</Link></p>
+          <button
             type="primary"
             htmlType="submit"
-            loading={isLoading}
+            onLoad={isLoading}
             className="submit-btn"
           >
             Login
-          </Button>
+          </button>
+        </Form.Item>
+        <Form.Item>
         </Form.Item>
       </Form>
     </div>

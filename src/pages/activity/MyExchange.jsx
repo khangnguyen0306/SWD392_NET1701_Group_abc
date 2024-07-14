@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Avatar, Button, Image, message, Modal, Badge, Spin, Result } from 'antd';
+import { Table, Avatar, Button, Image, message, Modal, Badge, Spin, Result, Card } from 'antd';
 import { useAcceptExchangeMutation, useGetAllExchangeFromPosterQuery } from '../../services/exchangeAPI';
 import { CheckOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import "./Activity.scss"
+import { Link } from 'react-router-dom';
 const MyExchange = () => {
     const { data: myExchanges, isLoading, error, refetch } = useGetAllExchangeFromPosterQuery();
     const [acceptExchange, { isLoading: isAccepting }] = useAcceptExchangeMutation();
@@ -61,17 +62,35 @@ const MyExchange = () => {
             dataIndex: 'post',
             key: 'post',
             render: (text, record) => (
-                <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-                <Image
-                    src={record.post.imageUrl}
-                    alt={record.post.title}
-                    style={{ width: '80px', height: '80px', marginRight: '1rem' }}
-                    preview={false}
-                />
-                <div>
-                    <p>{record.post.title}</p>
+                <div style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', paddingLeft: '1rem' }}>
+                    <div>
+                        <Link to={`/user-profile/${record?.user.id}`}>
+                            <Card style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    {record.user.imgUrl ? (
+                                        <Avatar src={record.user.imgUrl} size={'large'} />
+                                    ) : (
+                                        <Avatar icon={<UserOutlined />} />
+                                    )}
+                                    <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{record.user.userName}</p>
+                                </div>
+                            </Card>
+                        </Link>
+                        <Link to={`/postDetail/${record.post.id}`}>
+                            <p style={{ padding: '20px 0' }}>{record.post.title}</p>
+                        </Link>
+                    </div>
+                    {/* <div>
+                        {record.post.imageUrl ? (
+                            <Image
+                                src={record.post.imageUrl}
+                                alt={record.post.title}
+                                style={{ width: '80px', height: '80px', marginRight: '1rem' }}
+                                preview={false}
+                            />
+                        ) : null}
+                    </div> */}
                 </div>
-            </div>
             ),
         },
         {
@@ -79,7 +98,7 @@ const MyExchange = () => {
             dataIndex: 'exchangeProduct',
             key: 'exchangeProduct',
             render: (text, record) => (
-                <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center',justifyContent:'left' }}>
                     {record.exchangedProducts.map(product => (
                         <div key={product.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'start' }}>
                             <Image src={product.urlImg} alt={product.name} style={{ width: '80px', height: '80px', marginRight: '1rem' }} />

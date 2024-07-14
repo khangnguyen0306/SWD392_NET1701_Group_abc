@@ -145,7 +145,7 @@ const PostList = () => {
                                         <Avatar src={post.user.imgUrl} size={'large'} icon={<UserOutlined />} style={{ marginRight: '1rem' }} />
                                         <div>
                                             <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{post.user.userName}</p>
-                                            <p style={{ margin: '0',color:'black' }}>
+                                            <p style={{ margin: '0', color: 'black' }}>
                                                 Posted on {format(new Date(post.date), 'MMMM dd, yyyy')}
                                             </p>
 
@@ -181,20 +181,21 @@ const PostList = () => {
                                 {convertStatus[post.publicStatus]}
                             </p>
                             <Link to={`/postDetail/${post.id}`}>
-                                <Row gutter={[16, 16]}>
-                                    <Col xs={24} md={12}>
-                                        <div style={{ color: 'black',marginLeft:'3rem' }}>
+                                <Row gutter={[16, 16]} align={"left"}>
+                                    <Col xs={24} md={12} style={{width:'100%'}}>
+                                        <div style={{ color: 'black', marginLeft: '3rem' }}>
                                             <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '1rem' }}>{post.title}</p>
                                             <div dangerouslySetInnerHTML={{ __html: truncateName(post.description, 90) }} />
                                             <Button type='link' style={{ padding: 0 }}>View all</Button>
                                         </div>
-                                    </Col>
-                                    <Col xs={24} md={12}>
-                                        <Image
-                                            src={post?.imageUrl}
-                                            style={{ maxWidth: '100%', height: 'auto' }}
-                                            preview={false}
-                                        />
+
+                                        {post?.imageUrl ? (
+                                            <Image
+                                                src={post?.imageUrl}
+                                                style={{ maxWidth: '100%', height: 'auto' }}
+                                                preview={false}
+                                            />
+                                        ) : null}
                                     </Col>
                                 </Row>
                             </Link>

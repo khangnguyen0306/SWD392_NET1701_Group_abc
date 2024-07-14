@@ -32,23 +32,17 @@ const DashboardManagement = () => {
         try {
             console.log(user);
             const addedUser = await addUser(user);
-            if (addedUser.message) {
+            console.log(addedUser);
+            if (addedUser.data.code === 201) {
                 refetchUserData();
-                const messageSucess = "Add User successfully!";
-                handleOk(messageSucess);
+                handleOk(addedUser.data.message);
                 form.resetFields();
-
+            }else{
+                message.error(addedUser.data.message);
             }
-            // console.log('User added successfully:', addedUser);
-            // Refetch updated user data
-
-
-            // Display success message
-
 
         } catch (error) {
             message.error("Add user unsuccessful. Please try again.");
-            // Handle error, show message, etc.
         }
     };
 
