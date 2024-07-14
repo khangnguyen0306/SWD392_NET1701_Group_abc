@@ -23,6 +23,7 @@ const Chat = Loadable({ loader: () => import("../pages/chat/ChatPage") });
 const Category = Loadable({ loader: () => import("../pages/staff/subcategorymanagement/CategoryMaincomponent") });
 const ProductManagement = Loadable({ loader: () => import("../pages/productManagement/MainComponent") });
 const TransactionHistory = Loadable({ loader: () => import("../pages/transactionHistory/TransactionHistoryMain") });
+const AppealForm = Loadable({ loader: () => import("../pages/login/AppealForm") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
   {
     path: "/productDetail/:productId",
     element: ProductDetail,
+  },
+  {
+    path: "/appeal",
+    element: AppealForm,
   },
  
 

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { forgotPasswordAPI } from "../services/forgotPasswordAPI";
+
 
 const initialState = {
     loading: false,
@@ -19,18 +19,18 @@ const forgotPasswordSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addMatcher(forgotPasswordAPI.endpoints.sendResetEmail.matchPending, (state) => {
+            .addMatcher(authApi.endpoints.sendResetEmail.matchPending, (state) => {
                 state.loading = true;
                 state.error = null;
                 state.success = false;
             })
-            .addMatcher(forgotPasswordAPI.endpoints.sendResetEmail.matchFulfilled, (state) => {
+            .addMatcher(authApi.endpoints.sendResetEmail.matchFulfilled, (state) => {
                 state.loading = false;
                 state.success = true;
             })
-            .addMatcher(forgotPasswordAPI.endpoints.sendResetEmail.matchRejected, (state, action) => {
+            .addMatcher(authApi.endpoints.sendResetEmail.matchRejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.data;
+                state.error = action.error.data || action.error.message;
             });
     },
 });

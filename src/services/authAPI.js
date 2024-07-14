@@ -76,12 +76,20 @@ export const authApi = createApi({
         //     body: { refreshToken: refreshToken }, // pass the refresh token in the body
         //   }),
         // }),
+        sendResetEmail: builder.mutation({
+          query: (email) => ({
+              url: `auth/forgot-password`,
+              method: "PUT",
+              body: { email },
+          }),
+        }),
     }),
 });
 
 export const {
     useLoginUserMutation,
-    useRegisterUserMutation
+    useRegisterUserMutation,
+    useSendResetEmailMutation,
     //   useChangePasswordByEmailMutation,
     //   useVerifyMailMutation,
     //   useVerifyOtpMutation,
