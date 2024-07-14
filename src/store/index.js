@@ -12,6 +12,8 @@ import { exchangeAPI } from "../services/exchangeAPI";
 import exchangeReducer from "../slices/exchange.slice";
 // import { chatAPI } from "../services/chatAPI";
 import chatReducer from "../slices/chat.slice";
+import { appealApi } from "../services/appealAPI";
+import appealReducer from "../slices/appeal.slice";
 
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -30,6 +32,7 @@ const AuthPerisReducer = persistReducer(persistConfig, AuthReducer);
 const PostPerisReducer = persistReducer(persistConfig, postReducer);
 const ExchangePerisReducer = persistReducer(persistConfig, exchangeReducer);
 const ChatPerisReducer = persistReducer(persistConfig, chatReducer);
+const AppealPerisReducer = persistReducer(persistConfig, appealReducer);
 
 export const store = configureStore({
   reducer: {
@@ -46,6 +49,8 @@ export const store = configureStore({
     [exchangeAPI.reducerPath]: exchangeAPI.reducer,
     exchange: ExchangePerisReducer,
     chat: ChatPerisReducer,
+    [appealApi.reducerPath]: appealApi.reducer,
+    appeal: AppealPerisReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -55,6 +60,7 @@ export const store = configureStore({
       authApi.middleware,
       postAPI.middleware,
       exchangeAPI.middleware,
+      appealApi.middleware,
     ),
 });
 

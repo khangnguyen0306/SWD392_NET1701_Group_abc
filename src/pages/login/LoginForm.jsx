@@ -4,7 +4,7 @@ import { Form, Input, Button, Alert, notification, message } from "antd";
 import "./Login.scss";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, SmileOutlined, UserOutlined } from "@ant-design/icons";
-import { setUser } from "../../slices/auth.slice";
+import { setToken, setUser } from "../../slices/auth.slice";
 import { useLoginUserMutation } from "../../services/authAPI";
 
 const LoginForm = () => {
@@ -20,7 +20,10 @@ const LoginForm = () => {
     const result = await loginUser({ email: values.email, password: values.password });
     console.log(result);
     if (result.data) {
+      
       dispatch(setUser(result.data.data.user));
+      dispatch(setToken(result.data.data.token));
+      localStorage.setItem("token", result.data.data.token);
 
       notification.success({
         message: "Login successfully",

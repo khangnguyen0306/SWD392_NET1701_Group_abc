@@ -1,0 +1,42 @@
+.userProfileContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    padding: 2rem;
+}
+
+.userProfile {
+    width: 100%;
+    max-width: 600px;
+}
+
+.profileCard, .additionalInfoCard {
+    width: 100%;
+    margin-top: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.profileCard {
+    padding: 2rem;
+    text-align: center;
+}
+
+.profileAvatar {
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profileInfo {
+    margin-top: 1rem;
+    line-height: 1.5;
+}
+
+.additionalInfoCard {
+    margin-top: 2rem;
+    padding: 2rem;
+    text-align: left;
+}
