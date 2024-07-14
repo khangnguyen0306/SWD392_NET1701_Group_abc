@@ -1,56 +1,71 @@
-import * as signalR from "@microsoft/signalr";
+import * as signalR from '@microsoft/signalr';
 
 class SignalRService {
-  constructor() {
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7293/chatHub")
-      .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
+    constructor() {
+        this.connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7293/chatHub") // Ensure this matches your backend URL
+            .withAutomaticReconnect()
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
 
-    this.connection.onreconnected(this.onReconnected.bind(this));
-    this.connection.onclose(this.onClose.bind(this));
-    this.connection.onreconnecting(this.onReconnecting.bind(this));
-  }
-
-  async start() {
-    try {
-      await this.connection.start();
-      console.log("SignalR Connected.");
-    } catch (err) {
-      console.log("SignalR Connection Error: ", err);
-      setTimeout(() => this.start(), 5000);
+        this.connection.onclose(() => this.start());
     }
-  }
 
-  on(event, callback) {
-    this.connection.on(event, callback);
-  }
-
-  off(event, callback) {
-    this.connection.off(event, callback);
-  }
-
-  async sendMessage(user, message) {
-    try {
-      await this.connection.invoke("SendMessage", { user, content: message });
-    } catch (err) {
-      console.error("Send message error: ", err);
+    async start() {
+        if (this.connection.state === signalR.HubConnectionState.Disconnected) {
+            try {
+                await this.connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.error("SignalR Connection Error:", err);
+                setTimeout(() => this.start(), 5000);
+            }
+        }
     }
-  }
 
-  async onReconnected(connectionId) {
-    console.log("SignalR Reconnected: ", connectionId);
-  }
+    async sendMessage(message) {
+        try {
+            await this.connection.invoke("SendMessage", message);
+        } catch (err) {
+            console.error("SignalR SendMessage Error:", err);
+        }
+    }
 
-  async onClose(error) {
-    console.log("SignalR Connection Closed. Error: ", error);
-    await this.start();
-  }
+    async joinGroup(postId) {
+        try {
+            await this.connection.invoke("JoinGroup", postId);
+        } catch (err) {
+            console.error("SignalR JoinGroup Error:", err);
+        }
+    }
 
-  async onReconnecting(error) {
-    console.log("SignalR Reconnecting. Error: ", error);
-  }
+    async leaveGroup(postId) {
+        try {
+            await this.connection.invoke("LeaveGroup", postId);
+        } catch (err) {
+            console.error("SignalR LeaveGroup Error:", err);
+        }
+    }
+
+    async loadMessagesByPostId(groupId) {
+        try {
+            await this.connection.invoke("LoadMessageByPostId", groupId);
+        } catch (err) {
+            console.error("SignalR LoadMessagesByPostId Error:", err);
+        }
+    }
+
+    onReceiveMessage(callback) {
+        this.connection.on("ReceiveMessage", callback);
+    }
+
+    onReceiveMessages(callback) {
+        this.connection.on("ReceiveMessages", callback);
+    }
+
+    onReceiveNewGroup(callback) {
+        this.connection.on("ReceiveNewGroup", callback);
+    }
 }
 
 const signalRService = new SignalRService();
