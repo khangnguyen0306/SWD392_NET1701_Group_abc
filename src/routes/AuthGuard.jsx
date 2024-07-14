@@ -10,11 +10,11 @@ const AuthGuard = ({ allowedRoles, children }) => {
   console.log(user)        
   const location = useLocation();
 
-
+  if (token && (location.pathname === "/login")) return <Navigate to='/' />
   if (!token) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  if (token && (location.pathname === "login")) return <Navigate to='/' />
+ 
   if (location.pathname === "/dashboard") {
     if (!user || user.roleId !== 1) {
       return <Navigate to="/404" replace />;

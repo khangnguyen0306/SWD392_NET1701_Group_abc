@@ -8,20 +8,17 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 import imager from '../../assets/signin-image.jpg';
+import { selectCurrentToken } from "../../slices/auth.slice.js";
 function Login() {
-  // const token = useSelector(selectCurrenToken);
+  const token = useSelector(selectCurrentToken);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if (token) {
-  //     navigate("/");
-  //   }
-  //   const timer = setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, 500);
-  //   return () => clearTimeout(timer);
-  // }, [token, navigate]);
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   return (
     <>
@@ -37,8 +34,7 @@ function Login() {
                 <Row>
                   <Col className="image-login">
                     <img src={imager} />
-                    <Link style={{ fontSize: '16px', color: '#222222' }} to={"/register"} > <u className="Create-account-name">Create an account</u></Link>
-                    <Link style={{ fontSize: '16px', color: '#222222' }} to={"/forgot-password"} > <u className="forgot-password">Forgot password</u></Link>
+
                   </Col>
                   <Col>
                     <h1 className="title-login">
@@ -46,6 +42,10 @@ function Login() {
                     </h1>
                     <div className="form-login">
                       <LoginForm />
+                    </div>
+                    <div style={{marginTop:'-4rem'}}>
+                      <span>You don't have account? <Link style={{ fontSize: '16px',padding:'0.3rem' }} to={"/register"} > Create an account</Link> </span>
+
                     </div>
                   </Col>
                 </Row>

@@ -90,7 +90,7 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
           <Card>
             <div className="input-placeholder" onClick={openModal}>
               <Avatar src="path_to_avatar_image" />
-              <Input placeholder="Bạn muốn bán hay trao đổi đồ vật gì đấy?" readOnly />
+              <Input placeholder="Hello!! What you want to exchange ?" readOnly />
             </div>
           </Card>
         ) : null}

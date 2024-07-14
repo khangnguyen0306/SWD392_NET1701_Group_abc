@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, Table, Space, Typography, Spin, message, Tag, Button } from 'antd';
 import { useGetAllTransactionQuery } from '../../services/userAPI';
 import dayjs from 'dayjs';
+import CartModal from './cartModal';
+import { FileSearchOutlined } from '@ant-design/icons';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
 const TransactionHistory = () => {
     const { data: transactions, isLoading, refetch } = useGetAllTransactionQuery();
-
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
     useEffect(() => {
         refetch();
     }, [refetch]);
@@ -32,6 +35,19 @@ const TransactionHistory = () => {
             currency: 'VND',
         }).format(price);
     };
+
+    const handleViewDetails = (transaction) => {
+        console.log(transaction)
+        setIsModalVisible(true);
+        setSelectedTransaction(transaction);
+
+    };
+
+    const handleCloseModal = () => {
+        setIsModalVisible(false);
+        setSelectedTransaction(null);
+    };
+
 
     const columns = [
         {
@@ -62,53 +78,51 @@ const TransactionHistory = () => {
             key: 'status',
             render: (status) => (
                 <Text type={status ? 'warning' : 'success'}>
-                    {status ? <Tag color='orange'>Ongoing</Tag> : <Tag color='green'>Completed</Tag>}
+                    {!status ? <Tag color='orange'>Ongoing</Tag> : <Tag color='green'>Completed</Tag>}
                 </Text>
-            ),
-        },
-        {
-            title: 'Details',
-            dataIndex: 'orderDetails',
-            key: 'orderDetails',
-            render: (orderDetails) => (
-                <Space direction="vertical">
-                    {orderDetails.map(detail => (
-                        <Text key={detail.id}>Product ID: {detail.productId}, Price: {formatPrice(detail.price)} </Text>
-                    ))}
-                </Space>
             ),
         },
         {
             title: 'View Details',
             dataIndex: 'View Details',
             key: 'View Details',
-            render: () => (
-                <Button type='primary'>View Details</Button>
+            render: (text, record) => (
+                <Button type='primary' icon={<FileSearchOutlined />} onClick={() => handleViewDetails(record)}>
+                    View Details
+                </Button>
             )
         },
     ];
 
     return (
-        <Tabs defaultActiveKey="1" style={{ width: "100%", marginTop: '6rem', marginBottom: '1rem' }} >
-            <TabPane tab="Ongoing Transactions" key="1">
-                <Table
-                    style={{ marginTop: "2rem" }}
-                    dataSource={ongoingTransactions}
-                    columns={columns}
-                    rowKey={(record, index) => generateRowKey('ongoing', index)}
-                    pagination={{ pageSize: 10 }}
-                />
-            </TabPane>
-            <TabPane tab="Completed Transactions" key="2">
-                <Table
-                    style={{ marginTop: "2rem" }}
-                    dataSource={completedTransactions}
-                    columns={columns}
-                    rowKey={(record, index) => generateRowKey('completed', index)}
-                    pagination={{ pageSize: 10 }}
-                />
-            </TabPane>
-        </Tabs>
+        <>
+            <Tabs defaultActiveKey="1" style={{ width: "100%", marginTop: '6rem', marginBottom: '1rem' }} >
+
+                <TabPane tab="Ongoing Transactions" key="2">
+                    <Table
+                        style={{ marginTop: "2rem" }}
+                        dataSource={completedTransactions}
+                        columns={columns}
+                        rowKey={(record, index) => generateRowKey('completed', index)}
+                        pagination={{ pageSize: 10 }}
+                    />
+                </TabPane>
+                <TabPane tab="Completed Transactions" key="1">
+                    <Table
+                        style={{ marginTop: "2rem" }}
+                        dataSource={ongoingTransactions}
+                        columns={columns}
+                        rowKey={(record, index) => generateRowKey('ongoing', index)}
+                        pagination={{ pageSize: 10 }}
+                    />
+                </TabPane>
+            </Tabs>
+            <CartModal
+                isVisible={isModalVisible}
+                onClose={handleCloseModal}
+                transaction={selectedTransaction}
+            />
+        </>
     );
 };
 
