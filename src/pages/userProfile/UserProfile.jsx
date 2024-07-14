@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Layout, Button, Form, Input, Radio, DatePicker, message, Avatar, Row, Col, Card, Image } from 'antd';
-import { EyeInvisibleOutlined, EyeTwoTone, UserOutlined } from '@ant-design/icons';
+import { Layout, Button, Form, Input, Radio, DatePicker, message, Avatar, Row, Col, Card, Image, Skeleton } from 'antd';
+import { EditOutlined, EyeInvisibleOutlined, EyeTwoTone, UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import "./UserProfile.scss"
 import { validationPatterns } from '../../utils/utils';
-import { useEditProfileMutation } from '../../services/userAPI';
+import { useEditProfileMutation, useGetUserProfileForOtherQuery } from '../../services/userAPI';
 import { selectCurrentUser } from '../../slices/auth.slice';
 import { useSelector } from 'react-redux';
 import ChangePassword from './ChangePassword';
@@ -15,26 +15,32 @@ import UploadWidget from '../../components/uploadWidget/uploadWidget';
 const UserProfile = () => {
     const [editUser] = useEditProfileMutation();
     const user = useSelector(selectCurrentUser);
+    const { data, isLoading, refetch } = useGetUserProfileForOtherQuery(user?.id)
+    console.log(data)
     const [isUpdatePassword, setIsUpdatePassword] = useState(false);
     const [form] = Form.useForm();
     const [updateUser, setUpdateUser] = useState(false);
     const [newAvatar, setNewAvatar] = useState([]);
     const [folder] = useState(uuidv4());
 
+
+
     useEffect(() => {
-        if (user) {
+        if (data) {
             form.setFieldsValue({
-                id: user.id,
-                userName: user?.userName,
-                email: user?.email,
-                DOB: user?.dob ? dayjs(user.dob) : null,
-                gender: user?.gender,
-                phoneNumber: user?.phoneNumber,
-                address: user?.address,
-                password: user?.password
+                id: data.id,
+                userName: data?.userName,
+                email: data?.email,
+                DOB: data?.dob ? dayjs(data.dob) : null,
+                gender: data?.gender,
+                phoneNumber: data?.phoneNumber,
+                address: data?.address,
+                password: data?.password,
+                imgUrl: data?.imgUrl
             });
+
         }
-    }, [user, form]);
+    }, [data, form]);
 
     const handleUpdate = () => {
         setUpdateUser(!updateUser);
@@ -54,12 +60,17 @@ const UserProfile = () => {
                 },
                 id: user.id,
             });
+            refetch();
             message.success("Updated user profile successfully");
+
             setUpdateUser(false);
         } catch (error) {
             message.error("Failed to update user profile");
         }
     };
+    if (isLoading) {
+        return <Skeleton active />
+    }
 
     return (
         <Layout className='main-layout-userProfile-page'>
@@ -69,7 +80,7 @@ const UserProfile = () => {
                         <Card title={
                             <div className='profile-information-title'>
                                 <p>My account</p>
-                                <Button onClick={() => setUpdateUser(true)}>Update profile</Button>
+                                <Button onClick={() => setUpdateUser(true)} icon={<EditOutlined/>} type='primary'>Update profile</Button>
                             </div>
                         }
                             style={{ height: '100%' }}>
@@ -89,7 +100,7 @@ const UserProfile = () => {
                                     <Col span={12}>
                                         <div className='profile-information-content-input'>
                                             <label id='fullname'>Day of birth</label>
-                                            <Input value={dayjs(user?.dob).format("DD/MM/YYYY")} readOnly size='large' />
+                                            <Input value={dayjs(user?.dob).format("DD/MM/YYYY")} readOnly size='large'/>
                                         </div>
                                     </Col>
                                 </div>
@@ -115,19 +126,18 @@ const UserProfile = () => {
                         <Card style={{ height: '100%' }}>
                             <Col flex={1} style={{ display: 'flex', justifyContent: 'center' }}>
                                 <div style={{ textAlign: 'center' }} className='profile-card-user'>
-                                    {user ? (
-                                        <div style={{ textAlign: 'center' }}>
-                                            <img
-                                                src={newAvatar[0] || user?.imgUrl} height={"170px"} width={"170px"}
-                                                style={{ borderRadius: '50%', display: 'block' }}
-                                            />
-                                            <h3 style={{ marginTop: '1rem' }}>{user?.userName}</h3>
-                                            <ChangePassword
-                                                form={form}
-                                                isUpdatePassword={isUpdatePassword}
-                                                setIsUpdatePassword={setIsUpdatePassword}
-                                            />
-                                        </div>
+                                    {data ? (
+                                        <>
+                                            <div style={{ textAlign: 'center' }}>
+                                                <img
+                                                    src={newAvatar[0] || data?.imgUrl} height={"170px"} width={"170px"}
+                                                    style={{ borderRadius: '50%', display: 'block', boxShadow: "0 8px 12px rgba(0, 0, 0, 0.6)" }}
+                                                />
+                                                <h3 style={{ marginTop: '1rem' }}>{data?.userName}</h3>
+
+                                            </div>
+
+                                        </>
                                     ) : (
                                         <div style={{ textAlign: 'center' }}>
                                             <Avatar size={64} icon={<UserOutlined />} />
@@ -135,7 +145,15 @@ const UserProfile = () => {
                                         </div>
                                     )}
                                 </div>
+
                             </Col>
+                            <div style={{ textAlign: 'start' }}>
+                                <ChangePassword
+                                    form={form}
+                                    isUpdatePassword={isUpdatePassword}
+                                    setIsUpdatePassword={setIsUpdatePassword}
+                                />
+                            </div>
                         </Card>
                     </Col>
                 </Row>
@@ -151,7 +169,7 @@ const UserProfile = () => {
                             <Card title={
                                 <div className='profile-information-title'>
                                     <p>My account</p>
-                                    <Button>Update profile</Button>
+                                    <Button icon={<EditOutlined/>} type='primary'>Update profile</Button>
                                 </div>
                             }
                                 style={{ height: '100%' }}>
@@ -219,7 +237,7 @@ const UserProfile = () => {
                                                             message: validationPatterns.email.message
                                                         }
                                                     ]}>
-                                                    <Input readOnly />
+                                                    <Input readOnly  style={{paddingBottom:'10px'}}/>
                                                 </Form.Item>
                                             </div>
                                             <div className='profile-information-content-input' style={{ marginTop: '1rem' }}>
@@ -266,7 +284,7 @@ const UserProfile = () => {
                                                 <Button type="primary" htmlType="submit" style={{ marginRight: '20px' }}>
                                                     Save
                                                 </Button>
-                                                <Button type="primary" onClick={() => setUpdateUser(false)}>
+                                                <Button type="primary" danger onClick={() => setUpdateUser(false)}>
                                                     Cancel
                                                 </Button>
                                             </Form.Item>
@@ -278,18 +296,17 @@ const UserProfile = () => {
                         <Col span={7}>
                             <Card style={{ height: '100%' }}>
                                 <Col flex={1} style={{ display: 'flex', justifyContent: 'center' }}>
-                                    {user ? (
+                                    {data ? (
                                         <>
-                                        <div style={{ textAlign: 'center' }}>
-                                            <img
-                                                src={newAvatar[0] || user?.imgUrl} height={"170px"} width={"170px"}
-                                                style={{ borderRadius: '50%', display: 'block' }}
-                                            />
-                                            <h3 style={{ marginTop: '1rem' }}>{user?.userName}</h3>
-                                            
-                                        </div>
-                                       
-                                    </>
+                                            <div style={{ textAlign: 'center' }}>
+                                                <img
+                                                    src={newAvatar[0] || data?.imgUrl} height={"170px"} width={"170px"}
+                                                    style={{ borderRadius: '50%', display: 'block', boxShadow: "0 8px 12px rgba(0, 0, 0, 0.6)" }}
+                                                />
+                                                <h3 style={{ marginTop: '1rem' }}>{data?.userName}</h3>
+
+                                            </div>
+                                        </>
                                     ) : (
                                         <div style={{ textAlign: 'center' }}>
                                             <Avatar size={64} icon={<UserOutlined />} />
@@ -298,16 +315,13 @@ const UserProfile = () => {
 
                                     )}
                                 </Col>
-                                <div style = {{textAlign: 'left'}}>
-                                        <ChangePassword
-                                        form={form}
-                                        isUpdatePassword={isUpdatePassword}
-                                        setIsUpdatePassword={setIsUpdatePassword}
-                                    />
-                                    </div>
+
                             </Card>
+
                         </Col>
+
                     </Row>
+
                 </Form>
             )}
         </Layout>

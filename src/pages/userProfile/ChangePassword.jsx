@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Checkbox, Button, message } from 'antd';
+import { Form, Input, Checkbox, Button, message, Switch } from 'antd';
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 import { validationPatterns } from '../../utils/utils';
 import { useUpdatePasswordMutation } from '../../services/userAPI';
@@ -22,7 +22,8 @@ const ChangePassword = ({ form, isUpdatePassword, setIsUpdatePassword }) => {
     return (
         <>
             <div className='profile-information-content-input' style={{ marginTop: '1rem' }}>
-                <Checkbox onChange={(e) => setIsUpdatePassword(e.target.checked)}>Change Password</Checkbox>
+                <Switch checked={isUpdatePassword} onChange={(checked) => setIsUpdatePassword(checked)} />
+                <span style={{ marginLeft: '0.5rem' }}>Change Password</span>
             </div>
 
             {isUpdatePassword && (

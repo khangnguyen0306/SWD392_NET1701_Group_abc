@@ -11,6 +11,7 @@ const { Option } = Select;
 const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
     const [form] = Form.useForm();
     const { data: productData, isLoading: isLoadingProduct } = useGetAllProductForExchangeQuery();
+    console.log(productData)
     const { data: postDetail, refetch } = useGetPostDetailQuery(post);
     const [editPost, { isLoading: isEditing }] = useEditPostMutation();
     const [currentImageUrl, setCurrentImageUrl] = useState('');
@@ -113,7 +114,7 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
                     >
                         {productData?.map(product => (
                             <Option key={product.id} value={product.id}>
-                                {product.name}
+                                {product?.name}
                             </Option>
                         ))}
                     </Select>
