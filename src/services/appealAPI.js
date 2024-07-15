@@ -23,12 +23,14 @@ export const appealApi = createApi({
       providesTags: (result, _error, id) => [{ type: "Appeal", id }],
     }),
     addAppeal: builder.mutation({
-      query: (body) => {
+      query: ({ userId, ...body }) => {
         return {
           method: "POST",
-          url: `appeal/addappeal`,
+          url: `/appeal/addappeal?userId=${userId}`, // Ensure this matches your server's endpoint
           body,
+          responseHandler: (response) => response.text(),
         };
+        
       },
       invalidatesTags: [{ type: "Appeal", id: "LIST" }],
     }),
