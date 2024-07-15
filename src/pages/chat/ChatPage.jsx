@@ -1,73 +1,140 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import signalRService from '../../services/chatAPI'; 
-import * as signalR from '@microsoft/signalr';
+import signalRService from '../../services/chatAPI'; // Assuming this is correctly imported
+import { Button, Input } from 'antd';
 
 const Chat = () => {
-    const messages = useSelector((state) => state.chat.messages);
-    const [inputMessage, setInputMessage] = useState('');
-    const [postId, setPostId] = useState(1); // Example postId, replace with actual value
+    const [groupName, setGroupName] = useState('');
+    const [groups, setGroups] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [selectedGroupId, setSelectedGroupId] = useState(null);
+    const [messageInput, setMessageInput] = useState('');
 
     useEffect(() => {
-        signalRService.start();
+        const userId = 1036;
+        let timeoutId;
 
-        signalRService.onReceiveMessage((message) => {
-            console.log("Received message:", message);
-            // Update your message state here
-        });
+        const fetchData = async () => {
+            try {
+                signalRService.start();
 
-        signalRService.onReceiveMessages((messages) => {
-            console.log("Received messages:", messages);
-            // Update your message state here
-        });
+                // Handle receiving all group chats
+                const handleReceiveAllGroupChats = (groupDtos) => {
+                    setGroups(groupDtos);
+                };
 
-        signalRService.onReceiveNewGroup((group) => {
-            console.log("Received new group:", group);
-            // Handle new group logic here
-        });
+                // Handle receiving messages
+                const handleReceiveMessages = (receivedMessages) => {
+                    setMessages(receivedMessages);
+                };
 
-        // Join group when component mounts
-        signalRService.joinGroup(postId);
+                // Register event handlers for SignalR events
+                signalRService.onReceiveAllGroupChats(handleReceiveAllGroupChats);
+                signalRService.onReceiveMessages(handleReceiveMessages);
+                signalRService.onReceiveNewGroup((newGroup) => {
+                    console.log('New group received:', newGroup);
+                    // Optionally update state with new group
+                });
 
-        return () => {
-            // Leave group when component unmounts
-            signalRService.leaveGroup(postId);
-            if (signalRService.connection.state === signalR.HubConnectionState.Connected) {
-                signalRService.connection.stop();
+                // Fetch all group chats for the user
+                signalRService.getAllGroupChat(userId);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                // Schedule the next call after 3 seconds
+                timeoutId = setTimeout(fetchData, 3000);
             }
         };
-    }, [postId]);
 
-    const handleSendMessage = async () => {
-        const user = "User"; 
-        const message = {
-            user,
-            content: inputMessage,
-            postId,
-            timestamp: new Date()
+        // Start fetching data initially
+        fetchData();
+
+        // Clean up timeout on component unmount
+        return () => {
+            clearTimeout(timeoutId);
         };
-        await signalRService.sendMessage(message);
-        setInputMessage('');
+    }, []); // Empty dependency array ensures this Empty dependency array ensures this effect runs only once on mount
+
+    // Function to handle creating a new group
+    const handleCreateGroup = async () => {
+        const group = {
+            name: groupName,
+            postId: 32,
+            userExchangeId: 1036,
+        };
+        await signalRService.createGroup(group); // Assuming createGroup method exists in signalRService
+        setGroupName(''); // Clear group name input after creation
+    };
+
+    // Function to handle clicking on a group to load messages
+    const handleGroupClick = async (groupId) => {
+        setSelectedGroupId(groupId);
+        await signalRService.LoadMessageByGroupId(groupId); // Adjust method name as per your service
+    };
+
+    // Function to handle sending a message
+    const handleSendMessage = () => {
+        if (messageInput.trim() !== '') {
+            const message = {
+                SenderId: 1036, // Replace with actual sender ID logic if needed
+                GroupId: selectedGroupId, // Use selectedGroupId or actual logic to determine group ID
+                Content: messageInput,
+                CreatedDate: new Date().toISOString(), // Example timestamp, adjust as needed
+            };
+
+            // Send message via SignalR service
+            signalRService.sendMessage(message);
+
+            // Clear message input after sending
+            setMessageInput('');
+        }
     };
 
     return (
-        <div className="chat-container" style = {{marginTop:'100px'}}>
-            <div className="chat-messages">
-                {messages.map((msg, index) => (
-                    <div key={index} className="chat-message">
-                        <strong>{msg.user}</strong>: {msg.message}
-                    </div>
+        <div className="chat-container" style={{ marginTop: '100px' }}>
+            {/* Group creation UI */}
+            <input
+                type="text"
+                placeholder="Group Name"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                className="group-input"
+            />
+            <button onClick={handleCreateGroup} className="create-group-button">
+                Create Group
+            </button>
+
+            {/* List of groups */}
+            <h2>Groups</h2>
+            <ul>
+                {groups.map((group) => (
+                    <li key={group.id}>
+                        {`Group ID: ${group.id}, Post ID: ${group.postId}`}
+                        <Button onClick={() => handleGroupClick(group.id)}>Load Messages</Button>
+                    </li>
                 ))}
-            </div>
-            <div className="chat-input-container">
-                <input
+            </ul>
+
+            {/* Messages for selected group */}
+            {selectedGroupId && (
+                <div className="messages-section">
+                    <h2>Messages for Group ID: {selectedGroupId}</h2>
+                    <ul>
+                        {messages.map((message) => (
+                            <li key={message.id}>{message.content}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {/* Message input and send button */}
+            <div className="chat-input">
+                <Input
                     type="text"
-                    className="chat-input"
-                    placeholder="Type a message..."
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
+                    placeholder="Type your message..."
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
                 />
-                <button className="chat-send-button" onClick={handleSendMessage}>Send</button>
+                <Button onClick={handleSendMessage}>Send</Button>
             </div>
         </div>
     );

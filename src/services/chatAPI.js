@@ -2,69 +2,85 @@ import * as signalR from '@microsoft/signalr';
 
 class SignalRService {
     constructor() {
+        this.connection = null;
+        this.start();
+    }
+
+    async start() {
+        if (this.connection && this.connection.state !== signalR.HubConnectionState.Disconnected) {
+            console.log('SignalR connection is already active or in a non-disconnected state.');
+            return;
+        }
+
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7293/chatHub") // Ensure this matches your backend URL
+            .withUrl('https://localhost:7293/chatHub')
             .withAutomaticReconnect()
             .configureLogging(signalR.LogLevel.Information)
             .build();
 
-        this.connection.onclose(() => this.start());
-    }
+        this.connection.onclose(() => {
+            console.log('SignalR connection closed. Attempting to reconnect...');
+            this.start();
+        });
 
-    async start() {
-        if (this.connection.state === signalR.HubConnectionState.Disconnected) {
-            try {
-                await this.connection.start();
-                console.log("SignalR Connected.");
-            } catch (err) {
-                console.error("SignalR Connection Error:", err);
-                setTimeout(() => this.start(), 5000);
-            }
-        }
-    }
-
-    async sendMessage(message) {
         try {
-            await this.connection.invoke("SendMessage", message);
+            await this.connection.start();
+            console.log('SignalR Connected');
         } catch (err) {
-            console.error("SignalR SendMessage Error:", err);
+            console.error('Error while establishing connection: ' + err);
+            setTimeout(() => this.start(), 5000); // Retry connection every 5 seconds
         }
     }
 
-    async joinGroup(postId) {
-        try {
-            await this.connection.invoke("JoinGroup", postId);
-        } catch (err) {
-            console.error("SignalR JoinGroup Error:", err);
+    async invoke(methodName, ...args) {
+        if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
+            console.log('SignalR connection is not active. Attempting to start...');
+            await this.start();
         }
+        return this.connection.invoke(methodName, ...args);
     }
-
-    async leaveGroup(postId) {
-        try {
-            await this.connection.invoke("LeaveGroup", postId);
-        } catch (err) {
-            console.error("SignalR LeaveGroup Error:", err);
-        }
-    }
-
-    async loadMessagesByPostId(groupId) {
-        try {
-            await this.connection.invoke("LoadMessageByPostId", groupId);
-        } catch (err) {
-            console.error("SignalR LoadMessagesByPostId Error:", err);
-        }
+    onReceiveNewGroup(callback) {
+        this.connection.on('ReceiveNewGroup', callback);
     }
 
     onReceiveMessage(callback) {
-        this.connection.on("ReceiveMessage", callback);
+        this.connection.on('ReceiveMessage', callback);
     }
 
     onReceiveMessages(callback) {
-        this.connection.on("ReceiveMessages", callback);
+        this.connection.on('ReceiveMessages', callback);
     }
 
-    onReceiveNewGroup(callback) {
-        this.connection.on("ReceiveNewGroup", callback);
+    onReceiveAllGroupChats(callback) {
+        this.connection.on('ReceiveAllGroupChats', callback);
+    }
+
+    createGroup(group) {
+        this.invoke('CreateGroup', group).catch(err => console.error('Error creating group:', err));
+    }
+
+    getAllGroupChat(userId) {
+        this.invoke('GetAllGroupChat', userId).catch(err => console.error('Error fetching group chats:', err));
+    }
+
+    joinGroup(postId) {
+        this.invoke('JoinGroup', postId).catch(err => console.error('Error joining group:', err));
+    }
+
+    leaveGroup(postId) {
+        this.invoke('LeaveGroup', postId).catch(err => console.error('Error leaving group:', err));
+    }
+
+    joinAllGroup(userId) {
+        this.invoke('JoinAllGroup', userId).catch(err => console.error('Error joining all groups:', err));
+    }
+
+    sendMessage(message) {
+        this.connection.invoke('SendMessage', message).catch(err => console.error('Error sending message:', err));
+    }
+
+    async LoadMessageByGroupId(groupId) {
+        await this.connection.invoke('LoadMessageByGroupId', groupId);
     }
 }
 
