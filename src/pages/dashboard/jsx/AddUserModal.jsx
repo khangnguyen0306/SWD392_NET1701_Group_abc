@@ -32,8 +32,8 @@ const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
                 >
                     <Select>
                         <Option value="1">Administrator</Option>
-                        <Option value="3">User</Option>
-                        <Option value="2">Staff</Option>
+                        <Option value="2">User</Option>
+                        <Option value="3">Staff</Option>
                     </Select>
                 </Form.Item>
 
