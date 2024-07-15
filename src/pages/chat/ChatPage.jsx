@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import signalRService from '../../services/chatAPI'; // Assuming this is correctly imported
 import { Button, Input } from 'antd';
+import { useDispatch } from 'react-redux';
 
 const Chat = () => {
     const [groupName, setGroupName] = useState('');
@@ -10,13 +11,13 @@ const Chat = () => {
     const [messageInput, setMessageInput] = useState('');
 
     useEffect(() => {
-        const userId = 1036;
+        const userId = 7;
         let timeoutId;
 
         const fetchData = async () => {
             try {
                 signalRService.start();
-
+                await signalRService.LoadMessageByGroupId(selectedGroupId);
                 // Handle receiving all group chats
                 const handleReceiveAllGroupChats = (groupDtos) => {
                     setGroups(groupDtos);
@@ -37,11 +38,12 @@ const Chat = () => {
 
                 // Fetch all group chats for the user
                 signalRService.getAllGroupChat(userId);
+                signalRService.LoadMessageByGroupId(selectedGroupId)
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
                 // Schedule the next call after 3 seconds
-                timeoutId = setTimeout(fetchData, 3000);
+                timeoutId = setTimeout(fetchData, 1000);
             }
         };
 
@@ -58,8 +60,8 @@ const Chat = () => {
     const handleCreateGroup = async () => {
         const group = {
             name: groupName,
-            postId: 32,
-            userExchangeId: 1036,
+            postId: 1,
+            userExchangeId: 7,
         };
         await signalRService.createGroup(group); // Assuming createGroup method exists in signalRService
         setGroupName(''); // Clear group name input after creation
@@ -72,10 +74,10 @@ const Chat = () => {
     };
 
     // Function to handle sending a message
-    const handleSendMessage = () => {
+    const handleSendMessage = async() => {
         if (messageInput.trim() !== '') {
             const message = {
-                SenderId: 1036, // Replace with actual sender ID logic if needed
+                SenderId: 7, // Replace with actual sender ID logic if needed
                 GroupId: selectedGroupId, // Use selectedGroupId or actual logic to determine group ID
                 Content: messageInput,
                 CreatedDate: new Date().toISOString(), // Example timestamp, adjust as needed
@@ -86,6 +88,7 @@ const Chat = () => {
 
             // Clear message input after sending
             setMessageInput('');
+            await signalRService.LoadMessageByGroupId(selectedGroupId);
         }
     };
 

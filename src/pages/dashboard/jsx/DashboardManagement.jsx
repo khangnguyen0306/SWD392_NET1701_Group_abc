@@ -4,6 +4,7 @@ import TableUser from './TableUser';
 import { Button, Form, Layout, message } from 'antd';
 import AddUserModal from './AddUserModal';
 import EditUserModal from './EditUserModal';
+import { PlusCircleOutlined } from '@ant-design/icons';
 
 const DashboardManagement = () => {
     const { data: userData, isLoadingUserData, refetch: refetchUserData } = useGetAllUserQuery();
@@ -37,7 +38,7 @@ const DashboardManagement = () => {
                 refetchUserData();
                 handleOk(addedUser.data.message);
                 form.resetFields();
-            }else{
+            } else {
                 message.error(addedUser.data.message);
             }
 
@@ -79,10 +80,15 @@ const DashboardManagement = () => {
     const handleDeleteUser = async (user) => {
 
         try {
-            const { deleteU } = await deleteUser(user.id);    // no return value
-            refetchUserData();
-            const messageEdit = "User Delete successfully!";
-            handleEditOk(messageEdit);
+            const deleteU = await deleteUser(user.id);
+            if (deleteU.error) {
+                message.error("Can't delete user !");
+            } else {
+                refetchUserData();
+                const messageEdit = "User Delete successfully!";
+                handleEditOk(messageEdit);
+            }
+
         } catch (error) {
             message.error("User Delete unsuccessfully!");
             console.log(error);
@@ -145,14 +151,18 @@ const DashboardManagement = () => {
         onEdit: showEditModal,
         onDelete: handleDeleteUser,
         onBan: handleBanUser,
-        onUnBan:handleUnBanUser
+        onUnBan: handleUnBanUser
     }
 
 
     return (
         <Layout>
             <div style={{ display: "flex", justifyContent: 'end', marginTop: '6.5rem' }}>
-                <Button onClick={showModal}>Add User</Button>
+                <Button type='primary'
+                    icon={<PlusCircleOutlined />}
+                    size='large'
+                    style={{marginBottom:'1rem 10px 0 0 '}}
+                    onClick={showModal}>Add User</Button>
             </div>
             <TableUser {...TableUserProps} />
             <AddUserModal {...addModalProps} />
