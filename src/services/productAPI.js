@@ -36,7 +36,7 @@ export const productAPI = createApi({
           : [{ type: "ProductList", id: "LIST" }],
     }),
     getAllCategoriesForCProduct: builder.query({
-      query: () => `category/getallvalidcategory`,
+      query: () => `category/getallcategory`,
       // `providesTags` determines which 'tag' is attached to the
       // cached data returned by the query.
       providesTags: (result) =>
