@@ -4,6 +4,7 @@ export const chatSlice = createSlice({
     name: 'chat',
     initialState: {
         messages: [],
+        groupId:null
     },
     reducers: {
         addMessages: (state, action) => {
@@ -11,6 +12,9 @@ export const chatSlice = createSlice({
         },
         addMessage: (state, action) => {
             state.messages.push(action.payload);
+        },
+        groupId: (state, action) => {
+            state.groupId.push(action.payload);
         }
     },
 });

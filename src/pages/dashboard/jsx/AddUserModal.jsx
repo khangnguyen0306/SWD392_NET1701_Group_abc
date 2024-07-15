@@ -8,10 +8,13 @@ import { validationPatterns } from '../../../utils/utils';
 const { Option } = Select;
 
 const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
-
+    const [loading, setLoading] = useState(false);
 
     const onFinish = (values) => {
-        handleOk(values);
+        setLoading(true);
+        handleOk(values).finally(() => {
+          setLoading(false);
+        });
     };
 
 
@@ -23,6 +26,7 @@ const AddUserModal = ({ visible, handleOk, handleCancel, form }) => {
             onOk={() => form.submit()}
             onCancel={handleCancel}
             okText="Add User"
+            confirmLoading={loading}
         >
             <Form form={form} name="addUserForm" initialValues={{ userType: 'Super Admin' }} onFinish={onFinish}>
                 <Form.Item
