@@ -5,7 +5,7 @@ import { useGetAllCategoriesForCProductQuery } from '../../../services/productAP
 const ModalCreateSubcategory = ({ visible, onCreate, onCancel }) => {
   const [form] = Form.useForm();
   const { data: categories, isLoading, refetch } = useGetAllCategoriesForCProductQuery();
-
+  console.log(categories)
 
   useEffect(() => {
     if (visible && categories) {
@@ -53,7 +53,7 @@ const ModalCreateSubcategory = ({ visible, onCreate, onCancel }) => {
             <Spin />
           ) : (
             <Select placeholder="Select a category">
-              {categories?.map(category => (
+            {categories?.filter(category => category.status).map(category =>  (
                 <Select.Option key={category.id} value={category.id}>
                   {category.name}
                 </Select.Option>
