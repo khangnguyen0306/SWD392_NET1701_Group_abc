@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, message, Image } from 'antd';
 import ReactQuill from 'react-quill';
 import { useCreatePostMutation, useGetAllPostByUserQuery } from '../../services/postAPI';
@@ -14,6 +14,8 @@ const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
   const [images, setImages] = useState([]);
   const [folder] = useState(uuidv4());
 
+
+
   const handleSubmit = async (values) => {
     try {
       const { title, description, productId } = values;
@@ -21,14 +23,16 @@ const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
         title,
         description,
         productId,
-        imageUrl: images.length > 0 ? images[0] : '',
+        imageUrl: images?.length > 0 ? images[0] : '',
       }).unwrap();
       message.success('Post created successfully');
+      refetchProducts();
       refetchPosts();
       form.resetFields();
       setImages(null);
       setIsModalVisible(false);
     } catch (error) {
+      console.log(error)
       message.error('Failed to create post');
     }
   };
