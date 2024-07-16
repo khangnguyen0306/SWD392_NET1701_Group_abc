@@ -81,7 +81,12 @@ const AppealForm = () => {
           name="message"
           rules={[{ required: true, message: 'Please input your appeal message' }]}
         >
-          <Input.TextArea placeholder="Appeal Message" rows={4} size="large" />
+          <Input.TextArea
+            placeholder="Appeal Message"
+            rows={6} // Increase the number of rows to allow for more text input
+            size="large"
+            maxLength={1000} // Set a higher maximum length or remove this property if you don't want any limit
+          />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" className="submit-btn" block>

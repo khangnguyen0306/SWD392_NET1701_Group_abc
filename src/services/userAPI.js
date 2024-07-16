@@ -25,6 +25,7 @@ export const userAPI = createApi({
           ? result.map(({ id }) => ({ type: "UserList", id }))
           : [{ type: "UserList", id: "LIST" }],
     }),
+
     getUserProfile: builder.query({
       query: (userId) => ({
         url: `user/${userId}`, 
@@ -147,5 +148,6 @@ export const {
   useUnBanUserMutation,
   useGetUserProfileForOtherQuery,
   useGetAllTransactionQuery,
-  useUpdatePasswordMutation
+  useUpdatePasswordMutation,
+  
 } = userAPI;

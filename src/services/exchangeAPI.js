@@ -179,6 +179,9 @@ export const exchangeAPI = createApi({
         { type: "ExchangeList", id: "LIST" },
       ],
     }),
+    getAllFinishedForUser: builder.query({
+      query: () => 'exchanged/getallfinishedforuser',
+    }),
     acceptExchange: builder.mutation({
       query: (payload) => {
         return {
@@ -201,7 +204,8 @@ export const {
   useGetAllExchangeFromPosterQuery,
   useCancelExchangeFromCustomerMutation,
   useAcceptExchangeMutation,
-  useCancelExchangeFromOwnerMutation
+  useCancelExchangeFromOwnerMutation,
+  useGetAllFinishedForUserQuery
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,
   //   useGetClassByIdQuery,

@@ -1,307 +1,125 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Card, Dropdown, List, Menu, Skeleton, message, Modal, Col, Row, Image, Tabs, Empty } from 'antd';
-// import { useDeleteAppealMutation, useGetAllAppealsByUserQuery, useGetAllAppealsQuery } from '../../services/appealAPI';
-import { EllipsisOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../../slices/auth.slice';
+import { Table, Button, message, Layout, Badge, Spin } from 'antd';
+import { useGetAppealsQuery, useAcceptAppealMutation } from '../../services/appealAPI';
+import './AppealManager.scss';
 
-const { TabPane } = Tabs;
-const { confirm } = Modal;
+const { Content } = Layout;
 
 const AppealManager = () => {
-    const { data: appealData, isLoading: isLoadingAppeal, refetch: refetchAppealData } = useGetAllAppealsByUserQuery();
-    const { refetch } = useGetAllAppealsQuery();
-    const [deleteAppeal, { isLoading: isDeleting }] = useDeleteAppealMutation();
-    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-    const [selectedAppeal, setSelectedAppeal] = useState(null);
-    const user = useSelector(selectCurrentUser);
+  const { data: appealData, isLoading: isLoadingAppeal, refetch: refetchAppealData } = useGetAppealsQuery();
+  const [acceptAppeal] = useAcceptAppealMutation();
+  const [localAppealData, setLocalAppealData] = useState([]);
 
-    useEffect(() => {
-        refetchAppealData();
-        refetch();
-    }, [refetch, refetchAppealData]);
-
-    const showDeleteConfirm = (appealId) => {
-        confirm({
-            title: 'Are you sure you want to delete this appeal?',
-            content: 'This action cannot be undone.',
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk: async () => {
-                try {
-                    await deleteAppeal(appealId).unwrap();
-                    message.success('Appeal deleted successfully');
-                    refetchAppealData();
-                    refetch();
-                } catch (error) {
-                    console.log(error);
-                    message.error('Failed to delete the appeal');
-                }
-            },
-            onCancel() {
-                console.log('Cancel');
-            },
-        });
-    };
-
-    const handleEdit = (appeal) => {
-        setSelectedAppeal(appeal);
-        setIsEditModalVisible(true);
-    };
-
-    const handleEditCancel = () => {
-        setIsEditModalVisible(false);
-    };
-
-    const handleEditOk = () => {
-        setIsEditModalVisible(false);
-    };
-
-    // Phân loại appeal đã được duyệt và chưa được duyệt
-    const approvedAppeals = appealData?.filter(appeal => appeal.status === 'approved')?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-    const pendingAppeals = appealData?.filter(appeal => appeal.status === 'pending')?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-    const rejectedAppeals = appealData?.filter(appeal => appeal.status === 'rejected')?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-
-    if (isLoadingAppeal) {
-        return (
-            <List
-                itemLayout="vertical"
-                size="large"
-                dataSource={[...Array(10).keys()]}
-                renderItem={() => (
-                    <List.Item>
-                        <Skeleton active />
-                    </List.Item>
-                )}
-            />
-        );
+  useEffect(() => {
+    if (appealData) {
+      setLocalAppealData(appealData);
     }
+  }, [appealData]);
 
-    return (
-        <div style={{ paddingLeft: '240px' }}>
-            <Tabs defaultActiveKey="1">
-                {/* Tab Approved Appeals */}
-                <TabPane tab={<span style={{ fontSize: '14px' }} >Approved</span>} key="1">
-                    <List
-                        itemLayout="vertical"
-                        size="large"
-                        dataSource={approvedAppeals}
-                        renderItem={appeal => (
-                            <List.Item key={appeal.id}>
-                                <Card
-                                    style={{ marginLeft: '-200px', position: 'relative' }}
-                                    title={
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            {appeal.user.imgUrl ? (
-                                                <Avatar src={appeal.user.imgUrl} size={'large'} />
-                                            ) : (
-                                                <Avatar icon={<UserOutlined />} />
-                                            )}
-                                            <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{appeal.user.userName}</p>
-                                        </div>
-                                    }
-                                    loading={isLoadingAppeal}
-                                    hoverable
-                                    extra={
-                                        <Dropdown
-                                            overlay={
-                                                <Menu>
-                                                    {appeal?.user?.id === user?.id && (
-                                                        <>
-                                                            <Menu.Item key="edit" onClick={() => handleEdit(appeal.id)}>
-                                                                Edit
-                                                            </Menu.Item>
-                                                            <Menu.Item key="delete" onClick={() => showDeleteConfirm(appeal.id)}>
-                                                                Delete
-                                                            </Menu.Item>
-                                                        </>
-                                                    )}
-                                                </Menu>
-                                            }
-                                            trigger={['click']}
-                                        >
-                                            <Button type="text" icon={<SettingOutlined />} size="small" />
-                                        </Dropdown>
-                                    }
-                                >
-                                    <Link to={`/appealDetail/${appeal.id}`}>
-                                        <Row gutter={[16, 16]}>
-                                            <Col xs={24} md={15}>
-                                                <div style={{ marginLeft: '2rem', color: 'black', marginBottom: '2rem' }}>
-                                                    <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{appeal.title}</p>
-                                                    <div dangerouslySetInnerHTML={{ __html: appeal.description }} />
-                                                    <p style={{ marginTop: '1rem', position: 'absolute', bottom: '-20px', left: '10px' }} >
-                                                        <Badge color={"#00FF00"} text={"Approved"} />
-                                                    </p>
-                                                </div>
-                                            </Col>
-                                            <Col xs={24} md={6}>
-                                                <div style={{ textAlign: 'center' }}>
-                                                    {appeal?.imageUrl ? (
-                                                        <Image src={appeal?.imageUrl} style={{ maxWidth: '100%', height: '100%' }} preview={false} />
-                                                    ) : null}
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </Link>
-                                </Card>
-                            </List.Item>
-                        )}
-                    />
-                </TabPane>
+  const handleAccept = async (id) => {
+    try {
+      await acceptAppeal(id).unwrap();
+      message.success('Appeal accepted successfully');
+      setLocalAppealData(localAppealData.map(appeal => 
+        appeal.userId === localAppealData.find(a => a.id === id).userId
+        ? { ...appeal, status: true }
+        : appeal
+      ));
+    } catch (error) {
+      message.error('Failed to accept the appeal');
+    }
+  };
 
-                {/* Tab Pending Appeals */}
-                <TabPane tab={<span style={{ fontSize: '14px' }}>Pending</span>} key="2">
-                    <List
-                        itemLayout="vertical"
-                        size="large"
-                        dataSource={pendingAppeals}
-                        renderItem={appeal => (
-                            <List.Item key={appeal.id}>
-                                <Card
-                                    style={{ marginLeft: '-200px', position: 'relative' }}
-                                    title={
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            {appeal.user.imgUrl ? (
-                                                <Avatar src={appeal.user.imgUrl} size={'large'} />
-                                            ) : (
-                                                <Avatar icon={<UserOutlined />} />
-                                            )}
-                                            <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{appeal.user.userName}</p>
-                                        </div>
-                                    }
-                                    loading={isLoadingAppeal}
-                                    hoverable
-                                    extra={
-                                        <Dropdown
-                                            overlay={
-                                                <Menu>
-                                                    {appeal?.user?.id === user?.id && (
-                                                        <>
-                                                            <Menu.Item key="edit" onClick={() => handleEdit(appeal.id)}>
-                                                                Edit
-                                                            </Menu.Item>
-                                                            <Menu.Item key="delete" onClick={() => showDeleteConfirm(appeal.id)}>
-                                                                Delete
-                                                            </Menu.Item>
-                                                        </>
-                                                    )}
-                                                </Menu>
-                                            }
-                                            trigger={['click']}
-                                        >
-                                            <Button type="text" icon={<SettingOutlined />} size="small" />
-                                        </Dropdown>
-                                    }
-                                >
-                                    <Link to={`/appealDetail/${appeal.id}`}>
-                                        <Row gutter={[16, 16]}>
-                                            <Col xs={24} md={15}>
-                                                <div style={{ marginLeft: '2rem', color: 'black', marginBottom: '2rem' }}>
-                                                    <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{appeal.title}</p>
-                                                    <div dangerouslySetInnerHTML={{ __html: appeal.description }} />
-                                                    <p style={{ marginTop: '1rem', position: 'absolute', bottom: '-20px', left: '10px' }} >
-                                                        <Badge color={"#ffc125"} text={"Pending"} />
-                                                    </p>
-                                                </div>
-                                            </Col>
-                                            <Col xs={24} md={6}>
-                                                <div style={{ textAlign: 'center' }}>
-                                                    {appeal?.imageUrl ? (
-                                                        <Image src={appeal?.imageUrl} style={{ maxWidth: '100%', height: '100%' }} preview={false} />
-                                                    ) : null}
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </Link>
-                                </Card>
-                            </List.Item>
-                        )}
-                    />
-                </TabPane>
+  const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
+      title: 'User ID',
+      dataIndex: 'userId',
+      key: 'userId',
+      sorter: (a, b) => a.userId - b.userId,
+    },
+    {
+      title: 'User Name',
+      dataIndex: 'userName',
+      key: 'userName',
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
+    },
+    {
+      title: 'Ban Reason',
+      dataIndex: 'bannerDescription',
+      key: 'bannerDescription',
+      className: 'wrap-text',
+    },
+    {
+      title: 'Ban Date',
+      dataIndex: 'bannerDate',
+      key: 'bannerDate',
+      render: (text) => new Date(text).toLocaleString(),
+      sorter: (a, b) => new Date(a.bannerDate) - new Date(b.bannerDate),
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      className: 'wrap-text',
+    },
+    {
+      title: 'Appeal Date',
+      dataIndex: 'date',
+      key: 'date',
+      render: (text) => new Date(text).toLocaleString(),
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => (
+        <Badge
+          color={status ? 'green' : 'yellow'}
+          text={status ? 'Approved' : 'Pending'}
+        />
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text, record) => (
+        <Button
+          type="primary"
+          onClick={() => handleAccept(record.id)}
+          disabled={record.status}
+        >
+          Accept
+        </Button>
+      ),
+    },
+  ];
 
-                {/* Tab Rejected Appeals */}
-                <TabPane tab={<span style={{ fontSize: '14px' }}>Rejected</span>} key="3">
-                    <List
-                        itemLayout="vertical"
-                        size="large"
-                        dataSource={rejectedAppeals}
-                        renderItem={appeal => (
-                            <List.Item key={appeal.id}>
-                                <Card
-                                    style={{ marginLeft: '-200px', position: 'relative' }}
-                                    title={
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            {appeal.user.imgUrl ? (
-                                                <Avatar src={appeal.user.imgUrl} size={'large'} />
-                                            ) : (
-                                                <Avatar icon={<UserOutlined />} />
-                                            )}
-                                            <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{appeal.user.userName}</p>
-                                        </div>
-                                    }
-                                    loading={isLoadingAppeal}
-                                    hoverable
-                                    extra={
-                                        <Dropdown
-                                            overlay={
-                                                <Menu>
-                                                    {appeal?.user?.id === user?.id && (
-                                                        <>
-                                                            <Menu.Item key="edit" onClick={() => handleEdit(appeal.id)}>
-                                                                Edit
-                                                            </Menu.Item>
-                                                            <Menu.Item key="delete" onClick={() => showDeleteConfirm(appeal.id)}>
-                                                                Delete
-                                                            </Menu.Item>
-                                                        </>
-                                                    )}
-                                                </Menu>
-                                            }
-                                            trigger={['click']}
-                                        >
-                                            <Button type="text" icon={<SettingOutlined />} size="small" />
-                                        </Dropdown>
-                                    }
-                                >
-                                    <Link to={`/appealDetail/${appeal.id}`}>
-                                        <Row gutter={[16, 16]}>
-                                            <Col xs={24} md={15}>
-                                                <div style={{ marginLeft: '2rem', color: 'black', marginBottom: '2rem' }}>
-                                                    <p style={{ fontSize: '18px', fontWeight: 'bold' }}>{appeal.title}</p>
-                                                    <div dangerouslySetInnerHTML={{ __html: appeal.description }} />
-                                                    <p style={{ marginTop: '1rem', position: 'absolute', bottom: '-20px', left: '10px' }} >
-                                                        <Badge color={"#ff0000"} text={"Rejected"} />
-                                                    </p>
-                                                </div>
-                                            </Col>
-                                            <Col xs={24} md={6}>
-                                                <div style={{ textAlign: 'center' }}>
-                                                    {appeal?.imageUrl ? (
-                                                        <Image src={appeal?.imageUrl} alt='Hình ảnh bài đăng' style={{ maxWidth: '100%', height: '100%' }} preview={false} />
-                                                    ) : null}
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </Link>
-                                </Card>
-                            </List.Item>
-                        )}
-                    />
-                </TabPane>
-            </Tabs>
-
-            <EditAppealModal
-                visible={isEditModalVisible}
-                onOk={handleEditOk}
-                onCancel={handleEditCancel}
-                appeal={selectedAppeal}
-                refetchAppealData={refetchAppealData}
-            />
-        </div>
-    );
+  return (
+    <Layout>
+      <Content className="appeal-content">
+        {isLoadingAppeal ? (
+          <div className="loading-spinner">
+            <Spin size="large" />
+          </div>
+        ) : (
+          <Table
+            dataSource={localAppealData}
+            columns={columns}
+            rowKey={(record) => record.id}
+            pagination={{ pageSize: 10 }}
+            className="appeal-table"
+          />
+        )}
+      </Content>
+    </Layout>
+  );
 };
 
 export default AppealManager;
