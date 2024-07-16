@@ -72,7 +72,7 @@ const ExchangeRequest = () => {
                                     ) : (
                                         <Avatar icon={<UserOutlined />} />
                                     )}
-                                    <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{record.postOwner.userName}</p>
+                                    <p style={{ marginLeft: '1rem', fontSize: '14px' }}>{record.postOwner?.userName}</p>
                                 </div>
                             </Card>
                             <Link to={`/postDetail/${record.post.id}`}>
@@ -89,7 +89,7 @@ const ExchangeRequest = () => {
             key: 'exchangeProduct',
             render: (text, record) => (
                 <div style={{ display: 'flex', alignItems: 'center',justifyContent:'left' }}>
-                    {record.exchangedProducts.map(product => (
+                    {record.exchangedProducts?.map(product => (
                         <div key={product.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'left' }}>
                             <Image src={product.urlImg} alt={product.name} style={{ width: '80px', height: '80px', marginRight: '1rem' }} />
                             <p>{product.name}</p>

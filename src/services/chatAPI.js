@@ -14,6 +14,7 @@ class SignalRService {
 
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl('https://localhost:7293/chatHub')
+            // .withUrl('https://swd392web1.azurewebsites.net/chatHub')
             .withAutomaticReconnect()
             .configureLogging(signalR.LogLevel.Information)
             .build();

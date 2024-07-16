@@ -104,6 +104,7 @@ const ExchangePage = ({ onSubmit, initialPosts = [] }) => {
           <CreatePost
             setIsModalVisible={setIsModalVisible}
             productData={productData}
+            refetchProducts={refetch}
           />
         </Modal>
 

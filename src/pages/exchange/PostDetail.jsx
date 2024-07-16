@@ -290,7 +290,7 @@ const PostDetail = () => {
                     <Card
                         className='custom-card-fixed'
                         title="Comment"
-                        style={{ marginBottom: '20px', maxHeight: '400px', overflowY: 'auto' }}
+                        style={{ marginBottom: '20px', maxHeight: '500px', overflowY: 'auto' }}
                     >
                         {commentData?.slice(0, visibleComments).map(comment => {
                             const commentDate = comment.date ? new Date(comment.date) : null;
