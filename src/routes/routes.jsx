@@ -24,6 +24,7 @@ const Category = Loadable({ loader: () => import("../pages/staff/subcategorymana
 const ProductManagement = Loadable({ loader: () => import("../pages/productManagement/MainComponent") });
 const TransactionHistory = Loadable({ loader: () => import("../pages/transactionHistory/TransactionHistoryMain") });
 const AppealForm = Loadable({ loader: () => import("../pages/login/AppealForm") });
+const AppealManagement = Loadable({ loader: () => import("../pages/admin/AppealManagement") });
 const Dashboard = Loadable({
   loader: () => import("../pages/dashboard/jsx/Dashboard"),
 });
@@ -127,6 +128,11 @@ export const router = createBrowserRouter([
             path: "/manage-products",
             element: ProductManagement,
           },
+          {
+            path: "/manage-appeal",
+            element: AppealManagement,
+          },
+          
           {
             path: "/transactionHistory",
             element: TransactionHistory,

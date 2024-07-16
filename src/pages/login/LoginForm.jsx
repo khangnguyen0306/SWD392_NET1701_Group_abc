@@ -36,9 +36,29 @@ const LoginForm = () => {
       });
       const from = location.state?.from || "/";
       navigate(from);
+      
     } else {
       if (result.error) {
         message.error(result.error.data.message)
+        if (result.error.data.isBanned) {
+          const email = values.email;
+          const userId =result.error.data.data.user.id ;
+          const { bannedAccountId } = result.error.data;
+          console.log("User is banned, navigating to appeal page with state:", {
+           email,
+            bannedAccountId,
+            userId,
+          });
+          navigate("/appeal", {
+            state: {
+            email,
+              bannedAccountId,
+              userId,
+            },
+          });
+          return;
+        }
+
         return
       }
       notification.error({

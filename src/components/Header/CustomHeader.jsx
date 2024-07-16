@@ -106,7 +106,7 @@ const CustomHeader = () => {
             <NavLink to="/manage-products" activeClassName="active">
               Manage Products
             </NavLink>
-          </Menu.Item> */}
+          </Menu.Item>
         </>
       );
     } else if (user?.roleId === 3) {
