@@ -3,28 +3,48 @@ import { Table, Avatar, Button, Image, message, Modal, Badge, Spin, Result, Card
 import { useAcceptExchangeMutation, useGetAllExchangeFromPosterQuery } from '../../services/exchangeAPI';
 import { CheckOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import "./Activity.scss"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import signalRService from '../../services/chatAPI';
+
+
 const MyExchange = () => {
     const { data: myExchanges, isLoading, error, refetch } = useGetAllExchangeFromPosterQuery();
     const [acceptExchange, { isLoading: isAccepting }] = useAcceptExchangeMutation();
-
+    const navigate = useNavigate();
     useEffect(() => {
         refetch();
     }, [refetch]);
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [exchangeIdToAccept, setExchangeIdToAccept] = useState(null);
-
-    const showModal = (exchangeId) => {
-        setExchangeIdToAccept(exchangeId);
+    const [exchangeRecordToAccept, setExchangeRecordToAccept] = useState(null);
+    const showModal = (record) => {
+        console.log(record)
+        setExchangeRecordToAccept(record);
         setIsModalVisible(true);
+    };
+    const handleCreateGroup = async (postId, userId) => {
+        const group = {
+            postId: postId,
+            userExchangeId: userId,
+        };
+        try {
+            await signalRService.createGroup(group);
+            setGroupName('');
+        } catch (error) {
+            console.error('Error creating group:', error);
+        }
     };
 
     const handleOk = async () => {
         try {
-            await acceptExchange(exchangeIdToAccept);
-            message.success('Exchange request accepted successfully');
+            console.log(exchangeRecordToAccept.post.id)
+            console.log(exchangeRecordToAccept.user.id)
+
+            await acceptExchange(exchangeRecordToAccept.id);
+            handleCreateGroup(exchangeRecordToAccept.post.id, exchangeRecordToAccept.user.id)
+            message.success('Exchange request accepted successfully! You are connected to group chat number:'+exchangeRecordToAccept.post.id);
             refetch();
+            navigate('/chat')
         } catch (error) {
             message.error('Failed to accept exchange request');
         } finally {
@@ -98,8 +118,8 @@ const MyExchange = () => {
             dataIndex: 'exchangeProduct',
             key: 'exchangeProduct',
             render: (text, record) => (
-                <div style={{ display: 'flex', alignItems: 'center',justifyContent:'left' }}>
-                    {record.exchangedProducts.map(product => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
+                    {record.exchangedProducts?.map(product => (
                         <div key={product.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'start' }}>
                             <Image src={product.urlImg} alt={product.name} style={{ width: '80px', height: '80px', marginRight: '1rem' }} />
                             <p>{product.name}</p>
@@ -132,7 +152,7 @@ const MyExchange = () => {
                 <Button
                     type="primary"
                     icon={<CheckOutlined />}
-                    onClick={() => showModal(record.id)}
+                    onClick={() => showModal(record)}
                     loading={isAccepting}
                     style={{ backgroundColor: '#00CC00' }}
                 >
