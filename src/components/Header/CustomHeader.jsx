@@ -102,11 +102,7 @@ const CustomHeader = () => {
               Dashboard
             </NavLink>
           </Menu.Item>
-          {/* <Menu.Item key="/manage-products">
-            <NavLink to="/manage-products" activeClassName="active">
-              Manage Products
-            </NavLink>
-          </Menu.Item>
+         abdd73b424df3e
         </>
       );
     } else if (user?.roleId === 3) {

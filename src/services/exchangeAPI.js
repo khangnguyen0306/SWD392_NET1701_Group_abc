@@ -193,6 +193,13 @@ export const exchangeAPI = createApi({
         { type: "ExchangeList", id: "LIST" },
       ],
     }),
+    acceptCompletedExchange: builder.mutation({
+      query: (id) => ({
+        url: `exchanged/updatecompletedstatus/${id}`,
+        method: 'PUT',
+      }),
+    }),
+    
   }),
 });
 
@@ -205,7 +212,8 @@ export const {
   useCancelExchangeFromCustomerMutation,
   useAcceptExchangeMutation,
   useCancelExchangeFromOwnerMutation,
-  useGetAllFinishedForUserQuery
+  useGetAllFinishedForUserQuery,
+  useAcceptCompletedExchangeMutation,
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,
   //   useGetClassByIdQuery,

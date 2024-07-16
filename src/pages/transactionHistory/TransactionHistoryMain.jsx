@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, Table, Spin, message, Tag, Button, Avatar, Image } from 'antd';
 import { useGetAllTransactionQuery } from '../../services/userAPI';
-import { useGetAllFinishedForUserQuery, useAcceptExchangeMutation } from '../../services/exchangeAPI';
+import { useGetAllFinishedForUserQuery, useAcceptCompletedExchangeMutation } from '../../services/exchangeAPI';
 import dayjs from 'dayjs';
 import CartModal from './cartModal';
 import { FileSearchOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
@@ -11,7 +11,7 @@ const { TabPane } = Tabs;
 const TransactionHistory = () => {
     const { data: transactions, isLoading: isLoadingTransactions, refetch: refetchTransactions } = useGetAllTransactionQuery();
     const { data: exchanges, isLoading: isLoadingExchanges, refetch: refetchExchanges } = useGetAllFinishedForUserQuery();
-    const [acceptExchange] = useAcceptExchangeMutation();
+    const [acceptCompletedExchange] = useAcceptCompletedExchangeMutation();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -56,7 +56,7 @@ const TransactionHistory = () => {
 
     const handleAcceptExchange = async (exchangeId) => {
         try {
-            await acceptExchange({ id: exchangeId, isCompleted: true }).unwrap();
+            await acceptCompletedExchange(exchangeId).unwrap();
             message.success('Exchange accepted successfully');
             refetchExchanges();
         } catch (error) {
@@ -171,8 +171,7 @@ const TransactionHistory = () => {
             key: 'action',
             render: (text, record) => (
                 record.isCompleted ? 
-                
-                <Button type="primary" onClick={() => handleRateExchange(record.id)}>Rate</Button>:
+                <Button type="primary" onClick={() => handleRateExchange(record.id)}>Rate</Button> :
                 <Button type="primary" onClick={() => handleAcceptExchange(record.id)}>Accept</Button>
             ),
         },
