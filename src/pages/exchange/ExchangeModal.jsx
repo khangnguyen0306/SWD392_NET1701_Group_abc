@@ -11,54 +11,46 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
     const [selectedProductKeys, setSelectedProductKeys] = useState([]);
     const [description, setDescription] = useState('');
     const [isLocked, setIsLocked] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [createExchange] = useCreateExchangeMutation();
     const { data: productData, isLoading: isLoadingProduct, refetch } = useGetAllProductForExchangeQuery();
 
-
-
-
     const handleOk = async () => {
         try {
+            setIsSubmitting(true); // Set loading to true before the request
             const values = await form.validateFields();
-
-            // if (!isLocked) {
-            //     console.log('Please lock the exchange before submitting.');
-            //     return;
-            // }
 
             const formValues = {
                 productIds: selectedProductKeys,
                 description: description,
                 postId: parseInt(postId, 10)
             };
+
             try {
                 const { exchange } = await createExchange(formValues);
-               
-                form.resetFields();
-                setSelectedProductKeys(null)
-                refetch();
                 message.success('Exchange created successfully');
             } catch (e) {
                 message.error("Error creating exchange");
-                return;
+            } finally {
+                setIsSubmitting(false); // Reset loading to false after the request
+                form.resetFields();
+                setSelectedProductKeys([]);
+                refetch();
+                onClose();
             }
-
-            onClose();
         } catch (errorInfo) {
+            setIsSubmitting(false); // Reset loading to false if validation fails
             console.log('Validate Failed:', errorInfo);
         }
     };
 
     const handleTransferChange = (targetKeys) => {
-
         setSelectedProductKeys(targetKeys);
     };
 
     const handleDescriptionChange = (value) => {
         setDescription(value);
     };
-
-
 
     const columns = [
         {
@@ -77,13 +69,12 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
         },
     ];
 
-    const formattedProductData =
-        productData?.map((product) => ({
-            key: product.id.toString(),
-            name: product.name,
-            categoryName: product.categoryName,
-            subcategoryName: product.subcategoryName,
-        })) || [];
+    const formattedProductData = productData?.map((product) => ({
+        key: product.id.toString(),
+        name: product.name,
+        categoryName: product.categoryName,
+        subcategoryName: product.subcategoryName,
+    })) || [];
 
     return (
         <Modal
@@ -97,12 +88,12 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
                 <Button key="back" onClick={onClose}>
                     Cancel
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleOk} >
+                <Button key="submit" type="primary" onClick={handleOk} loading={isSubmitting}>
                     Submit
                 </Button>,
             ]}
         >
-            <Spin spinning={isLoadingProduct}>
+            <Spin spinning={isLoadingProduct || isSubmitting}>
                 <Form form={form} layout="vertical">
                     <Form.Item
                         label="Select Product to Exchange"
@@ -131,7 +122,6 @@ const ExchangeModal = ({ isVisible, onClose, postId }) => {
                     >
                         <ReactQuill value={description} onChange={handleDescriptionChange} />
                     </Form.Item>
-
                 </Form>
             </Spin>
         </Modal>

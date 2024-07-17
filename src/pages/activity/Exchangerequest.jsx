@@ -7,11 +7,6 @@ import { Link } from 'react-router-dom';
 const ExchangeRequest = () => {
     const { data: exchangeRequests, isLoading, error, refetch } = useGetAllExchangeFromCustomerQuery();
     const [cancelExchange, { isLoading: isCancelling }] = useCancelExchangeFromCustomerMutation();
-
-    useEffect(() => {
-        refetch();
-    }, [refetch]);
-
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [exchangeIdToCancel, setExchangeIdToCancel] = useState(null);
 
@@ -19,6 +14,8 @@ const ExchangeRequest = () => {
         setExchangeIdToCancel(exchangeId);
         setIsModalVisible(true);
     };
+
+
 
     const handleOk = async () => {
         try {
@@ -65,7 +62,7 @@ const ExchangeRequest = () => {
                 <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '1rem' }}>
                     <Link to={`/user-profile/${record.postOwner.id}`}>
                         <div>
-                            <Card  style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                            <Card style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     {record.postOwner.imgUrl ? (
                                         <Avatar src={record.postOwner.imgUrl} size={'large'} />
@@ -88,7 +85,7 @@ const ExchangeRequest = () => {
             dataIndex: 'exchangeProduct',
             key: 'exchangeProduct',
             render: (text, record) => (
-                <div style={{ display: 'flex', alignItems: 'center',justifyContent:'left' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
                     {record.exchangedProducts?.map(product => (
                         <div key={product.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'left' }}>
                             <Image src={product.urlImg} alt={product.name} style={{ width: '80px', height: '80px', marginRight: '1rem' }} />

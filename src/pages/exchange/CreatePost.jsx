@@ -13,11 +13,11 @@ const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
   const { refetch: refetchPosts } = useGetAllPostByUserQuery();
   const [images, setImages] = useState([]);
   const [folder] = useState(uuidv4());
-
-
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values) => {
     try {
+      setIsLoading(true); // Set loading to true before the request
       const { title, description, productId } = values;
       await createPost({
         title,
@@ -29,11 +29,13 @@ const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
       refetchProducts();
       refetchPosts();
       form.resetFields();
-      setImages(null);
+      setImages([]);
       setIsModalVisible(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       message.error('Failed to create post');
+    } finally {
+      setIsLoading(false); // Reset loading to false after the request
     }
   };
 
@@ -106,7 +108,7 @@ const CreatePost = ({ setIsModalVisible, productData, refetchProducts }) => {
         </div>
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+      <Button type="primary" htmlType="submit" loading={isLoading}>
           Create Post
         </Button>
         <Button style={{ marginLeft: '10px' }} onClick={() => setIsModalVisible(false)}>

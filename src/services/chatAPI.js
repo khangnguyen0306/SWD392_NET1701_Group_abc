@@ -14,7 +14,6 @@ class SignalRService {
 
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl('https://localhost:7293/chatHub')
-            // .withUrl('https://swd392web1.azurewebsites.net/chatHub')
             .withAutomaticReconnect()
             .configureLogging(signalR.LogLevel.Information)
             .build();
@@ -40,6 +39,7 @@ class SignalRService {
         }
         return this.connection.invoke(methodName, ...args);
     }
+
     onReceiveNewGroup(callback) {
         this.connection.on('ReceiveNewGroup', callback);
     }
@@ -63,7 +63,13 @@ class SignalRService {
     getAllGroupChat(userId) {
         this.invoke('GetAllGroupChat', userId).catch(err => console.error('Error fetching group chats:', err));
     }
+    offReceiveMessages() {
+        this.connection.off('ReceiveMessages');
+    }
 
+    offReceiveAllGroupChats() {
+        this.connection.off('ReceiveAllGroupChats');
+    }
     joinGroup(postId) {
         this.invoke('JoinGroup', postId).catch(err => console.error('Error joining group:', err));
     }
@@ -77,11 +83,20 @@ class SignalRService {
     }
 
     sendMessage(message) {
-        this.connection.invoke('SendMessage', message).catch(err => console.error('Error sending message:', err));
+        this.invoke('SendMessage', message).catch(err => console.error('Error sending message:', err));
     }
+    
 
     async LoadMessageByGroupId(groupId) {
-        await this.connection.invoke('LoadMessageByGroupId', groupId);
+        try {
+            const messages = await this.invoke('LoadMessageByGroupId', groupId);
+            
+            // console.log('Messages loaded for group:', groupId, messages);
+            return messages;
+        } catch (error) {
+            console.error('Error loading messages for group:', groupId, error);
+            return null;
+        }
     }
 }
 

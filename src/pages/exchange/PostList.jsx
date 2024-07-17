@@ -157,9 +157,9 @@ const PostList = () => {
                                         <Menu>
                                             {post?.user?.id === user?.id && (
                                                 <>
-                                                    <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
+                                                    {/* <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
                                                         Edit
-                                                    </Menu.Item>
+                                                    </Menu.Item> */}
                                                     <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
                                                         Delete
                                                     </Menu.Item>
