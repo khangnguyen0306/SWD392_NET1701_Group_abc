@@ -102,7 +102,7 @@ const CustomHeader = () => {
               Dashboard
             </NavLink>
           </Menu.Item>
-          {/* <Menu.Item key="/manage-products">
+          <Menu.Item key="/manage-products">
             <NavLink to="/manage-products" activeClassName="active">
               Manage Products
             </NavLink>

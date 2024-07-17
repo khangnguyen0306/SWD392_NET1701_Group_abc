@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import EditPostModal from './ModalEdit';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../slices/auth.slice';
+import { useGetAllProductForExchangeQuery } from '../../services/productAPI';
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -13,6 +14,7 @@ const { confirm } = Modal;
 const PostListByUser = () => {
     const { data: postData, isLoading: isLoadingPost, refetch: refetchPostData } = useGetAllPostByUserQuery();
     const { refetch } = useGetAllPostQuery();
+    const { refetch:refetchProduct } = useGetAllProductForExchangeQuery();
     const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
@@ -36,6 +38,7 @@ const PostListByUser = () => {
                     message.success('Post deleted successfully');
                     refetchPostData();
                     refetch();
+                    refetchProduct();
                 } catch (error) {
                     console.log(error);
                     message.error('Failed to delete the post');
@@ -129,9 +132,9 @@ const PostListByUser = () => {
                                                 <Menu>
                                                     {post?.user?.id === user?.id && (
                                                         <>
-                                                            <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
+                                                            {/* <Menu.Item key="edit" onClick={() => handleEdit(post.id)}>
                                                                 Edit
-                                                            </Menu.Item>
+                                                            </Menu.Item> */}
                                                             <Menu.Item key="delete" onClick={() => showDeleteConfirm(post.id)}>
                                                                 Delete
                                                             </Menu.Item>

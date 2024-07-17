@@ -70,13 +70,11 @@ $blue-color-price: #f05d40;
         }
 
         .addToCart-btn {
+            display: flex;
+            align-items: center;
             .ant-input-number-handler-wrap {
                 display: none;
             }
-
-            display: flex;
-            align-items: center;
-
         }
     }
 

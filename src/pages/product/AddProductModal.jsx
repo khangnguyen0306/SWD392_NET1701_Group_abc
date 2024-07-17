@@ -21,6 +21,7 @@ const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
     const [addProduct] = useCreateProductMutation();
     const [folder] = useState(uuidv4());
     const [price, setPrice] = useState(0);
+    const [loadingAdd, setLoadingAdd] = useState(false);
     useEffect(() => {
         setFilteredSubcategories(subcategories || []);
     }, [subcategories]);
@@ -38,6 +39,7 @@ const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
         try {
             const values = await form.validateFields();
             try {
+                setLoadingAdd(true)
                 await addProduct({ ...values, urlImg: images[0], price });
                 message.success('Product added successfully');
                 refetchProductData();
@@ -49,6 +51,8 @@ const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
             }
         } catch (error) {
             console.error('Validate Failed:', error);
+        }finally{
+            setLoadingAdd(false)
         }
     };
 
@@ -61,8 +65,8 @@ const ModalAddProduct = ({ visible, onOk, onCancel, refetchProductData }) => {
                 <Button key="cancel" onClick={onCancel}>
                     Cancel
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleSubmit}>
-                    Submit
+                <Button key="submit" type="primary" onClick={handleSubmit} loading={loadingAdd}>
+                    Add Product
                 </Button>,
             ]}
         >
