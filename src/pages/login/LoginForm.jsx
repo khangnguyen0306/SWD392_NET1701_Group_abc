@@ -25,7 +25,7 @@ const LoginForm = () => {
       dispatch(setUser(result.data.data.user));
       dispatch(setToken(result.data.data.token));
       localStorage.setItem("token", result.data.data.token);
-
+      localStorage.setItem("user", JSON.stringify(result.data.data.user));
       notification.success({
         message: "Login successfully",
         description: (

@@ -16,16 +16,16 @@ const AuthGuard = ({ allowedRoles, children }) => {
   }
  
   if (location.pathname === "/dashboard") {
-    if (!user || user?.roleId !== 1) {
+    if (!token || user?.roleId !== 1) {
       return <Navigate to="/404" replace />;
     }
   }
-  if (location.pathname === "manage-products" || (location.pathname === "postmanager") || (location.pathname === "manage-categories")) {
-    if (!user || user?.roleId !== 3 || user?.roleId !== 1) {
+  const allowedManagerRoutes = ["/manage-products", "/postmanager", "/manage-categories"];
+  if (allowedManagerRoutes.includes(location.pathname)) {
+    if (![1, 3].includes(user?.roleId)) {
       return <Navigate to="/404" replace />;
     }
   }
-  // return user ? <Outlet /> || { children } : <Navigate to="/404" replace />;
   return <Outlet />;
 };
 
