@@ -60,20 +60,31 @@ const PostManagement = () => {
 
   const handleApprovePost = async (postId) => {
     try {
-      await approvePost({ id: postId, newStatus: true }).unwrap();
-      refetchPostData();
-      message.success("Post approved successfully!", 1.5);
+      const rs = await approvePost({ id: postId, newStatus: true }).unwrap();
+      try {
+        if (rs.status) {
+          message.success(rs.message, 1.5);
+          refetchPostData();
+        }
+      } catch (error) {
+        message.error(rs.message, 1.5);
+        refetchPostData();
+      }
     } catch (error) {
       message.error("Approve post unsuccessful. Please try again.");
+      refetchPostData();
     }
   };
   const handleRejectPost = async (postId) => {
     try {
-      await rejectPost(postId).unwrap();
-      refetchPostData();
+      const rs = await rejectPost(postId).unwrap();
+      console.log(rs)
+
       message.success("Post reject successfully!", 1.5);
+      refetchPostData();
     } catch (error) {
       message.error("reject post unsuccessful. Please try again.");
+      refetchPostData();
     }
   };
 
@@ -104,7 +115,7 @@ const PostManagement = () => {
 
   return (
     <>
-      <Layout style={{height:'100vh'}}>
+      <Layout style={{ height: '100vh' }}>
         <div style={{ display: 'flex', justifyContent: 'end', marginTop: '6.5rem' }}>
           <Button onClick={showModal}>Add Post</Button>
         </div>
