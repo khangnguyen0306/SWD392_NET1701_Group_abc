@@ -17,6 +17,7 @@ const ReportTable = ({ reportData, refetchReports, refetchPosts }) => {
             refetchPosts();
         } catch (error) {
             message.error('Failed to remove report from list');
+            refetchReports();
         }
     };
 
@@ -28,6 +29,7 @@ const ReportTable = ({ reportData, refetchReports, refetchPosts }) => {
             refetchPosts();
         } catch (error) {
             message.error('Failed to approve report');
+            refetchReports();
         }
     };
 
