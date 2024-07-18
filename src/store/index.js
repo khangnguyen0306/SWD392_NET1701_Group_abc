@@ -14,6 +14,7 @@ import exchangeReducer from "../slices/exchange.slice";
 import chatReducer from "../slices/chat.slice";
 import { appealApi } from "../services/appealAPI";
 import appealReducer from "../slices/appeal.slice";
+import NotiReducer from "../slices/notification.slice";
 
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -33,6 +34,7 @@ const PostPerisReducer = persistReducer(persistConfig, postReducer);
 const ExchangePerisReducer = persistReducer(persistConfig, exchangeReducer);
 const ChatPerisReducer = persistReducer(persistConfig, chatReducer);
 const AppealPerisReducer = persistReducer(persistConfig, appealReducer);
+const NotificationReducer = persistReducer(persistConfig, NotiReducer);
 
 export const store = configureStore({
   reducer: {
@@ -51,6 +53,7 @@ export const store = configureStore({
     chat: ChatPerisReducer,
     [appealApi.reducerPath]: appealApi.reducer,
     appeal: AppealPerisReducer,
+    notifications:NotificationReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(

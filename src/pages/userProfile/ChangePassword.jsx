@@ -32,7 +32,7 @@ const ChangePassword = ({ form, isUpdatePassword, setIsUpdatePassword }) => {
         <div className='change-password-container'>
             <div className='change-password-toggle'>
                 <Switch checked={isUpdatePassword} onChange={(checked) => setIsUpdatePassword(checked)} />
-                <span className='change-password-label'>Change Password</span>
+                <span className='change-password-label' style={{marginLeft:'1rem'}}>  Change Password</span>
             </div>
 
             {isUpdatePassword && (

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button, Layout, Menu, Drawer, Grid, Avatar, Badge, Dropdown, notification } from "antd";
 import "./CustomHeader.scss";
-import { MenuOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { BellOutlined, MenuOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import CartModal from "../../pages/product/cartModal";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTotalProducts } from "../../slices/product.slice";
 import { logOut, selectCurrentUser } from "../../slices/auth.slice";
-import { useGetUserProfileForOtherQuery } from "../../services/userAPI";
+import { useGetAllNotificationQuery, useGetUserProfileForOtherQuery } from "../../services/userAPI";
+import { markAllAsRead, selectNotifications, selectUnreadCount, setNotifications } from "../../slices/notification.slice";
 
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
@@ -19,11 +20,18 @@ const CustomHeader = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
   const totalProducts = useSelector(selectTotalProducts);
+  // const [notifications, setNotifications] = useState([]);
+  const notifications = useSelector(selectNotifications);
+  const unreadNotiCount = useSelector(selectUnreadCount);
   const user = useSelector(selectCurrentUser);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data, isLoading, refetch } = useGetUserProfileForOtherQuery(user?.id)
+  const { data: notificationsData, isLoadingNoti, refetch: refetchNoti } = useGetAllNotificationQuery(user?.id);
+
+
+
   const toggleCartModal = () => {
     setCartVisible(!cartVisible);
   };
@@ -48,6 +56,15 @@ const CustomHeader = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [prevScrollPos]);
 
+  useEffect(() => {
+    if (notificationsData) {
+      dispatch(setNotifications(notificationsData));
+    }
+  }, [notificationsData, dispatch]);
+
+  const handleClearNotifications = () => {
+    dispatch(markAllAsRead());
+  };
   const menu = (
     <Menu>
       <Menu.Item key="profile">
@@ -171,6 +188,18 @@ const CustomHeader = () => {
       );
     }
   };
+  const notificationsMenu = (
+    <Menu>
+      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+        {notifications.map((noti) => (
+          <Menu.Item key={noti.id}>
+            {noti.content}
+          </Menu.Item>
+        ))}
+      </div>
+    </Menu>
+  );
+
 
   return (
     <Header id="header" className={visible ? "show" : "hidden"} style={{ zIndex: "1" }}>
@@ -190,11 +219,20 @@ const CustomHeader = () => {
           </div>
           <div className="icon-header">
             {user?.roleId == 3 || user?.roleId == 1 ? null : (
-              <p className="cart-icon" onClick={toggleCartModal}>
-                <Badge count={totalProducts}>
-                  <ShoppingCartOutlined style={{ fontSize: "30px" }} />
-                </Badge>
-              </p>
+              <>
+                {user ? (
+                  <Dropdown overlay={notificationsMenu} trigger={["click"]}>
+                    <Badge count={unreadNotiCount} onClick={handleClearNotifications}>
+                      <BellOutlined style={{ fontSize: "30px" }} />
+                    </Badge>
+                  </Dropdown>
+                ) : null}
+                <p className="cart-icon" onClick={toggleCartModal}>
+                  <Badge count={totalProducts}>
+                    <ShoppingCartOutlined style={{ fontSize: "30px" }} />
+                  </Badge>
+                </p>
+              </>
             )}
             {user ? (
               (user?.roleId === 3 || user?.roleId === 1) ? (
@@ -203,7 +241,7 @@ const CustomHeader = () => {
                 </Dropdown>
               ) : (
                 <Dropdown overlay={menu} trigger={["hover"]}>
-                  <Avatar style={{ marginRight: "1rem", display: "block", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)" }} size="large" src={data?.imgUrl} />
+                  <Avatar style={{ marginRight: "1rem", display: "block", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)", marginLeft: '0.5rem' }} size="large" src={data?.imgUrl} />
                 </Dropdown>
               )
             ) : (
@@ -224,6 +262,7 @@ const CustomHeader = () => {
         </Menu>
       </Drawer>
       <CartModal visible={cartVisible} onClose={toggleCartModal} />
+
     </Header>
   );
 };

@@ -152,19 +152,42 @@ const Chat = () => {
                                         messages?.map((message, index) => (
                                             <div key={index}>
                                                 {user.id !== message.senderId ? (
-                                                    <Card style={{ width: 'fit-content', margin: '10px', minWidth: '50px' }}
-                                                        bodyStyle={{ padding: '15px' }}>
-                                                        <p><Avatar icon={<UserOutlined />} style={{ marginRight: '1rem' }} /><span>{message.content}</span></p>
+                                                    <Card
+                                                        style={{ width: 'fit-content', margin: '10px', minWidth: '50px', maxWidth: '300px' }}
+                                                        bodyStyle={{ padding: '15px' }}
+                                                    >
+                                                        <div style={{ display: 'flex', wordBreak: 'break-word',alignItems: 'center' }}>
+                                                            <p>
+                                                                <Avatar icon={<UserOutlined />} style={{ marginRight: '1rem' }} />
+                                                            </p>
+                                                            <div>{message.content}</div>
+                                                        </div>
                                                     </Card>
                                                 ) : (
                                                     <div style={{ display: 'flex', justifyContent: 'end' }}>
-                                                        <Card style={{ width: 'fit-content', margin: '10px', minWidth: '100px', textAlign: 'right', backgroundColor: '#5c98f2', color: '#fff' }}
-                                                            bodyStyle={{ padding: '15px' }}>
-                                                            <p><span>{message.content}</span> <Avatar src={user.imgUrl} style={{ marginLeft: '1rem' }} /></p>
+                                                        <Card
+                                                            style={{
+                                                                width: 'fit-content',
+                                                                margin: '10px',
+                                                                minWidth: '100px',
+                                                                textAlign: 'right',
+                                                                backgroundColor: '#5c98f2',
+                                                                color: '#fff',
+                                                                maxWidth: '300px',
+                                                            }}
+                                                            bodyStyle={{ padding: '15px' }}
+                                                        >
+                                                            <div style={{ display: 'flex', wordBreak: 'break-word', alignItems: 'center',justifyContent:'end' }}>
+                                                                <div>{message.content}</div>
+                                                                <p>
+                                                                    <Avatar icon={<UserOutlined />} style={{ margin: ' 0 0 0 1rem' }} />
+                                                                </p>
+                                                            </div>
                                                         </Card>
                                                     </div>
                                                 )}
                                             </div>
+
                                         ))
                                     )}
                                 </Card>

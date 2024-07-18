@@ -17,6 +17,7 @@ const PostManagement = () => {
   const [editPost] = useEditPostMutation();
   const [deletePost] = useDeletePostMutation();
   const [approvePost] = useApprovePostMutation();
+  const [rejectPost] = useDeletePostMutation();
 
   // Show/Hide Modals
   const handleCancel = () => setIsModalVisible(false);
@@ -66,6 +67,15 @@ const PostManagement = () => {
       message.error("Approve post unsuccessful. Please try again.");
     }
   };
+  const handleRejectPost = async (postId) => {
+    try {
+      await rejectPost(postId).unwrap();
+      refetchPostData();
+      message.success("Post reject successfully!", 1.5);
+    } catch (error) {
+      message.error("reject post unsuccessful. Please try again.");
+    }
+  };
 
   const handleDeletePost = async (postId) => {
     try {
@@ -103,6 +113,7 @@ const PostManagement = () => {
           onEdit={showEditModal}
           onApprove={handleApprovePost}
           onDelete={handleDeletePost}
+          reject={handleRejectPost}
         />
         <AddPostModal {...addModalParams} />
         <EditPostModal {...editModalParams} />

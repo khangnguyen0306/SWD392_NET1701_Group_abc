@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, Table, Spin, message, Tag, Button, Avatar, Image } from 'antd';
 import { useGetAllTransactionQuery } from '../../services/userAPI';
-import { useGetAllFinishedForUserQuery, useAcceptExchangeMutation } from '../../services/exchangeAPI';
+import { useGetAllFinishedForUserQuery, useAcceptExchangeMutation, useAcceptCompletedExchangeMutation, useRatingMutation } from '../../services/exchangeAPI';
 import dayjs from 'dayjs';
 import CartModal from './cartModal';
-import { FileSearchOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
+import { AuditOutlined, CheckCircleFilled, CheckCircleOutlined, FileSearchOutlined, StarOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
+import RatingModal from './Rating';
 
 const { TabPane } = Tabs;
 
 const TransactionHistory = () => {
     const { data: transactions, isLoading: isLoadingTransactions, refetch: refetchTransactions } = useGetAllTransactionQuery();
     const { data: exchanges, isLoading: isLoadingExchanges, refetch: refetchExchanges } = useGetAllFinishedForUserQuery();
-    const [acceptExchange] = useAcceptExchangeMutation();
+    const [acceptCompletedExchange] = useAcceptCompletedExchangeMutation();
+
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTransaction, setSelectedTransaction] = useState(null);
-
+    const [isVisible, setIsVisible] = useState(false)
+    const [loadingRate, setLoadingRate] = useState(false)
+    const [currentRating, setCurrentRating] = useState(null)
     useEffect(() => {
         refetchTransactions();
         refetchExchanges();
@@ -55,19 +59,31 @@ const TransactionHistory = () => {
     };
 
     const handleAcceptExchange = async (exchangeId) => {
+
         try {
-            await acceptExchange({ id: exchangeId, isCompleted: true }).unwrap();
+            setLoadingRate(true);
+            await acceptCompletedExchange(exchangeId).unwrap();
             message.success('Exchange accepted successfully');
             refetchExchanges();
+            setLoadingRate(false)
         } catch (error) {
             message.error('Failed to accept exchange');
         }
     };
 
+
+
     const handleRateExchange = (exchangeId) => {
-        // Handle rate exchange logic here
-        message.info('Rate exchange functionality to be implemented.');
+console.log(exchangeId.post.id)
+        setIsVisible(true);
+        setCurrentRating(exchangeId.post.id)
+        // message.info('Rate exchange functionality to be implemented.');
     };
+    const handleclose = () => {
+        setIsVisible(false);
+        // message.info('Rate exchange functionality to be implemented.');
+    };
+
 
     const transactionColumns = [
         {
@@ -169,11 +185,23 @@ const TransactionHistory = () => {
         {
             title: 'Action',
             key: 'action',
+            sorter: (a, b) => a.isRated - b.isRated,
             render: (text, record) => (
-                record.isCompleted ? 
-                
-                <Button type="primary" onClick={() => handleRateExchange(record.id)}>Rate</Button>:
-                <Button type="primary" onClick={() => handleAcceptExchange(record.id)}>Accept</Button>
+                record.isCompleted ? (
+                    record.isRated ? (
+                        <Button style={{ backgroundColor: 'green' }} type="primary" icon={<CheckCircleFilled />}>
+                            Already Rated
+                        </Button>
+                    ) : (
+                        <Button style={{ backgroundColor: 'goldenrod' }} type="primary" onClick={() => handleRateExchange(record)} icon={<StarOutlined />} loading={loadingRate}>
+                            Rate
+                        </Button>
+                    )
+                ) : (
+                    <Button type="primary" onClick={() => handleAcceptExchange(record.id)} style={{ backgroundColor: 'green' }} icon={<CheckCircleOutlined />}>
+                        I have received the product
+                    </Button>
+                )
             ),
         },
     ];
@@ -222,6 +250,13 @@ const TransactionHistory = () => {
                 isVisible={isModalVisible}
                 onClose={handleCloseModal}
                 transaction={selectedTransaction}
+            />
+            <RatingModal
+                visible={isVisible}
+                onCancel={handleclose}
+                postId={currentRating}
+                refetchExchanges={refetchExchanges}
+                refetchTransactions={refetchTransactions}
             />
         </>
     );
