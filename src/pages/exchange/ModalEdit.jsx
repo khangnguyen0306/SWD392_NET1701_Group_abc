@@ -37,18 +37,19 @@ const EditPostModal = ({ visible, onOk, onCancel, post, refetchPostData }) => {
             const values = await form.validateFields();
             const imageUrlToUpdate = newImageUrl.length > 0 ? newImageUrl[0] : currentImageUrl;
 
-            const { data } = await editPost({
+            const  data  = await editPost({
                 id: post,
                 body: { ...values, imageUrl: imageUrlToUpdate }
             });
-
-            if (data) {
-                message.success('Post updated successfully');
+          
+            console.log(data)
+            if (data.data) {
+                message.success(data.data.message);
                 onOk();
                 refetch();
                 refetchPostData();
             } else {
-                message.error('Failed to update post');
+                message.error(data.error.data.message);
             }
         } catch (errorInfo) {
             console.log('Failed:', errorInfo);

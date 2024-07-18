@@ -22,6 +22,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
             setSelectedCategoryId(productDetail.categoryId);
         }
     }, [productDetail]);
+    
     useEffect(() => {
         if (selectedCategoryId) {
             refetchSubcategories();

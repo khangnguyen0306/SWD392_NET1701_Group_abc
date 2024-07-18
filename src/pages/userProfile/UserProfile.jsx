@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Layout, Button, Form, Input, Radio, DatePicker, message, Avatar, Row, Col, Card, Image, Skeleton } from 'antd';
+import { Layout, Button, Form, Input, Radio, DatePicker, message, Avatar, Row, Col, Card, Image, Skeleton, Rate } from 'antd';
 import { EditOutlined, EyeInvisibleOutlined, EyeTwoTone, UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import "./UserProfile.scss"
@@ -80,7 +80,7 @@ const UserProfile = () => {
                         <Card title={
                             <div className='profile-information-title'>
                                 <p>My account</p>
-                                <Button onClick={() => setUpdateUser(true)} icon={<EditOutlined/>} type='primary'>Update profile</Button>
+                                <Button onClick={() => setUpdateUser(true)} icon={<EditOutlined />} type='primary'>Update profile</Button>
                             </div>
                         }
                             style={{ height: '100%' }}>
@@ -100,7 +100,7 @@ const UserProfile = () => {
                                     <Col span={12}>
                                         <div className='profile-information-content-input'>
                                             <label id='fullname'>Day of birth</label>
-                                            <Input value={dayjs(user?.dob).format("DD/MM/YYYY")} readOnly size='large'/>
+                                            <Input value={dayjs(user?.dob).format("DD/MM/YYYY")} readOnly size='large' />
                                         </div>
                                     </Col>
                                 </div>
@@ -133,8 +133,8 @@ const UserProfile = () => {
                                                     src={newAvatar[0] || data?.imgUrl} height={"170px"} width={"170px"}
                                                     style={{ borderRadius: '50%', display: 'block', boxShadow: "0 8px 12px rgba(0, 0, 0, 0.6)" }}
                                                 />
-                                                <h3 style={{ marginTop: '1rem' }}>{data?.userName}</h3>
-
+                                                <h3 style={{ margin: '1rem 0 ' }}>{data?.userName}</h3>
+                                                <Rate disabled defaultValue={data?.ratingCount} />
                                             </div>
 
                                         </>
@@ -147,7 +147,7 @@ const UserProfile = () => {
                                 </div>
 
                             </Col>
-                            <div style={{ textAlign: 'start' }}>
+                            <div style={{ textAlign: 'start',marginTop:'1rem'}}>
                                 <ChangePassword
                                     form={form}
                                     isUpdatePassword={isUpdatePassword}
@@ -169,7 +169,7 @@ const UserProfile = () => {
                             <Card title={
                                 <div className='profile-information-title'>
                                     <p>My account</p>
-                                    <Button icon={<EditOutlined/>} type='primary'>Update profile</Button>
+                                    <Button icon={<EditOutlined />} type='primary'>Update profile</Button>
                                 </div>
                             }
                                 style={{ height: '100%' }}>
@@ -237,7 +237,7 @@ const UserProfile = () => {
                                                             message: validationPatterns.email.message
                                                         }
                                                     ]}>
-                                                    <Input readOnly  style={{paddingBottom:'10px'}}/>
+                                                    <Input readOnly style={{ paddingBottom: '10px' }} />
                                                 </Form.Item>
                                             </div>
                                             <div className='profile-information-content-input' style={{ marginTop: '1rem' }}>
@@ -303,7 +303,8 @@ const UserProfile = () => {
                                                     src={newAvatar[0] || data?.imgUrl} height={"170px"} width={"170px"}
                                                     style={{ borderRadius: '50%', display: 'block', boxShadow: "0 8px 12px rgba(0, 0, 0, 0.6)" }}
                                                 />
-                                                <h3 style={{ marginTop: '1rem' }}>{data?.userName}</h3>
+                                                <h3 style={{ margin: '1rem 0' }}>{data?.userName}</h3>
+                                                <Rate disabled defaultValue={data?.ratingCount} />
 
                                             </div>
                                         </>

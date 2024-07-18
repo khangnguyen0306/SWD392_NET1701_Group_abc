@@ -42,8 +42,8 @@ const UserProfileForOther = () => {
                                 <p><PhoneOutlined /> {user.phoneNumber}</p>
                                 <p><HomeOutlined /> {user.address}</p>
                                 <p>{user.gender === 'Male' ? <ManOutlined /> : <WomanOutlined />} {user.gender}</p>
-                                <Rate disabled defaultValue={5} />
-                                <p>Rating Count: {(user.ratingCount == 0 || user.ratingCount == null) ? "There are no reviews yet" : user.ratingCount}</p>
+                                <Rate disabled defaultValue={user?.ratingCount} />
+                                {/* <p>Rating Count: {(user.ratingCount == 0 || user.ratingCount == null) ? "There are no reviews yet" : user.ratingCount}</p> */}
                             </div>
                         </Col>
                     </Row>

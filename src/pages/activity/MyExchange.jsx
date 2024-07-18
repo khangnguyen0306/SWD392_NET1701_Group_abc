@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Avatar, Button, Image, message, Modal, Badge, Spin, Result, Card } from 'antd';
-import { useAcceptExchangeMutation, useGetAllExchangeFromPosterQuery } from '../../services/exchangeAPI';
-import { CheckOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
+import { useAcceptExchangeMutation, useDenyExchangeMutation, useGetAllExchangeFromPosterQuery } from '../../services/exchangeAPI';
+import { CheckOutlined, StopOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import "./Activity.scss"
 import { Link, useNavigate } from 'react-router-dom';
 import signalRService from '../../services/chatAPI';
@@ -10,17 +10,25 @@ import signalRService from '../../services/chatAPI';
 const MyExchange = () => {
     const { data: myExchanges, isLoading, error, refetch } = useGetAllExchangeFromPosterQuery();
     const [acceptExchange, { isLoading: isAccepting }] = useAcceptExchangeMutation();
+    const [denyExchange, { isLoading: isDeny }] = useDenyExchangeMutation();
     const navigate = useNavigate();
     useEffect(() => {
         refetch();
     }, [refetch]);
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalDenyVisible, setIsModalDenyVisible] = useState(false);
     const [exchangeRecordToAccept, setExchangeRecordToAccept] = useState(null);
+    const [loadingAccept, setIsLoadingAccept] = useState(false);
+    const [loadingDeny, setIsLoadingDeny] = useState(false);
     const showModal = (record) => {
         console.log(record)
         setExchangeRecordToAccept(record);
         setIsModalVisible(true);
+    };
+    const showModalDeny = (record) => {
+        setExchangeRecordToAccept(record);
+        setIsModalDenyVisible(true);
     };
     const handleCreateGroup = async (postId, userId) => {
         const group = {
@@ -36,8 +44,7 @@ const MyExchange = () => {
 
     const handleOk = async () => {
         try {
-            console.log(exchangeRecordToAccept.post.id)
-            console.log(exchangeRecordToAccept.user.id)
+            setIsLoadingAccept(true);
             try {
                 const rs = await acceptExchange(exchangeRecordToAccept.id);
                 if (rs.data) {
@@ -49,21 +56,48 @@ const MyExchange = () => {
                     message.error('Failed to accept exchange request');
                     refetch();
                 }
+                setIsModalVisible(false);
+                setIsLoadingAccept(false)
             } catch (error) {
                 message.error('Failed to accept exchange request');
                 refetch();
             }
         } catch (error) {
             message.error('Failed to accept exchange request');
-        } finally {
+        }
+    };
+
+    const handleDeny = async () => {
+        try {
+            setIsLoadingDeny(true)
+            try {
+                const rs = await denyExchange(exchangeRecordToAccept.id);
+                console.log(rs)
+                if (rs.data) {
+                    message.success(rs.data.message);
+                    refetch();
+                    setIsModalDenyVisible(false)
+                } else {
+                    message.error(rs.error.data.message);
+                    refetch();
+                    setIsModalDenyVisible(false)
+                }
+            } catch (error) {
+                message.error('Failed to Deny exchange request');
+                refetch();
+            }
             setIsModalVisible(false);
-
-
+            setIsLoadingDeny(false)
+        } catch (error) {
+            message.error('Failed to accept exchange request');
         }
     };
 
     const handleCancel = () => {
         setIsModalVisible(false);
+    };
+    const handleDenyCancel = () => {
+        setIsModalDenyVisible(false);
     };
 
     if (isLoading) {
@@ -159,15 +193,26 @@ const MyExchange = () => {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                <Button
-                    type="primary"
-                    icon={<CheckOutlined />}
-                    onClick={() => showModal(record)}
-                    loading={isAccepting}
-                    style={{ backgroundColor: '#00CC00' }}
-                >
-                    Accept
-                </Button>
+                <>
+                    <Button
+                        type="primary"
+                        icon={<CheckOutlined />}
+                        onClick={() => showModal(record)}
+                        loading={isAccepting}
+                        style={{ backgroundColor: '#00CC00', marginRight: '1rem' }}
+                    >
+                        Accept
+                    </Button>
+                    <Button
+                        type="primary"
+                        icon={<StopOutlined />}
+                        onClick={() => showModalDeny(record)}
+                        loading={isDeny}
+                        danger
+                    >
+                        Deny
+                    </Button>
+                </>
             ),
         },
     ];
@@ -188,10 +233,20 @@ const MyExchange = () => {
                 open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                okText="Yes"
+                okText={<Button type='primary' loading={loadingAccept}>Yes</Button>}
                 cancelText="No"
             >
                 <p>Are you sure you want to accept this exchange request?</p>
+            </Modal>
+            <Modal
+                title="Confirm Deny Exchange"
+                open={isModalDenyVisible}
+                onOk={handleDeny}
+                onCancel={handleDenyCancel}
+                okText={<Button type='primary' loading={loadingDeny}>Yes</Button>}
+                cancelText="No"
+            >
+                <p>Are you sure you want to Deny this exchange request?</p>
             </Modal>
         </div>
     );

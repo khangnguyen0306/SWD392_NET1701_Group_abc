@@ -4,12 +4,12 @@ import { selectTokens } from "../slices/auth.slice";
 
 export const userAPI = createApi({
   reducerPath: "userManagement",
-  tagTypes: ["UserList", "TransactionList"],
+  tagTypes: ["UserList", "TransactionList", "NotificationList"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
     prepareHeaders: (headers, { getState }) => {
-      const token = selectTokens(getState()); 
+      const token = selectTokens(getState());
       if (token) {
         headers.append("Authorization", `Bearer ${token}`);
       }
@@ -28,7 +28,7 @@ export const userAPI = createApi({
 
     getUserProfile: builder.query({
       query: (userId) => ({
-        url: `user/${userId}`, 
+        url: `user/${userId}`,
         method: "GET",
       }),
     }),
@@ -89,14 +89,14 @@ export const userAPI = createApi({
     }),
     updatePassword: builder.mutation({
       query: ({ userId, newPassword, oldPassword }) => {
-          return {
-              url: `users/updatepassword`,
-              method: "PUT",
-              body: { userId, newPassword, oldPassword },
-          };
+        return {
+          url: `users/updatepassword`,
+          method: "PUT",
+          body: { userId, newPassword, oldPassword },
+        };
       },
-  }),
-  
+    }),
+
     deleteUser: builder.mutation({
       query: (payload) => {
         return {
@@ -114,6 +114,13 @@ export const userAPI = createApi({
         result
           ? result.map(({ id }) => ({ type: "TransactionList", id }))
           : [{ type: "TransactionList", id: "LIST" }],
+    }),
+    getAllNotification: builder.query({
+      query: (payload) => `notification/getnotificationbyuserid/` + payload,
+      providesTags: (result) =>
+        result
+          ? result.map(({ id }) => ({ type: "NotificationList", id }))
+          : [{ type: "NotificationList", id: "LIST" }],
     }),
     BanUser: builder.mutation({
       query: (payload) => {
@@ -149,5 +156,5 @@ export const {
   useGetUserProfileForOtherQuery,
   useGetAllTransactionQuery,
   useUpdatePasswordMutation,
-  
+  useGetAllNotificationQuery
 } = userAPI;

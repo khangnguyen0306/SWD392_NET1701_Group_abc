@@ -20,6 +20,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
     const [currentImageUrl, setCurrentImageUrl] = useState('');
     const [newImageUrl, setNewImageUrl] = useState([]);
     const [price, setPrice] = useState(0);
+    const [loadingEdit, setLoadingEdit] = useState(false);
 
     useEffect(() => {
         setFilteredSubcategories(subcategories || []);
@@ -59,6 +60,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
 
     const handleSubmit = async () => {
         try {
+            setLoadingEdit(true);
             const values = await form.validateFields();
             const imageUrlToUpdate = newImageUrl.length > 0 ? newImageUrl[0] : currentImageUrl;
             await updateProduct({
@@ -68,7 +70,9 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
             message.success('Product updated successfully');
             refetchProductData();
             setNewImageUrl([]);
+            setLoadingEdit(false);
             onCancel();
+
         } catch {
             message.error('Failed to update product');
         }
@@ -87,7 +91,7 @@ const ModalEditProduct = ({ visible, productData, onCancel, refetchProductData }
                 <Button key="cancel" onClick={onCancel}>
                     Cancel
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleSubmit}>
+                <Button key="submit" type="primary" onClick={handleSubmit} loading={loadingEdit}>
                     Submit
                 </Button>,
             ]}

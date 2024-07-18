@@ -3,14 +3,22 @@ import { Table, Button, Space } from 'antd';
 import { Link } from 'react-router-dom';
 
 
-const TablePost = ({ postData, onEdit, onApprove }) => {
+const TablePost = ({ postData, onEdit, onApprove,reject }) => {
     const [loading, setLoading] = useState(false);
+    const [loadingReject, setLoadingReject] = useState(false);
 
     const handleApprove = async (value) => {
         setLoading(true);
         await onApprove(value);
         setLoading(false);
     };
+
+    const handleReject = async (value) => {
+        setLoadingReject(true);
+        await reject(value);
+        setLoadingReject(false);
+    };
+
     const columns = [
         {
             title: 'Post ID',
@@ -42,7 +50,7 @@ const TablePost = ({ postData, onEdit, onApprove }) => {
                 <Space>
                     {/* <Button onClick={() => onEdit(record)}>Edit</Button> */}
                     <Button type="primary" onClick={() => handleApprove(record.id)} loading={loading}>Approve</Button>
-                    <Button type="primary" danger onClick={() => handleApprove(record.id)} loading={loading}>Reject</Button>
+                    <Button type="primary" danger onClick={() => handleReject(record.id)} loading={loadingReject}>Reject</Button>
                     <Link to={`/postDetail/${record.id}`}>
                         <Button type="primary" style={{ color: '#fff', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>View</Button>
                     </Link>

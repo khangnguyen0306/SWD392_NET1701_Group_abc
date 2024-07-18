@@ -7,7 +7,7 @@ import { selectTokens } from "../slices/auth.slice";
 export const exchangeAPI = createApi({
   reducerPath: "exchangeManagement",
   // Tag types are used for caching and invalidation.
-  tagTypes: ["ExchangeList"],
+  tagTypes: ["ExchangeList","RatingList"],
   baseQuery: fetchBaseQuery({
     baseUrl: BE_API_LOCAL,
 
@@ -126,16 +126,16 @@ export const exchangeAPI = createApi({
     //   invalidatesTags: [{ type: "ClassList", id: "LIST" }],
     // }),
 
-    // createProduct: builder.mutation({
-    //   query: (body) => {
-    //     return {
-    //       method: "POST",
-    //       url: `product/addproduct`,
-    //       body,
-    //     };
-    //   },
-    //   invalidatesTags: [{ type: "ProductList", id: "LIST" }],
-    // }),
+    Rating: builder.mutation({
+      query: (body) => {
+        return {
+          method: "POST",
+          url: `rating/ratingexchanged`,
+          body,
+        };
+      },
+      invalidatesTags: [{ type: "RatingList", id: "LIST" }],
+    }),
     // createProductForExchange: builder.mutation({
     //   query: (body) => {
     //     return {
@@ -158,6 +158,17 @@ export const exchangeAPI = createApi({
     //   invalidatesTags: (res, err, arg) => [{ type: "ClassList", id: arg.id }],
     // }),
     cancelExchangeFromOwner: builder.mutation({
+      query: (payload) => {
+        return {
+          method: "DELETE",
+          url: `exchanged/deny/` + payload,
+        };
+      },
+      invalidatesTags: (_res, _err, _arg) => [
+        { type: "ExchangeList", id: "LIST" },
+      ],
+    }),
+    denyExchange: builder.mutation({
       query: (payload) => {
         return {
           method: "DELETE",
@@ -193,6 +204,12 @@ export const exchangeAPI = createApi({
         { type: "ExchangeList", id: "LIST" },
       ],
     }),
+    acceptCompletedExchange: builder.mutation({
+      query: (id) => ({
+        url: `exchanged/updatecompletedstatus/${id}`,
+        method: 'PUT',
+      }),
+    }),
   }),
 });
 
@@ -205,7 +222,10 @@ export const {
   useCancelExchangeFromCustomerMutation,
   useAcceptExchangeMutation,
   useCancelExchangeFromOwnerMutation,
-  useGetAllFinishedForUserQuery
+  useGetAllFinishedForUserQuery,
+  useAcceptCompletedExchangeMutation,
+  useRatingMutation,
+  useDenyExchangeMutation
   //   useDuplicateClassMutation,
   //   useCreateClassMutation,
   //   useGetClassByIdQuery,
