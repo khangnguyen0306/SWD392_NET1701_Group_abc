@@ -28,7 +28,7 @@ const MyExchange = () => {
             userExchangeId: userId,
         };
         try {
-          await  signalRService.createGroup(group);
+            await signalRService.createGroup(group);
         } catch (error) {
             console.error('Error creating group:', error);
         }
@@ -38,18 +38,26 @@ const MyExchange = () => {
         try {
             console.log(exchangeRecordToAccept.post.id)
             console.log(exchangeRecordToAccept.user.id)
-
-            await acceptExchange(exchangeRecordToAccept.id);
-
-            message.success('Exchange request accepted successfully! You are connected to group chat number:' + exchangeRecordToAccept.post.id);
-            refetch();
-
+            try {
+                const rs = await acceptExchange(exchangeRecordToAccept.id);
+                if (rs.data) {
+                    message.success(rs.data.message + 'You are connected to group chat number:' + exchangeRecordToAccept.post.id);
+                    handleCreateGroup(exchangeRecordToAccept.post.id, exchangeRecordToAccept.user.id)
+                    navigate('/chat')
+                    refetch();
+                } else {
+                    message.error('Failed to accept exchange request');
+                    refetch();
+                }
+            } catch (error) {
+                message.error('Failed to accept exchange request');
+                refetch();
+            }
         } catch (error) {
             message.error('Failed to accept exchange request');
         } finally {
             setIsModalVisible(false);
-            handleCreateGroup(exchangeRecordToAccept.post.id, exchangeRecordToAccept.user.id)
-            navigate('/chat')
+
 
         }
     };
