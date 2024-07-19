@@ -124,7 +124,13 @@ const CustomHeader = () => {
               Manage Products
             </NavLink>
           </Menu.Item>
+          <Menu.Item key="/manage-appeal">
+            <NavLink to="/manage-appeal" activeClassName="active">
+              Manage Appeals
+            </NavLink>
+          </Menu.Item>
         </>
+        
       );
     } else if (user?.roleId === 3) {
       return (

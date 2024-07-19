@@ -20,8 +20,9 @@ const AppealManager = () => {
     try {
       await acceptAppeal(id).unwrap();
       message.success('Appeal accepted successfully');
+      const updatedAppeal = localAppealData.find(a => a.id === id);
       setLocalAppealData(localAppealData.map(appeal => 
-        appeal.userId === localAppealData.find(a => a.id === id).userId
+        appeal.userId === updatedAppeal.userId
         ? { ...appeal, status: true }
         : appeal
       ));

@@ -15,7 +15,7 @@ const AuthGuard = ({ allowedRoles, children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
  
-  if (location.pathname === "/dashboard") {
+  if (location.pathname === "/dashboard" ) {
     if (!token || user?.roleId !== 1) {
       return <Navigate to="/404" replace />;
     }
