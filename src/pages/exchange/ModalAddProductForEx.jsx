@@ -24,6 +24,7 @@ const AddProductPage = () => {
     const [folder] = useState(uuidv4());
     const navigate = useNavigate();
     const [price, setPrice] = useState(0);
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         setFilteredSubcategories(subcategories || []);
     }, [subcategories]);
@@ -44,7 +45,9 @@ const AddProductPage = () => {
         try {
             const values = await form.validateFields();
             try {
+                setLoading(true);
                 await addProduct({ ...values, urlImg: images[0], price });
+                setLoading(false);
                 message.success('Product added successfully');
                 refetch();
                 navigate(-1)
@@ -161,7 +164,7 @@ const AddProductPage = () => {
                             </div>
                         </Form.Item>
                         <Form.Item>
-                            <Button type="primary" block onClick={handleSubmit}>
+                            <Button type="primary" block onClick={handleSubmit} loading={loading}>
                                 Submit
                             </Button>
                         </Form.Item>

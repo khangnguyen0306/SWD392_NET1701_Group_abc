@@ -28,6 +28,7 @@ const LoginForm = () => {
       localStorage.setItem("user", JSON.stringify(result.data.data.user));
       notification.success({
         message: "Login successfully",
+        duration:2,
         description: (
           <div>
             Welcome {result.data.data.user.userName} <SmileOutlined />

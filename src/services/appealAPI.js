@@ -6,7 +6,16 @@ export const appealApi = createApi({
   reducerPath: "appealManagement",
   // Tag types are used for caching and invalidation.
   tagTypes: ["AppealList"],
-  baseQuery: fetchBaseQuery({ baseUrl:BE_API_LOCAL}),
+  baseQuery: fetchBaseQuery({
+    baseUrl: BE_API_LOCAL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = localStorage.getItem('token'); 
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    }
+  }),
   endpoints: (builder) => ({
     getAppeals: builder.query({
       query: () => `appeal/getall`,
@@ -30,7 +39,6 @@ export const appealApi = createApi({
           body,
           responseHandler: (response) => response.text(),
         };
-        
       },
       invalidatesTags: [{ type: "Appeal", id: "LIST" }],
     }),

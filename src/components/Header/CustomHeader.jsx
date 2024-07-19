@@ -41,6 +41,7 @@ const CustomHeader = () => {
     notification.success({
       message: "Logout successfully",
       description: "See you again!",
+      duration:1.5
     });
     navigate("/login");
   };
@@ -119,9 +120,9 @@ const CustomHeader = () => {
               Dashboard
             </NavLink>
           </Menu.Item>
-          <Menu.Item key="/manage-products">
-            <NavLink to="/manage-products" activeClassName="active">
-              Manage Products
+          <Menu.Item key="/manage-appeal">
+            <NavLink to="/manage-appeal" activeClassName="active">
+              Manage Appeals
             </NavLink>
           </Menu.Item>
         </>

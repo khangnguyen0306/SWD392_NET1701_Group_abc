@@ -139,7 +139,7 @@ const Register = () => {
                     }),
                   ]}
                 >
-                  <DatePicker />
+                  <DatePicker inputReadOnly/>
                 </Form.Item>
                 <Form.Item
                   hasFeedback

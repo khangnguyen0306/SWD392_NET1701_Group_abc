@@ -20,7 +20,7 @@ const AuthGuard = ({ allowedRoles, children }) => {
       return <Navigate to="/404" replace />;
     }
   }
-  const allowedManagerRoutes = ["/manage-products", "/postmanager", "/manage-categories"];
+  const allowedManagerRoutes = ["/manage-products", "/postmanager", "/manage-categories","/manage-appeal"];
   if (allowedManagerRoutes.includes(location.pathname)) {
     if (![1, 3].includes(user?.roleId)) {
       return <Navigate to="/404" replace />;

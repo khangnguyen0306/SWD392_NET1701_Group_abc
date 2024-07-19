@@ -43,19 +43,21 @@ const ReportTable = ({ reportData, refetchReports, refetchPosts }) => {
                     </p>
                 </Link>
             </Menu.Item>
-            <Menu.Item key="approve">
-                <Popconfirm
-                    title="Are you sure you want to approve this report?"
-                    onConfirm={() => handleApprove(record.id, record.postId)}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <p style={{ display: 'flex', alignItems: 'center' }}>
-                        <CheckCircleOutlined style={{ paddingRight: '0.5rem', color: '#52c41a', fontSize: '18px' }} />
-                        Approve
-                    </p>
-                </Popconfirm>
-            </Menu.Item>
+            {record.status != true ? (
+                <Menu.Item key="approve">
+                    <Popconfirm
+                        title="Are you sure you want to approve this report?"
+                        onConfirm={() => handleApprove(record.id, record.postId)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <p style={{ display: 'flex', alignItems: 'center' }}>
+                            <CheckCircleOutlined style={{ paddingRight: '0.5rem', color: '#52c41a', fontSize: '18px' }} />
+                            Approve
+                        </p>
+                    </Popconfirm>
+                </Menu.Item>
+            ) : null}
             <Menu.Item key="disapprove">
                 <Popconfirm
                     title="Are you sure you want to disapprove this report?"
@@ -65,7 +67,7 @@ const ReportTable = ({ reportData, refetchReports, refetchPosts }) => {
                 >
                     <p style={{ display: 'flex', alignItems: 'center' }}>
                         <DeleteOutlined style={{ paddingRight: '0.5rem', color: '#EE2C2C', fontSize: '18px' }} />
-                        Disapprove
+                        {record.status != false ? "Delete report" : "Disapprove and Delete"}
                     </p>
                 </Popconfirm>
             </Menu.Item>

@@ -19,7 +19,8 @@ import {
     message,
     Layout,
     Row,
-    Col
+    Col,
+    Spin
 } from 'antd';
 import {
     ArrowLeftOutlined,
@@ -41,15 +42,17 @@ import { formatDistanceToNow } from 'date-fns';
 import CommentForm from './Comment';
 import ModalEditComment from './ModalEditComment';
 import "./PostDetail.scss"
-import EditPostModal from './ModalEdit';
 import ProductDisplay from './DisplayProduct';
-import ProductDetail from '../product/ProductDetail';
 const { Content } = Layout;
 
 const PostDetail = () => {
     const { postId } = useParams();
-    const { data: postDetail, isLoading, error, refetch: refetchPostDetail } = useGetPostDetailQuery(postId);
-    const { data: commentData, isLoading: isLoadingCmt, refetch: refetchComments } = useGetPostCommentQuery(postId);
+    const { data: postDetail, isLoading: isLoadingPost, refetch: refetchPostDetail } = useGetPostDetailQuery(postId, {
+        skip: !postId
+    });
+    const { data: commentData, isLoading: isLoadingCmt, refetch: refetchComments} = useGetPostCommentQuery(postId, {
+        skip: !postId
+    });
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -62,10 +65,14 @@ const PostDetail = () => {
     const [currentCommentId, setCurrentCategoryId] = useState(null);
     const [deleteComment] = useDeleteCommentMutation();
     const [confirmLoading, setConfirmLoading] = useState(false);
-
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
-        refetchPostDetail();
-        refetchComments();
+        if (postId) {
+              const timeoutId = setTimeout(() => {
+                Promise.all([refetchPostDetail(), refetchComments()]).finally(() => setLoading(false));
+            });
+            return () => clearTimeout(timeoutId);
+        }
     }, [postId, refetchPostDetail, refetchComments]);
 
     const openModalEditComment = (id) => {
@@ -143,7 +150,19 @@ const PostDetail = () => {
         return name;
     };
 
-    if (isLoading || isLoadingCmt ) {
+
+
+    if (loading) {
+        return (
+            <Spin tip="Loading..." size="large">
+                <Card style={{ width: '100%', marginTop: 16 }}>
+                    <Skeleton active />
+                </Card>
+            </Spin>
+        );
+    }
+
+    if (isLoadingPost || isLoadingCmt) {
         return (
             <Card style={{ width: '100%', marginTop: 16 }}>
                 <Skeleton active />
@@ -215,7 +234,7 @@ const PostDetail = () => {
                                                     ) : (
                                                         <Avatar icon={<UserOutlined />} />
                                                     )}
-                                           
+
                                                     <p style={{ marginLeft: '1rem' }}>{postDetail?.user?.userName}</p>
                                                 </div>
                                             </Link>

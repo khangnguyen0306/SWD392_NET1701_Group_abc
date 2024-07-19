@@ -9,7 +9,7 @@ const AppealManager = () => {
   const { data: appealData, isLoading: isLoadingAppeal, refetch: refetchAppealData } = useGetAppealsQuery();
   const [acceptAppeal] = useAcceptAppealMutation();
   const [localAppealData, setLocalAppealData] = useState([]);
-
+  const [loadingUnban, setLoadingUnBan] = useState(false)
   useEffect(() => {
     if (appealData) {
       setLocalAppealData(appealData);
@@ -18,13 +18,16 @@ const AppealManager = () => {
 
   const handleAccept = async (id) => {
     try {
-      await acceptAppeal(id).unwrap();
-      message.success('Appeal accepted successfully');
-      setLocalAppealData(localAppealData.map(appeal => 
-        appeal.userId === localAppealData.find(a => a.id === id).userId
-        ? { ...appeal, status: true }
-        : appeal
-      ));
+      setLoadingUnBan(true)
+      const ap = await acceptAppeal(id);
+      if (ap.error.originalStatus == 200)
+        message.success(ap.error.data);
+      // setLocalAppealData(localAppealData.map(appeal => 
+      //   appeal.userId === localAppealData.find(a => a.id === id).userId
+      //   ? { ...appeal, status: true }
+      //   : appeal
+      // ));
+      setLoadingUnBan(false)
     } catch (error) {
       message.error('Failed to accept the appeal');
     }
@@ -94,6 +97,7 @@ const AppealManager = () => {
           type="primary"
           onClick={() => handleAccept(record.id)}
           disabled={record.status}
+          loading={loadingUnban}
         >
           Accept
         </Button>
